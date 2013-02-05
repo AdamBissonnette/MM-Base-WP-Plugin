@@ -13,7 +13,7 @@ include_once('inc/functions.php');
 class MM_FileList
 {
 	var $_settings;
-	var $_plugin_slug = "mm_";
+	var $_plugin_slug = "mm_fl_";
 	var $_plugin_name = "MM File List";
     var $_options_pagename = 'mm_options';
     var $_versionnum = 0.1;
@@ -123,7 +123,8 @@ class MM_FileList
 					$data_back = $_POST['settings'];
 					
 					$values = array(
-						$_plugin_slug . 'variable' => $data_back['variable'],				
+						$_plugin_slug . 'list_format' => $data_back['list_format'],
+						$_plugin_slug . 'item_format' => $data_back['item_format'],		
 					);
 					
 					$this->_save_settings_todb($values);
@@ -156,7 +157,8 @@ class MM_FileList
 		global $shortname; 
 
 		$standart_values = array(
-			$_plugin_slug . 'variable' => ''
+			$_plugin_slug . 'list_format' => '',
+			$_plugin_slug . 'item_format' => '',
 		);
 
 		foreach ($standart_values as $key => $value){
@@ -219,6 +221,16 @@ class MM_FileList
 		//These templates could be set as editable / saveable options
 		$listTemplate = '<ul class="mm-dir-list">%s</ul>';
 		$listItemTemplate = '<li><a href="%s">%s</a></li>';
+		
+		if ($this->_settings[$_plugin_slug . 'list_format'] != '')
+		{
+			$listTemplate = $this->_settings[$_plugin_slug . 'list_format'];
+		}
+		
+		if ($this->_settings[$_plugin_slug . 'item_format'] != '')
+		{
+			$listItemTemplate = $this->_settings[$_plugin_slug . 'item_format'];
+		}
 		
 		$items = "";
 		
