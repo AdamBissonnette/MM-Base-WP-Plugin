@@ -1,8 +1,8 @@
 <?php
 /*
-Plugin Name: MM Manager
+Plugin Name: MM File List
 Plugin URI: http://mediamanifesto.com
-Description: Base plugin code for future wordpress development
+Description: Plugin to list files in a given directory
 Version: 1
 Author: Adam Bissonnette
 Author URI: http://www.mediamanifesto.com
@@ -10,17 +10,17 @@ Author URI: http://www.mediamanifesto.com
 
 include_once('inc/functions.php');
 
-class MM_Manager
+class MM_FileList
 {
 	var $_settings;
 	var $_plugin_slug = "mm_";
-	var $_plugin_name = "MM Manager";
+	var $_plugin_name = "MM File List";
     var $_options_pagename = 'mm_options';
-    var $_versionnum = 0.3;
+    var $_versionnum = 0.1;
     var $location_folder;
 	var $menu_page;
 	
-	function MM_Manager()
+	function MM_FileList()
 	{
 		return $this->__construct();
 	}
@@ -52,18 +52,7 @@ class MM_Manager
 		
 		$sql = "";
 		
-		/* $sql = sprintf("CREATE TABLE IF NOT EXISTS  %s (
-			  `intID` int(11) NOT NULL AUTO_INCREMENT,
-			  `intExternalID` int(11) NOT NULL COMMENT 'Connects to the calendar plugin',
-			  `vcrName` varchar(100) COLLATE utf8_unicode_ci NOT NULL,
-			  `vcrDescription` varchar(500) COLLATE utf8_unicode_ci NOT NULL,
-			  `intQuantity` int(11) NOT NULL,
-			  `intNotifyQuantity` int(11) NOT NULL,
-			  `dtmStartDate` datetime NOT NULL,
-			  `dtmEndDate` datetime NOT NULL,
-			  `tinDeleted` tinyint(4) NOT NULL DEFAULT '0',
-			  PRIMARY KEY (`intID`));",
-		$wpdb->prefix . $_plugin_slug . "event"); */
+		/* We don't need no Javascript Stuff Right?? */
 				
 		dbDelta($sql);
 		
@@ -142,15 +131,6 @@ class MM_Manager
 		if ($this->check_user_capability())
 		{
 			switch($_REQUEST['fn']){
-				case 'save':
-					
-				break;
-				case 'delete':
-					
-				break;
-				case 'get':
-
-				break;
 				case 'settings':
 					$data_back = $_POST['settings'];
 					
@@ -165,13 +145,6 @@ class MM_Manager
 				break;
 			}
 		}
-
-		//If you're not an authorized user you can only buy products
-		switch($_REQUEST['fn']){
-			case 'register':
-
-			break;
-		}	
 
 		die;
 	}
@@ -209,12 +182,12 @@ class MM_Manager
 	}
 } // end MM_ProductManager class
 
-register_activation_hook(__FILE__,array('MM_Manager', 'mm_install'));
+register_activation_hook(__FILE__,array('MM_FileList', 'mm_install'));
 
-add_action( 'init', 'MM_Manager_Init', 5 );
-function MM_Manager_Init()
+add_action( 'init', 'MM_FileList_Init', 5 );
+function MM_FileList_Init()
 {
-    global $MM_Manager;
-    $MM_Manager = new MM_Manager();
+    global $MM_FileList;
+    $MM_FileList = new MM_FileList();
 }
 ?>
