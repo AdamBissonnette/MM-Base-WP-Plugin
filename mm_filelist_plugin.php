@@ -32,17 +32,6 @@ class MM_FileList
         $this->_set_standart_values();
 
         add_action( 'admin_menu', array(&$this, 'create_menu_link') );
-		date_default_timezone_set(get_option('timezone_string'));
-		
-		//Scripts & Styles
-		add_action( 'wp_print_scripts', array(&$this, 'plugin_js') );
-		add_action( 'wp_print_styles', array(&$this, 'plugin_css') );
-		
-		//Ajax Posts
-		add_action('wp_ajax_nopriv_do_ajax', array(&$this, $_plugin_slug . 'save') );
-		add_action('wp_ajax_do_ajax', array(&$this, $_plugin_slug . 'save') );
-		
-		
     }
     
     
@@ -52,7 +41,7 @@ class MM_FileList
 		
 		$sql = "";
 		
-		/* We don't need no Javascript Stuff Right?? */
+		/* We don't need no Javascript... errrrrrr SQL :< Stuff Right?? */
 				
 		dbDelta($sql);
 		
@@ -91,14 +80,12 @@ class MM_FileList
 
     function plugin_js()
 	{
-		wp_enqueue_script('formtools', $this->location_folder . '/js/formtools.js');
+		//No included js - wp_enqueue_script('formtools', $this->location_folder . '/js/formtools.js');
 	}
 	
 	function plugin_css()
 	{
-?>
-         <link rel="stylesheet" href="<?php echo $this->location_folder; ?>/css/formstyles.css" type="text/css" />
-<?php
+		//No page css
 	}
 
     function plugin_page_js()
@@ -180,6 +167,72 @@ class MM_FileList
 			if ( $value == '' ) $this->_settings[$key] = $standart_values[$key];
 		}
 	}
+	
+	function ListFiles($atts)
+	{	
+		extract( shortcode_atts( array(
+		'directory' => '',
+		'output' => 'li',
+		'types' => 'pdf,doc'
+		), $atts ) );
+		
+		
+		$typesToList = explode(",", $types);
+		$files = scandir($directory);
+		$list = array();
+		
+		foreach($files as $file)
+		{
+			$extension = pathinfo($file)['extension'];
+			
+			if($file != '.' && $file != '..' && in_array($extension, $types))
+			{		 
+				if(!is_dir($directory.'/'.$file))
+				{
+					$list[$file]=> $directory . '/' . $file;
+				} 
+			}
+		} 
+		
+		if ($handle = opendir('/path/to/files')) {		
+			while (false !== ($entry = readdir($handle))) {
+				echo "$entry\n";
+			}
+        }
+        
+        closedir($handle);
+        
+        $output = "";
+        
+        switch($list){
+        	case 'li':
+        		return _MakeHtmlList($list);
+        	break;
+        	case 'comma':
+        	case default:
+        		$output = implode(",", $list);
+ 			break;
+        }
+        
+        return $output;
+    }
+
+	function _MakeHtmlList($list)
+	{
+		//These templates could be set as editable / saveable options
+		$listTemplate = '<ul class="mm-dir-list">%s</ul>':
+		$listItemTemplate = '<li><a href="%s">%s</a></li>';
+		
+		$items = "";
+		
+		foreach ($list as $item => $value) //in this case item == filename, value == path
+		{
+			$items .= sprintf($listItemTemplate, $value, $item);
+		}
+		
+		return sprintf($listTemplate, $items);
+	}
+
 } // end MM_ProductManager class
 
 register_activation_hook(__FILE__,array('MM_FileList', 'mm_install'));
