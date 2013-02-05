@@ -44,11 +44,12 @@
 			$note = sprintf($noteTemplate, $note);
 		}
 		
-		$input = sprintf($inputTemplate, $inputName /* for */, $labelText, $inputName /* id */, $validationType /* class */, $placeholder, $value, $note);
+		$input = sprintf($inputTemplate, $inputName /* for */, $labelText, $inputName /* id */, $validationType /* class */, $placeholder, htmlspecialchars($value), $note);
 		
 		return $input;
 	}
 	
+	//Whyyyyyy doesn't this have value :D?
 	function genTextArea($inputName, $labelText, $placeholder = "", $validationType = "req")
 	{
 		return sprintf('<div class="control-group"><label class="control-label" for="%s">%s</label><div class="controls"><textarea id="%s" class="%s" placeholder="%s" /></textarea></div></div>',

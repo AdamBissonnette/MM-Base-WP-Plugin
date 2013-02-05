@@ -93,6 +93,7 @@ class MM_FileList
     {
     	wp_enqueue_script('bootstrap', $this->location_folder . '/js/bootstrap.min.js');
     	wp_enqueue_script('plugin', $this->location_folder . '/js/plugin.js');
+    	wp_enqueue_script('formtools', $this->location_folder . '/js/formtools.js');
     }
 
     function plugin_page_css()
