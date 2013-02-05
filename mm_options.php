@@ -2,7 +2,7 @@
 	<div class="row">
 		<div class="span12">
 			<?php screen_icon(); ?>
-			<h2><?php echo $_plugin_name ?></h2>
+			<h2><?php echo $this->_plugin_name ?></h2>
 		</div>
 	</div>
 	<div class="row" style="margin-top: 30px;">

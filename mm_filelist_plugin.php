@@ -32,6 +32,7 @@ class MM_FileList
         $this->_set_standart_values();
 
         add_action( 'admin_menu', array(&$this, 'create_menu_link') );
+        add_shortcode( 'MMFileList', array(&$this, 'ListFiles') );
     }
     
     
@@ -58,7 +59,7 @@ class MM_FileList
 	
 	function create_menu_link()
     {
-        $this->menu_page = add_options_page($_plugin_name . 'Options', $_plugin_name . 'Plugin',
+        $this->menu_page = add_options_page($_plugin_name . 'Options', $this->_plugin_name . ' Plugin',
         'manage_options',$this->_options_pagename, array(&$this, 'build_settings_page'));
         add_action( "admin_print_scripts-{$this->menu_page}", array(&$this, 'plugin_page_js') );
         add_action("admin_head-{$this->menu_page}", array(&$this, 'plugin_page_css'));
@@ -171,14 +172,17 @@ class MM_FileList
 	function ListFiles($atts)
 	{	
 		extract( shortcode_atts( array(
-		'directory' => '',
-		'output' => 'li',
+		'folder' => '',
+		'format' => 'li',
 		'types' => 'pdf,doc'
 		), $atts ) );
 		
+		$baseDir = wp_upload_dir();
+		$dir = $baseDir['path'] . $folder;
+		$outputDir = $baseDir['url'] . $folder;
 		
 		$typesToList = explode(",", $types);
-		$files = scandir($directory);
+		$files = scandir($dir);
 		$list = array();
 		
 		foreach($files as $file)
@@ -186,31 +190,23 @@ class MM_FileList
 			$path_parts = pathinfo($file);
 			$extension = $path_parts['extension'];
 			
-			if($file != '.' && $file != '..' && in_array($extension, $types))
+			if($file != '.' && $file != '..' && in_array($extension, $typesToList))
 			{		 
-				if(!is_dir($directory.'/'.$file))
+				if(!is_dir($dir.'/'.$file))
 				{
-					$list[$file]=> $directory . '/' . $file;
+					$list[$file] = $outputDir . '/' . $file;
 				} 
 			}
-		} 
-		
-		if ($handle = opendir('/path/to/files')) {		
-			while (false !== ($entry = readdir($handle))) {
-				echo "$entry\n";
-			}
-        }
-        
-        closedir($handle);
+		}
         
         $output = "";
         
-        switch($list){
+        switch($format){
         	case 'li':
-        		return _MakeHtmlList($list);
+        		return $this->_MakeHtmlList($list);
         	break;
         	case 'comma':
-        	case default:
+        	default:
         		$output = implode(",", $list);
  			break;
         }
@@ -221,7 +217,7 @@ class MM_FileList
 	function _MakeHtmlList($list)
 	{
 		//These templates could be set as editable / saveable options
-		$listTemplate = '<ul class="mm-dir-list">%s</ul>':
+		$listTemplate = '<ul class="mm-dir-list">%s</ul>';
 		$listItemTemplate = '<li><a href="%s">%s</a></li>';
 		
 		$items = "";
