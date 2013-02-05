@@ -183,7 +183,8 @@ class MM_FileList
 		
 		foreach($files as $file)
 		{
-			$extension = pathinfo($file)['extension'];
+			$path_parts = pathinfo($file);
+			$extension = $path_parts['extension'];
 			
 			if($file != '.' && $file != '..' && in_array($extension, $types))
 			{		 
