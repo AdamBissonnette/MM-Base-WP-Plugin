@@ -1,8 +1,8 @@
 <?php
 /*
-Plugin Name: MM Core
+Plugin Name: MM Addon
 Plugin URI: http://mediamanifesto.com
-Description: Base plugin code for any Media Manifesto plugins (all js, css, php, for easy install of addons)
+Description: Basic Addon Plugin that requires the core
 Version: 0.1
 Author: Adam Bissonnette
 Author URI: http://www.mediamanifesto.com/
@@ -10,51 +10,62 @@ Author URI: http://www.mediamanifesto.com/
 
 include_once('inc/functions.php');
 
-class MM_Core
+class MM_Addon
 {
 	var $_settings;
-	var $_plugin_slug = "mm_c_";
-	var $_plugin_name = "MM Core";
-    var $_options_pagename = 'mm_c_options';
+	var $_plugin_slug = "mm_a_";
+	var $_plugin_name = "MM Addon";
+    var $_options_pagename = 'mm_a_options';
     var $_versionnum = 0.1;
     var $location_folder;
 	var $menu_page;
 	
-	function MM_Core()
+	function MM_Addon()
 	{
 		return $this->__construct();
 	}
 	
     function __construct()
     {
-        $this->_settings = get_option($_plugin_slug . 'settings') ? get_option($_plugin_slug . 'settings') : array();
+    	//Require core    
+		$this->_settings = get_option($_plugin_slug . 'settings') ? get_option($_plugin_slug . 'settings') : array();
 		$this->location_folder = trailingslashit(WP_PLUGIN_URL) . dirname( plugin_basename(__FILE__) );
-        $this->_set_standart_values();
+		$this->_set_standart_values();
 
-        add_action( 'admin_menu', array(&$this, 'create_menu_link') );
+		add_action( 'admin_menu', array(&$this, 'create_menu_link') );
 		date_default_timezone_set(get_option('timezone_string'));
-		
-		//Scripts & Styles
+	
 		add_action( 'wp_print_scripts', array(&$this, 'plugin_js') );
 		add_action( 'wp_print_styles', array(&$this, 'plugin_css') );
-		
+	
 		//Ajax Posts
 		add_action('wp_ajax_nopriv_do_ajax', array(&$this, $_plugin_slug . 'save') );
 		add_action('wp_ajax_do_ajax', array(&$this, $_plugin_slug . 'save') );
-		
 		
     }
     
     
     static function mm_install() {
 		global $wpdb;
-		require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
 		
-		$sql = "";
+		$plugins = get_option('active_plugins');
+		$required_plugin = 'mm_core/mm_core_plugin.php';
+
+		if ( in_array( $required_plugin , $plugins ) ) {  
+			require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
+		
+			$sql = "";
 				
-		dbDelta($sql);
+			dbDelta($sql);
 		
-		add_option($_plugin_slug . "versionnum", $_versionnum);
+			add_option($_plugin_slug . "versionnum", $_versionnum);
+		}
+		else
+		{
+			wp_die( __('MM Core is required to install this plugin') );
+		}
+		
+		
 	}
     
     function add_settings_link($links) {
@@ -69,6 +80,7 @@ class MM_Core
     {
         $this->menu_page = add_options_page($_plugin_name . 'Options', $_plugin_name . 'Plugin',
         'manage_options',$this->_options_pagename, array(&$this, 'build_settings_page'));
+        //Get Core js & Core css
         add_action( "admin_print_scripts-{$this->menu_page}", array(&$this, 'plugin_page_js') );
         add_action("admin_head-{$this->menu_page}", array(&$this, 'plugin_page_css'));
 		add_filter('plugin_action_links_' . plugin_basename(__FILE__), array($this, 'add_settings_link'), 10, 2);
@@ -196,12 +208,12 @@ class MM_Core
 	}
 } // end MM_Core class
 
-register_activation_hook(__FILE__,array('MM_Core', 'mm_install'));
+register_activation_hook(__FILE__,array('MM_Addon', 'mm_install'));
 
 add_action( 'init', 'MM_Core_Init', 5 );
-function MM_Core_Init()
+function MM_Addon_Init()
 {
-    global $MM_Core;
-    $MM_Core = new MM_Core();
+    global $MM_Addon;
+    $MM_Addon = new MM_Core();
 }
 ?>
