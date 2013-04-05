@@ -5,7 +5,7 @@
 	include_once('date-tools.php');
 	include_once('html-tools.php');
 	include_once('email-tools.php');
-	include_once('object-template.php');
+	include_once('wp-tools.php');
 
 	/* Plugin specific code 
 	function add_specials_admin_bar_link() {

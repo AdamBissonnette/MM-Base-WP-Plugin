@@ -1,26 +1,26 @@
 <?php
 /*
-Plugin Name: MM Manager
+Plugin Name: MM Core
 Plugin URI: http://mediamanifesto.com
-Description: Base plugin code for future wordpress development
-Version: 1
+Description: Base plugin code for any Media Manifesto plugins (all js, css, php, for easy install of addons)
+Version: 0.1
 Author: Adam Bissonnette
-Author URI: http://www.mediamanifesto.com
+Author URI: http://www.mediamanifesto.com/
 */
 
 include_once('inc/functions.php');
 
-class MM_Manager
+class MM_Core
 {
 	var $_settings;
-	var $_plugin_slug = "mm_";
-	var $_plugin_name = "MM Manager";
-    var $_options_pagename = 'mm_options';
-    var $_versionnum = 0.3;
+	var $_plugin_slug = "mm_c_";
+	var $_plugin_name = "MM Core";
+    var $_options_pagename = 'mm_c_options';
+    var $_versionnum = 0.1;
     var $location_folder;
 	var $menu_page;
 	
-	function MM_Manager()
+	function MM_Core()
 	{
 		return $this->__construct();
 	}
@@ -51,19 +51,6 @@ class MM_Manager
 		require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
 		
 		$sql = "";
-		
-		/* $sql = sprintf("CREATE TABLE IF NOT EXISTS  %s (
-			  `intID` int(11) NOT NULL AUTO_INCREMENT,
-			  `intExternalID` int(11) NOT NULL COMMENT 'Connects to the calendar plugin',
-			  `vcrName` varchar(100) COLLATE utf8_unicode_ci NOT NULL,
-			  `vcrDescription` varchar(500) COLLATE utf8_unicode_ci NOT NULL,
-			  `intQuantity` int(11) NOT NULL,
-			  `intNotifyQuantity` int(11) NOT NULL,
-			  `dtmStartDate` datetime NOT NULL,
-			  `dtmEndDate` datetime NOT NULL,
-			  `tinDeleted` tinyint(4) NOT NULL DEFAULT '0',
-			  PRIMARY KEY (`intID`));",
-		$wpdb->prefix . $_plugin_slug . "event"); */
 				
 		dbDelta($sql);
 		
@@ -207,14 +194,14 @@ class MM_Manager
 			if ( $value == '' ) $this->_settings[$key] = $standart_values[$key];
 		}
 	}
-} // end MM_ProductManager class
+} // end MM_Core class
 
-register_activation_hook(__FILE__,array('MM_Manager', 'mm_install'));
+register_activation_hook(__FILE__,array('MM_Core', 'mm_install'));
 
-add_action( 'init', 'MM_Manager_Init', 5 );
-function MM_Manager_Init()
+add_action( 'init', 'MM_Core_Init', 5 );
+function MM_Core_Init()
 {
-    global $MM_Manager;
-    $MM_Manager = new MM_Manager();
+    global $MM_Core;
+    $MM_Core = new MM_Core();
 }
 ?>
