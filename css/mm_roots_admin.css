@@ -169,4 +169,7 @@ border:1px solid #ccc;border-bottom-color:#bbb; border-radius:15px;-webkit-box-s
   clear: both;
 }
 
-.help-block {font-size: 14px;}
+.comment-form-url {
+	position: absolute;
+	left: -1000px;
+}

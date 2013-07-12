@@ -53,5 +53,5 @@
 	{
 		return sprintf('<div class="control-group"><label class="control-label" for="%s">%s</label><div class="controls"><textarea id="%s" class="%s" placeholder="%s" /></textarea></div></div>',
 								$inputName /* for */, $labelText, $inputName /* id */, $validationType /* class */, $placeholder);
-	}	
+	}
 ?>
