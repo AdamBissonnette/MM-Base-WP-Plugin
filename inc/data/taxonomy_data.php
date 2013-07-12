@@ -1,5 +1,5 @@
 <?php
-	global $taxonomies;
+	global $core_taxonomies;
 
 	/*
 		Optional "options" variables
@@ -10,7 +10,7 @@
 		rows - text area only rows attribute
 	*/
 
-	$taxonomies = array(
+	$core_taxonomies = array(
 		/*array('slug' => 'post',
 			  'options' => array(
 				array('name' => 'Post Options',

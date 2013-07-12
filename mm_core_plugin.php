@@ -3,27 +3,22 @@
 Plugin Name: MM Core
 Plugin URI: http://mediamanifesto.com
 Description: Base plugin code for any Media Manifesto plugins (all js, css, php, for easy install of addons)
-Version: 0.1
+Version: 1
 Author: Adam Bissonnette
 Author URI: http://www.mediamanifesto.com/
 */
-
-<?php
-/**
- * Core Theme Object
- */
 
 include_once('inc/functions.php');
 
 class MM_Core
 {
 	var $_settings;
-    var $_options_pagename = 'MM_Core';
-    var $_settings_key = 'MM_Core';
-    var $_meta_key = 'MM_Core_meta';
+    static $_options_pagename = 'MM_Core';
+    static $_settings_key = 'MM_Core';
+    static $_meta_key = 'MM_Core_meta';
     //var $_setting_prefix = 'MM_Core_';
-    var $_save_key = '';
-    var $_versionnum = 1.0;
+    static $_save_key = '';
+    static $_versionnum = 1.0;
 	var $menu_page;
 	
 	function MM_Core()
@@ -53,7 +48,9 @@ class MM_Core
 		//Custom Meta
 		add_action( 'admin_init', array(&$this, 'custom_metabox'));
 
-		add_action( 'save_post', array(&$this, '_save_post_meta'), 10, 2 );
+		add_action( 'save_post', array(&$this, '_save_post`_meta'), 10, 2 );
+
+		add_action( 'init', array(&$this, 'custom_navigation_menus') );
     }
 
     static function MM_Core_install() {
@@ -98,7 +95,7 @@ class MM_Core
 
 	function create_menu_link()
     {
-        $this->menu_page = add_options_page('Theme Options', 'Theme Options',
+        $this->menu_page = add_options_page($this->_options_pagename . 'Options', $this->_options_pagename . 'Options',
         'manage_options',$this->_options_pagename, array(&$this, 'build_settings_page'));
     }
     
@@ -130,9 +127,43 @@ class MM_Core
 	{
 		$isAdmin = $this->check_user_capability();
 
-		do_callback($isAdmin);
+		$this->do_callback($isAdmin);
 	}
     
+	function do_callback($isAdmin)
+	{
+		if ($isAdmin)
+		{
+			$this->do_admin_function();
+		}
+
+		$this->do_standard_function();
+	}
+
+	function do_admin_function()
+	{
+		switch($_REQUEST['fn']){
+			case 'settings':
+				$data_back = $_REQUEST['settings'];
+				
+				$values = array();
+				$i = 0;
+				foreach ($data_back as $data)
+				{
+					$values[$data['name']] = $data['value'];
+				}
+				
+				$this->_save_settings_todb($values);
+			break;
+		}
+	}
+
+
+	function do_standard_function()
+	{
+
+	}
+
 	function _save_post_meta( $post_id, $post ){
 		global $pagenow;
 		global $taxonomies;
@@ -234,6 +265,15 @@ class MM_Core
 		return $output;
 	}
 
+	// Register Navigation Menus
+	function custom_navigation_menus() {
+		$locations = array(
+			'header_menu' => __( 'Subpage Menu', 'text_domain' ),
+			'social_menu' => __( 'Social Menu', 'text_domain' )
+		);
+
+		register_nav_menus( $locations );
+	}
 }
 
 register_activation_hook(__FILE__,array('MM_Core', 'MM_Core_install'));

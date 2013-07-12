@@ -5,8 +5,8 @@
 		Fields
 	*/
 
-	global $theme_options;
-	$theme_options = array(/*
+	global $core_options;
+	$core_options = array(/*
 		array('name' => 'Plugin Options',
 			'id' => 'theme',
 			'icon' => 'cog',

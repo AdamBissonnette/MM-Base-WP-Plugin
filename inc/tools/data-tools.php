@@ -38,137 +38,148 @@ if (!function_exists('arr_to_obj')) {
 	}
 }
 
-
-//Theme Data Functions
-function OutputThemeData($tabs, $values=null)
-{
-	$isFirst = true;
-
-	echo '<div class="span12 tabbable">';
-
-
-	if (count($tabs) > 1)
+if (!function_exists('OutputMMData')) {
+	//MM Data Functions
+	function OutputMMData($tabs, $values=null)
 	{
+		$isFirst = true;
 
-		echo '<ul class="nav nav-tabs">';
+		echo '<div class="span12 tabbable">';
+
+
+		if (count($tabs) > 1)
+		{
+
+			echo '<ul class="nav nav-tabs">';
+			
+			foreach ($tabs as $tab)
+			{			
+				OutputTabNav($tab["id"], $tab["name"], $tab["icon"], $isFirst);
+				
+				if ($isFirst)
+				{
+					$isFirst = false;
+				}
+			}
+
+			
+			echo '</ul>'; //Done with nav
+		
+		}
+
+		echo '<div class="row tab-content">';
+		
+		$isFirst = true;
 		
 		foreach ($tabs as $tab)
-		{			
-			OutputTabNav($tab["id"], $tab["name"], $tab["icon"], $isFirst);
+		{
+			echo OutputTabContent($tab["id"], $tab["sections"], $isFirst, $values);
 			
 			if ($isFirst)
 			{
 				$isFirst = false;
 			}
 		}
-
 		
-		echo '</ul>'; //Done with nav
-	
+		echo '</div>'; //Done with tab content
+		
+		//return $output;
 	}
+}
 
-	echo '<div class="row tab-content">';
-	
-	$isFirst = true;
-	
-	foreach ($tabs as $tab)
+if (!function_exists('OutputMMTabNav')) {
+	function OutputMMTabNav($id, $name, $icon, $isFirst)
 	{
-		echo OutputTabContent($tab["id"], $tab["sections"], $isFirst, $values);
-		
+		 $tabTemplate = '<li%s><a href="#%s" data-toggle="tab"><i class="icon-%s"></i> %s</a></li>';
+		 
+		 $class = "";
+		 
+		 if ($isFirst)
+		 {
+		 	$class = ' class="active"';
+		 }
+		 
+		 echo sprintf($tabTemplate, $class, $id, $icon, $name);
+	}
+}
+
+if (!function_exists('OutputMMTabContent')) {
+	function OutputMRootsTabContent($id, $sections, $isFirst, $values)
+	{
+		$tabContentTemplate = '<div class="tab-pane%s" id="%s">';
+
+		$class = "";
+		 
 		if ($isFirst)
 		{
-			$isFirst = false;
+		 	$class = ' active';
 		}
-	}
-	
-	echo '</div>'; //Done with tab content
-	
-	//return $output;
-}
 
-function OutputTabNav($id, $name, $icon, $isFirst)
-{
-	 $tabTemplate = '<li%s><a href="#%s" data-toggle="tab"><i class="icon-%s"></i> %s</a></li>';
-	 
-	 $class = "";
-	 
-	 if ($isFirst)
-	 {
-	 	$class = ' class="active"';
-	 }
-	 
-	 echo sprintf($tabTemplate, $class, $id, $icon, $name);
-}
-
-function OutputTabContent($id, $sections, $isFirst, $values)
-{
-	$tabContentTemplate = '<div class="tab-pane%s" id="%s">';
-
-	$class = "";
-	 
-	if ($isFirst)
-	{
-	 	$class = ' active';
-	}
-
-	echo sprintf($tabContentTemplate, $class, $id);
-	
-	foreach ($sections as $section)
-	{
-		OutputSection($section["name"], $section["size"], $section["fields"], $values);
-	}
-
-	echo "</div>";
+		echo sprintf($tabContentTemplate, $class, $id);
 		
-	//return $output;
-}
-
-function OutputSection($name, $size, $fields, $values)
-{
-	$sectionTemplate = '<div class="span%s"><legend>%s</legend>';
-	echo sprintf($sectionTemplate, $size, $name);
-
-	foreach ($fields as $field)
-	{
-		$options = isset($field["options"])?$field["options"]:array();
-		MMRootsField($field["id"], $field["label"], $field["type"], $options, $values);
-	}
-	
-	echo "</div>";
-}
-
-function GetThemeDataFields($tabs)
-{
-	$fields = array();
-
-	foreach ($tabs as $tab)
-	{
-
-		foreach ($tab["sections"] as $section)
+		foreach ($sections as $section)
 		{
-			$fields = array_merge($fields, $section["fields"]);
+			OutputSection($section["name"], $section["size"], $section["fields"], $values);
 		}
-	}
 
-	return $fields;
+		echo "</div>";
+			
+		//return $output;
+	}
 }
 
-function MMRootsField($id, $label, $type, $options=null, $values=null)
-{
-	global $MM_Roots;
-	
-	$formField = "";
-
-	if (isset($values))
+if (!function_exists('OutputMMSection')) {
+	function OutputMMSection($name, $size, $fields, $values)
 	{
-		$value = isset($values[$id])?stripslashes($values[$id]):"";
-		$formField = createFormField($id, $label, $value, $type, $options);
-	}
-	else
-	{
-		$formField = createFormField($id, $label, $MM_Roots->get_setting($id), $type, $options);
-	}
+		$sectionTemplate = '<div class="span%s"><legend>%s</legend>';
+		echo sprintf($sectionTemplate, $size, $name);
 
-	//return $formField;
+		foreach ($fields as $field)
+		{
+			$options = isset($field["options"])?$field["options"]:array();
+			MMField($field["id"], $field["label"], $field["type"], $options, $values);
+		}
+		
+		echo "</div>";
+	}
+}
+
+if (!function_exists('GetMMDataFields')) {
+	function GetMMDataFields($tabs)
+	{
+		$fields = array();
+
+		foreach ($tabs as $tab)
+		{
+
+			foreach ($tab["sections"] as $section)
+			{
+				$fields = array_merge($fields, $section["fields"]);
+			}
+		}
+
+		return $fields;
+	}
+}
+
+if (!function_exists('MMField')) {
+	function MMField($id, $label, $type, $options=null, $values=null)
+	{
+		global $MM_Roots;
+		
+		$formField = "";
+
+		if (isset($values))
+		{
+			$value = isset($values[$id])?stripslashes($values[$id]):"";
+			$formField = createFormField($id, $label, $value, $type, $options);
+		}
+		else
+		{
+			$formField = createFormField($id, $label, $MM_Roots->get_setting($id), $type, $options);
+		}
+
+		//return $formField;
+	}
 }
 ?>
