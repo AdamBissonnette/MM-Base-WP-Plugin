@@ -1,3 +1,0 @@
-<?php
-	//Links generation
-?>

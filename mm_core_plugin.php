@@ -3,7 +3,7 @@
 Plugin Name: MM Core
 Plugin URI: http://mediamanifesto.com
 Description: Base plugin code for any Media Manifesto plugins (all js, css, php, for easy install of addons)
-Version: 0.1
+Version: 1
 Author: Adam Bissonnette
 Author URI: http://www.mediamanifesto.com/
 */
@@ -13,11 +13,13 @@ include_once('inc/functions.php');
 class MM_Core
 {
 	var $_settings;
-	var $_plugin_slug = "mm_c_";
-	var $_plugin_name = "MM Core";
-    var $_options_pagename = 'mm_c_options';
-    var $_versionnum = 0.1;
+    var $_options_pagename = 'MM_Core';
+    var $_settings_key = 'MM_Core';
+    var $_meta_key = 'MM_Core_meta';
+    //var $_setting_prefix = 'MM_Core_';
+    var $_save_key = '';
     var $location_folder;
+    var $_versionnum = 1.0;
 	var $menu_page;
 	
 	function MM_Core()
@@ -27,89 +29,96 @@ class MM_Core
 	
     function __construct()
     {
-        $this->_settings = get_option($_plugin_slug . 'settings') ? get_option($_plugin_slug . 'settings') : array();
-		$this->location_folder = trailingslashit(WP_PLUGIN_URL) . dirname( plugin_basename(__FILE__) );
-        $this->_set_standart_values();
+        $this->_settings = get_option($this->_settings_key) ? get_option($this->_settings_key) : array();
+        $this->location_folder = trailingslashit(WP_PLUGIN_URL) . dirname( plugin_basename(__FILE__) );
 
         add_action( 'admin_menu', array(&$this, 'create_menu_link') );
-		date_default_timezone_set(get_option('timezone_string'));
-		
-		//Scripts & Styles
-		add_action( 'wp_print_scripts', array(&$this, 'plugin_js') );
-		add_action( 'wp_print_styles', array(&$this, 'plugin_css') );
 		
 		//Ajax Posts
-		add_action('wp_ajax_nopriv_do_ajax', array(&$this, $_plugin_slug . 'save') );
-		add_action('wp_ajax_do_ajax', array(&$this, $_plugin_slug . 'save') );
+		add_action('wp_ajax_nopriv_do_ajax', array(&$this, '_save') );
+		add_action('wp_ajax_do_ajax', array(&$this, '_save') );
+
+		//Custom Taxonomies
+		add_action( 'init', array(&$this, 'custom_taxonomies'));
+
+		//Page / Post Meta
+		add_post_type_support( 'page', 'excerpt' ); //Pages should have this - it's silly not to!
+
+		//add_action("admin_init", array(&$this, "page_metabox") );
+		//add_action("admin_init", array(&$this, "post_metabox") );
 		
-		
-    }
-    
-    
-    static function mm_install() {
-		global $wpdb;
-		require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
-		
-		$sql = "";
-				
-		dbDelta($sql);
-		
-		add_option($_plugin_slug . "versionnum", $_versionnum);
-	}
-    
-    function add_settings_link($links) {
-		$settings = '<a href="' .
-					admin_url(sprintf("options-general.php?page=%s", $_options_pagename)) .
-					'">' . __('Settings') . '</a>';
-		array_unshift( $links, $settings );
-		return $links;
-	}
-	
-	function create_menu_link()
-    {
-        $this->menu_page = add_options_page($_plugin_name . 'Options', $_plugin_name . 'Plugin',
-        'manage_options',$this->_options_pagename, array(&$this, 'build_settings_page'));
-        add_action( "admin_print_scripts-{$this->menu_page}", array(&$this, 'plugin_page_js') );
-        add_action("admin_head-{$this->menu_page}", array(&$this, 'plugin_page_css'));
-		add_filter('plugin_action_links_' . plugin_basename(__FILE__), array($this, 'add_settings_link'), 10, 2);
+		//Custom Meta
+		add_action( 'admin_init', array(&$this, 'custom_metabox'));
+
+		add_action( 'save_post', array(&$this, '_save_post`_meta'), 10, 2 );
+
+		add_action( 'init', array(&$this, 'custom_navigation_menus') );
     }
 
+    static function MM_Core_install() {
+    	global $wpdb;
+    	require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
+    	
+    	//Get default values from the theme data file if there are none
+		//$this->_set_standart_values($themeSettings);
+		
+		add_option($_settings_key . "_versionnum", $_versionnum);
+	}
+
+	function custom_metabox(){
+		global $taxonomies;
+
+		foreach ($taxonomies as $taxonomy)
+		{
+			add_meta_box("mm_post_meta", "Meta", array(&$this, "taxonomy_meta"), $taxonomy["slug"], "normal", "low", $taxonomy["options"]);
+		}	
+	}
+
+	function custom_taxonomies()
+	{
+		global $taxonomies;
+
+		foreach ($taxonomies as $taxonomy) 
+		{
+			if (isset($taxonomy["registration-args"]))
+			{
+				register_post_type( $taxonomy["slug"], $taxonomy["registration-args"] );
+			}
+		}
+	}
+
+	function taxonomy_meta($post, $data)
+	{
+		$options = $data["args"];
+
+		$values = get_post_meta($post->ID, $this->_meta_key, true);
+		include_once('inc/ui/meta_post_ui.php');
+	}
+
+	function create_menu_link()
+    {
+        $this->menu_page = add_options_page($this->_options_pagename . 'Options', $this->_options_pagename . 'Options',
+        'manage_options',$this->_options_pagename, array(&$this, 'build_settings_page'));
+    }
+    
     function build_settings_page()
     {
         if (!$this->check_user_capability()) {
             wp_die( __('You do not have sufficient permissions to access this page.') );
         }
-
-        if (isset($_REQUEST['saved'])) {if ( $_REQUEST['saved'] ) echo '<div id="message" class="updated fade"><p><strong>'. $_plugin_name .' settings saved.</strong></p></div>';}
-		if ( isset($_POST[$_plugin_slug . 'settings_saved']) )
-            $this->_save_settings_todb($_POST);
         
-		include_once('mm_options.php');
-    }
-
-    function plugin_js()
-	{
-		wp_enqueue_script('formtools', $this->location_folder . '/js/formtools.js');
-	}
-	
-	function plugin_css()
-	{
-?>
-         <link rel="stylesheet" href="<?php echo $this->location_folder; ?>/css/formstyles.css" type="text/css" />
-<?php
-	}
-
-    function plugin_page_js()
-    {
-    	wp_enqueue_script('bootstrap', $this->location_folder . '/js/bootstrap.min.js');
-    	wp_enqueue_script('plugin', $this->location_folder . '/js/plugin.js');
-    }
-
-    function plugin_page_css()
-    {
-?>
-         <link rel="stylesheet" href="<?php echo $this->location_folder; ?>/css/bootstrap.min.css" type="text/css" />
-<?php
+        if (!has_action( 'wp_default_styles', 'bootstrap_admin_wp_default_styles' ))
+        {
+	        wp_enqueue_style('bootstrap', plugins_url('/css/bootstrap.css', __FILE__), false, null);
+	        wp_enqueue_script('jquery', plugins_url('/js/jquery-1.9.1.min.js', __FILE__), false, null);        
+	        wp_enqueue_script('bootstrap', plugins_url('/js/plugins.js', __FILE__), false, null);
+        }
+        
+        wp_enqueue_style('adminstyles', plugins_url('/css/admin.css', __FILE__), false, null);
+  		wp_enqueue_script('formtools', plugins_url('/js/formtools.js', __FILE__), false, null);
+  		wp_enqueue_script('adminjs', plugins_url('/js/admin.js', __FILE__), false, null);
+        
+		include_once('inc/ui/admin_ui.php');
     }
 
     function check_user_capability()
@@ -118,72 +127,107 @@ class MM_Core
 
         return false;
     }
+    
+    
+    function _save()
+	{
+		$isAdmin = $this->check_user_capability();
+
+		$this->do_callback($isAdmin);
+	}
+    
+	function do_callback($isAdmin)
+	{
+		if ($isAdmin)
+		{
+			$this->do_admin_function();
+		}
+
+		$this->do_standard_function();
+	}
+
+	function do_admin_function()
+	{
+		switch($_REQUEST['fn']){
+			case 'settings':
+				$data_back = $_REQUEST['settings'];
+				
+				$values = array();
+				$i = 0;
+				foreach ($data_back as $data)
+				{
+					$values[$data['name']] = $data['value'];
+				}
+				
+				$this->_save_settings_todb($values);
+			break;
+		}
+	}
+
+
+	function do_standard_function()
+	{
+
+	}
+
+	function _save_post_meta( $post_id, $post ){
+		global $pagenow;
+		global $taxonomies;
+
+		if ( 'post.php' != $pagenow ) return $post_id;
+		
+		if ( defined('DOING_AUTOSAVE') && DOING_AUTOSAVE ) 
+			return $post_id;
+
+		if ( ! isset( $_POST['mm_nonce'] ) || ! wp_verify_nonce( $_POST['mm_nonce'], 'mm_nonce' ) )
+	        return $post_id;
+
+	    $metafields = array();
+
+	    $taxonomySlugs = array();
+
+		foreach ($taxonomies as $taxonomy) {
+			$taxonomySlugs[] = $taxonomy["slug"];
+		}
+
+	    if (in_array($post->post_type, $taxonomySlugs))
+	    {
+	   		$taxonomyKey = array_search($post->post_type, $taxonomySlugs);
+	   		$metafields = GetThemeDataFields($taxonomies[$taxonomyKey]["options"]);
+
+			$metadata = array();
+
+			foreach ($metafields as $field) {
+				$fieldID = $field["id"];
+				$metadata[$fieldID] = $_POST[$fieldID];
+			}
+
+			update_post_meta( $post_id, $this->_meta_key, $metadata );
+	    }
+	}
 
     function get_option($setting)
     {
         return $this->_settings[$setting];
-    } 
-	
-	function mm_save()
-	{
-		if ($this->check_user_capability())
-		{
-			switch($_REQUEST['fn']){
-				case 'save':
-					
-				break;
-				case 'delete':
-					
-				break;
-				case 'get':
-
-				break;
-				case 'settings':
-					$data_back = $_POST['settings'];
-					
-					$values = array(
-						$_plugin_slug . 'variable' => $data_back['variable'],				
-					);
-					
-					$this->_save_settings_todb($values);
-				break;
-				default:
-					//Derp
-				break;
-			}
-		}
-
-		//If you're not an authorized user you can only buy products
-		switch($_REQUEST['fn']){
-			case 'register':
-
-			break;
-		}	
-
-		die;
-	}
-	
-	function _save_settings_todb($form_settings = '')
+    }
+    
+    function _save_settings_todb($form_settings = '')
 	{
 		if ( $form_settings <> '' ) {
-			unset($form_settings[$_plugin_slug . 'settings_saved']);
+			unset($form_settings[$this->_settings_key . '_saved']);
 
 			$this->_settings = $form_settings;
 
 			#set standart values in case we have empty fields
-			$this->_set_standart_values();
+			$this->_set_standart_values($form_settings);
 		}
-
-		update_option($_plugin_slug . 'settings', $this->_settings);
+		
+		update_option($this->_settings_key, $this->_settings);
 	}
 
-	function _set_standart_values()
+	function _set_standart_values($standart_values)
 	{
-		global $shortname; 
-
-		$standart_values = array(
-			$_plugin_slug . 'variable' => ''
-		);
+		global $shortname;
 
 		foreach ($standart_values as $key => $value){
 			if ( !array_key_exists( $key, $this->_settings ) )
@@ -194,9 +238,51 @@ class MM_Core
 			if ( $value == '' ) $this->_settings[$key] = $standart_values[$key];
 		}
 	}
-} // end MM_Core class
+	
+	function get_setting($name)
+	{
+		$output = "";
 
-register_activation_hook(__FILE__,array('MM_Core', 'mm_install'));
+		if (isset($this->_settings[$name]))
+		{
+			$output = stripslashes($this->_settings[$name]);
+		}
+
+		return $output;
+	}
+
+	/*****
+	*	get_post_meta($id, $key)
+	*	$id - the post to get the theme meta from
+	*	$key (optional) - the optional key if this is the only value you want or need
+	*	$single (optional) - if the key is a single value or an array
+	*	$ouput - returns either the single value key or the whole meta array
+	*/
+	function get_post_meta($id, $key=null, $single = true)
+	{
+		$output = "";
+		$post_meta = get_post_meta($id, $this->_meta_key, $single);
+
+		if ($key != null && isset($post_meta[$key]))
+		{
+			$output = $post_meta[$key];
+		}
+		
+		return $output;
+	}
+
+	// Register Navigation Menus
+	function custom_navigation_menus() {
+		$locations = array(
+			'header_menu' => __( 'Subpage Menu', 'text_domain' ),
+			'social_menu' => __( 'Social Menu', 'text_domain' )
+		);
+
+		register_nav_menus( $locations );
+	}
+}
+
+register_activation_hook(__FILE__,array('MM_Core', 'MM_Core_install'));
 
 add_action( 'init', 'MM_Core_Init', 5 );
 function MM_Core_Init()
