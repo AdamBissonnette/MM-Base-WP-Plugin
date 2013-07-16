@@ -13,12 +13,13 @@ include_once('inc/functions.php');
 class MM_Core
 {
 	var $_settings;
-    static $_options_pagename = 'MM_Core';
-    static $_settings_key = 'MM_Core';
-    static $_meta_key = 'MM_Core_meta';
+    var $_options_pagename = 'MM_Core';
+    var $_settings_key = 'MM_Core';
+    var $_meta_key = 'MM_Core_meta';
     //var $_setting_prefix = 'MM_Core_';
-    static $_save_key = '';
-    static $_versionnum = 1.0;
+    var $_save_key = '';
+    var $location_folder;
+    var $_versionnum = 1.0;
 	var $menu_page;
 	
 	function MM_Core()
@@ -29,6 +30,7 @@ class MM_Core
     function __construct()
     {
         $this->_settings = get_option($this->_settings_key) ? get_option($this->_settings_key) : array();
+        $this->location_folder = trailingslashit(WP_PLUGIN_URL) . dirname( plugin_basename(__FILE__) );
 
         add_action( 'admin_menu', array(&$this, 'create_menu_link') );
 		
@@ -90,7 +92,7 @@ class MM_Core
 		$options = $data["args"];
 
 		$values = get_post_meta($post->ID, $this->_meta_key, true);
-		include_once('ui/meta_post_ui.php');
+		include_once('inc/ui/meta_post_ui.php');
 	}
 
 	function create_menu_link()
@@ -105,14 +107,18 @@ class MM_Core
             wp_die( __('You do not have sufficient permissions to access this page.') );
         }
         
-        wp_enqueue_style('bootstrap', $this->location_folder .  '/css/bootstrap.css', false, null);
-        wp_enqueue_script('jquery', $this->location_folder .  '/js/jquery-1.9.1.min.js', false, null);
-        wp_enqueue_script('bootstrap', get_template_directory_uri() . '/js/plugins.js', false, null);
-        wp_enqueue_style('admin', $this->location_folder .  '/css/MM_Core_admin.css', false, null);
-  		wp_enqueue_script('formtools', $this->location_folder .  '/js/formtools.js', false, null);
-  		wp_enqueue_script('admin', $this->location_folder .  '/js/MM_Core_admin.js', false, null);
+        if (!has_action( 'wp_default_styles', 'bootstrap_admin_wp_default_styles' ))
+        {
+	        wp_enqueue_style('bootstrap', plugins_url('/css/bootstrap.css', __FILE__), false, null);
+	        wp_enqueue_script('jquery', plugins_url('/js/jquery-1.9.1.min.js', __FILE__), false, null);        
+	        wp_enqueue_script('bootstrap', plugins_url('/js/plugins.js', __FILE__), false, null);
+        }
         
-		include_once('ui/admin_ui.php');
+        wp_enqueue_style('adminstyles', plugins_url('/css/admin.css', __FILE__), false, null);
+  		wp_enqueue_script('formtools', plugins_url('/js/formtools.js', __FILE__), false, null);
+  		wp_enqueue_script('adminjs', plugins_url('/js/admin.js', __FILE__), false, null);
+        
+		include_once('inc/ui/admin_ui.php');
     }
 
     function check_user_capability()
