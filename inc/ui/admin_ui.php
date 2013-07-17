@@ -1,17 +1,17 @@
 <div class="mmpm_wrapper">
 	<div class="row">
 		<div class="span12">
-			<h3>MM Roots Options</h3>
+			<h3>Mmm Trackables Options</h3>
 		</div>
 	</div>
 
 	<div class="row">
-		<form id="theme_settings" name="<?php echo $this->_setting_prefix . '_settings_form'; ?>" onsubmit="javascript: SaveOptions(this);" class="form-horizontal" method="post">
+		<form id="<?php echo $this->_setting_prefix . '_settings_form'; ?>" name="<?php echo $this->_setting_prefix . '_settings_form'; ?>" onsubmit="javascript: SaveOptions(this);" class="form-horizontal" method="post">
 		
 		<?php
-			global $theme_options;
+			global $trackable_options;
 			
-			echo OutputThemeData($theme_options);
+			echo OutputMMData($trackable_options);
 		?>
 		
 		<div class="row">

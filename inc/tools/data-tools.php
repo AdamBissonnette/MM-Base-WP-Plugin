@@ -104,7 +104,7 @@ if (!function_exists('OutputMMTabNav')) {
 }
 
 if (!function_exists('OutputMMTabContent')) {
-	function OutputMRootsTabContent($id, $sections, $isFirst, $values)
+	function OutputMMTabContent($id, $sections, $isFirst, $values)
 	{
 		$tabContentTemplate = '<div class="tab-pane%s" id="%s">';
 

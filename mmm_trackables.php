@@ -1,8 +1,8 @@
 <?php
 /*
-Plugin Name: MM Core
+Plugin Name: Mmm Trackables
 Plugin URI: http://mediamanifesto.com
-Description: Base plugin code for any Media Manifesto plugins (all js, css, php, for easy install of addons)
+Description: This Media Manifesto Made Plugin Mmm Trackables is  a simple tool to output google analytics event tracking bindings into the footer of all pages or just a single page
 Version: 1
 Author: Adam Bissonnette
 Author URI: http://www.mediamanifesto.com/
@@ -10,19 +10,19 @@ Author URI: http://www.mediamanifesto.com/
 
 include_once('inc/functions.php');
 
-class MM_Core
+class Mmm_Trackables
 {
 	var $_settings;
-    var $_options_pagename = 'MM_Core';
-    var $_settings_key = 'MM_Core';
-    var $_meta_key = 'MM_Core_meta';
-    //var $_setting_prefix = 'MM_Core_';
+    var $_options_pagename = 'Mmm_Trackables';
+    var $_settings_key = 'Mmm_Trackables';
+    var $_meta_key = 'Mmm_Trackables_meta';
+    var $_setting_prefix = 'Mmm_Trackables';
     var $_save_key = '';
     var $location_folder;
     var $_versionnum = 1.0;
 	var $menu_page;
 	
-	function MM_Core()
+	function Mmm_Trackables()
 	{
 		return $this->__construct();
 	}
@@ -39,23 +39,22 @@ class MM_Core
 		add_action('wp_ajax_do_ajax', array(&$this, '_save') );
 
 		//Custom Taxonomies
-		add_action( 'init', array(&$this, 'custom_taxonomies'));
+		//add_action( 'init', array(&$this, 'custom_taxonomies'));
 
 		//Page / Post Meta
-		add_post_type_support( 'page', 'excerpt' ); //Pages should have this - it's silly not to!
-
+		//add_post_type_support( 'page', 'excerpt' ); //Pages should have this - it's silly not to!
 		//add_action("admin_init", array(&$this, "page_metabox") );
 		//add_action("admin_init", array(&$this, "post_metabox") );
 		
 		//Custom Meta
 		add_action( 'admin_init', array(&$this, 'custom_metabox'));
 
-		add_action( 'save_post', array(&$this, '_save_post`_meta'), 10, 2 );
+		add_action( 'save_post', array(&$this, '_save_post_meta'), 10, 2 );
 
-		add_action( 'init', array(&$this, 'custom_navigation_menus') );
+		add_action( 'wp_footer', array(&$this, 'output_trackables'));
     }
 
-    static function MM_Core_install() {
+    static function Mmm_Trackables_install() {
     	global $wpdb;
     	require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
     	
@@ -97,7 +96,7 @@ class MM_Core
 
 	function create_menu_link()
     {
-        $this->menu_page = add_options_page($this->_options_pagename . 'Options', $this->_options_pagename . 'Options',
+        $this->menu_page = add_options_page($this->_options_pagename . 'Options', $this->_options_pagename . ' Options',
         'manage_options',$this->_options_pagename, array(&$this, 'build_settings_page'));
     }
     
@@ -149,9 +148,9 @@ class MM_Core
 	function do_admin_function()
 	{
 		switch($_REQUEST['fn']){
-			case 'settings':
+			case $this->_setting_prefix . '_settings_form':
 				$data_back = $_REQUEST['settings'];
-				
+
 				$values = array();
 				$i = 0;
 				foreach ($data_back as $data)
@@ -271,23 +270,36 @@ class MM_Core
 		return $output;
 	}
 
-	// Register Navigation Menus
-	function custom_navigation_menus() {
-		$locations = array(
-			'header_menu' => __( 'Subpage Menu', 'text_domain' ),
-			'social_menu' => __( 'Social Menu', 'text_domain' )
-		);
+	function output_trackables() {
+	    $trackable_script_template = '<script type="text/javascript">%s</script>';
+	    $trackable_function_template = 'jQuery(function($) {%s})';
 
-		register_nav_menus( $locations );
+	    $events = explode('\n\r', $this->get_setting('events'));
+
+	    $bind_template = "$('#%s').bind('%s', function($) {%s})";
+	    $trackevent_template = "_gaq.push(['_trackEvent', '%s', '%s']);";
+
+	    $eventOutput = "";
+
+	    foreach ($events as $event) {
+	    	$eventdata = explode(",", $event);
+
+	    	//0 = ID of Control, 1 = Javascript Event, 2 = Analytics Event Name, 3 = Analytics Event Category
+	    	$trackevent_output = sprintf($trackevent_template, $eventdata[2], $eventdata[1]);
+	    	$eventOutput .= sprintf($bind_template,$eventdata[0], $eventdata[1], $trackevent_output);
+	    }
+
+
+	    echo sprintf($trackable_script_template, sprintf($trackable_function_template, $eventOutput));
 	}
 }
 
-register_activation_hook(__FILE__,array('MM_Core', 'MM_Core_install'));
+register_activation_hook(__FILE__,array('Mmm_Trackables', 'Mmm_Trackables_install'));
 
-add_action( 'init', 'MM_Core_Init', 5 );
-function MM_Core_Init()
+add_action( 'init', 'Mmm_Trackables_Init', 5 );
+function Mmm_Trackables_Init()
 {
-    global $MM_Core;
-    $MM_Core = new MM_Core();
+    global $Mmm_Trackables;
+    $Mmm_Trackables = new Mmm_Trackables();
 }
 ?>

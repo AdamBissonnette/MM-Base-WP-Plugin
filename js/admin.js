@@ -2,7 +2,7 @@ function SaveOptions(form)
 {
 	var formdata = jQuery(form).serializeArray()
 	jQuery.post ('admin-ajax.php',
-		 { 'action':'do_ajax', 'fn':'settings', 'count':10, settings:formdata },
+		 { 'action':'do_ajax', 'fn':jQuery(form).attr('id'), 'count':10, settings:formdata },
 		  function(data){FinalizeOptions(data)},
 		   "json");
 }
@@ -22,9 +22,9 @@ function FinalizeOptions(data)
 jQuery(document).ready(function($) {
 	$('#btnOptionsSave').click(function(e) {
 		e.preventDefault();
-		if (ValidateForm("form#theme_settings"))
+		if (ValidateForm(jQuery("form").first().attr('id')))
 		{
-			SaveOptions(jQuery("form#theme_settings"));
+			SaveOptions(jQuery("form").first());
 		}
 	});
 });
