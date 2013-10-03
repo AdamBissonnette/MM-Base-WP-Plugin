@@ -10,19 +10,19 @@ Author URI: http://www.mediamanifesto.com/
 
 include_once('inc/functions.php');
 
-class MM_Core
+class Mmm_Class_Manager
 {
 	var $_settings;
-    var $_options_pagename = 'MM_Core';
-    var $_settings_key = 'MM_Core';
-    var $_meta_key = 'MM_Core_meta';
-    //var $_setting_prefix = 'MM_Core_';
+    var $_options_pagename = 'Mmm_Class_Manager';
+    var $_settings_key = 'Mmm_Class_Manager';
+    var $_meta_key = 'Mmm_Class_Manager_meta';
+    //var $_setting_prefix = 'Mmm_Class_Manager_';
     var $_save_key = '';
     var $location_folder;
     var $_versionnum = 1.0;
 	var $menu_page;
 	
-	function MM_Core()
+	function Mmm_Class_Manager()
 	{
 		return $this->__construct();
 	}
@@ -40,22 +40,14 @@ class MM_Core
 
 		//Custom Taxonomies
 		add_action( 'init', array(&$this, 'custom_taxonomies'));
-
-		//Page / Post Meta
-		add_post_type_support( 'page', 'excerpt' ); //Pages should have this - it's silly not to!
-
-		//add_action("admin_init", array(&$this, "page_metabox") );
-		//add_action("admin_init", array(&$this, "post_metabox") );
 		
 		//Custom Meta
 		add_action( 'admin_init', array(&$this, 'custom_metabox'));
-
 		add_action( 'save_post', array(&$this, '_save_post`_meta'), 10, 2 );
-
 		add_action( 'init', array(&$this, 'custom_navigation_menus') );
     }
 
-    static function MM_Core_install() {
+    static function Mmm_Class_Manager_install() {
     	global $wpdb;
     	require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
     	
@@ -282,12 +274,12 @@ class MM_Core
 	}
 }
 
-register_activation_hook(__FILE__,array('MM_Core', 'MM_Core_install'));
+register_activation_hook(__FILE__,array('Mmm_Class_Manager', 'Mmm_Class_Manager_install'));
 
-add_action( 'init', 'MM_Core_Init', 5 );
-function MM_Core_Init()
+add_action( 'init', 'Mmm_Class_Manager_Init', 5 );
+function Mmm_Class_Manager_Init()
 {
-    global $MM_Core;
-    $MM_Core = new MM_Core();
+    global $Mmm_Class_Manager;
+    $Mmm_Class_Manager = new Mmm_Class_Manager();
 }
 ?>
