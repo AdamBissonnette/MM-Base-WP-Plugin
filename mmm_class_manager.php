@@ -1,6 +1,6 @@
 <?php
 /*
-Plugin Name: MM Core
+Plugin Name: MMM Class Manager
 Plugin URI: http://mediamanifesto.com
 Description: Base plugin code for any Media Manifesto plugins (all js, css, php, for easy install of addons)
 Version: 1
@@ -58,19 +58,19 @@ class Mmm_Class_Manager
 	}
 
 	function custom_metabox(){
-		global $taxonomies;
+		global $mmm_class_taxonomies;
 
-		foreach ($taxonomies as $taxonomy)
+		foreach ($mmm_class_taxonomies as $taxonomy)
 		{
-			add_meta_box("mm_post_meta", "Meta", array(&$this, "taxonomy_meta"), $taxonomy["slug"], "normal", "low", $taxonomy["options"]);
+			add_meta_box("mmm_post_meta", "Meta", array(&$this, "taxonomy_meta"), $taxonomy["slug"], "normal", "low", $taxonomy["options"]);
 		}	
 	}
 
 	function custom_taxonomies()
 	{
-		global $taxonomies;
+		global $mmm_class_taxonomies;
 
-		foreach ($taxonomies as $taxonomy) 
+		foreach ($mmm_class_taxonomies as $taxonomy) 
 		{
 			if (isset($taxonomy["registration-args"]))
 			{
@@ -141,8 +141,8 @@ class Mmm_Class_Manager
 	function do_admin_function()
 	{
 		switch($_REQUEST['fn']){
-			case 'settings':
-				$data_back = $_REQUEST['settings'];
+			case 'mmm_class_settings':
+				$data_back = $_REQUEST['mmm_class_settings'];
 				
 				$values = array();
 				$i = 0;
@@ -164,7 +164,7 @@ class Mmm_Class_Manager
 
 	function _save_post_meta( $post_id, $post ){
 		global $pagenow;
-		global $taxonomies;
+		global $mmm_class_taxonomies;
 
 		if ( 'post.php' != $pagenow ) return $post_id;
 		
@@ -231,11 +231,11 @@ class Mmm_Class_Manager
 		}
 	}
 	
-	function get_setting($name)
+	function get_setting($name=null)
 	{
 		$output = "";
 
-		if (isset($this->_settings[$name]))
+		if ($name != null && isset($this->_settings[$name]))
 		{
 			$output = stripslashes($this->_settings[$name]);
 		}
