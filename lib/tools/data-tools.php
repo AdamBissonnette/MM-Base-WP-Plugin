@@ -44,7 +44,7 @@ if (!function_exists('OutputMMData')) {
 	{
 		$isFirst = true;
 
-		echo '<div class="span12 tabbable">';
+		echo '<div class="col-sm-12 tabbable">';
 
 
 		if (count($tabs) > 1)
@@ -54,7 +54,7 @@ if (!function_exists('OutputMMData')) {
 			
 			foreach ($tabs as $tab)
 			{			
-				OutputTabNav($tab["id"], $tab["name"], $tab["icon"], $isFirst);
+				OutputMMTabNav($tab["id"], $tab["name"], $tab["icon"], $isFirst);
 				
 				if ($isFirst)
 				{
@@ -73,7 +73,7 @@ if (!function_exists('OutputMMData')) {
 		
 		foreach ($tabs as $tab)
 		{
-			echo OutputTabContent($tab["id"], $tab["sections"], $isFirst, $values);
+			echo OutputMMTabContent($tab["id"], $tab["sections"], $isFirst, $values);
 			
 			if ($isFirst)
 			{
@@ -104,7 +104,7 @@ if (!function_exists('OutputMMTabNav')) {
 }
 
 if (!function_exists('OutputMMTabContent')) {
-	function OutputMRootsTabContent($id, $sections, $isFirst, $values)
+	function OutputMMTabContent($id, $sections, $isFirst, $values)
 	{
 		$tabContentTemplate = '<div class="tab-pane%s" id="%s">';
 
@@ -119,7 +119,7 @@ if (!function_exists('OutputMMTabContent')) {
 		
 		foreach ($sections as $section)
 		{
-			OutputSection($section["name"], $section["size"], $section["fields"], $values);
+			OutputMMSection($section["name"], $section["size"], $section["fields"], $values);
 		}
 
 		echo "</div>";
@@ -131,7 +131,7 @@ if (!function_exists('OutputMMTabContent')) {
 if (!function_exists('OutputMMSection')) {
 	function OutputMMSection($name, $size, $fields, $values)
 	{
-		$sectionTemplate = '<div class="span%s"><legend>%s</legend>';
+		$sectionTemplate = '<div class="col-sm-%s"><legend>%s</legend>';
 		echo sprintf($sectionTemplate, $size, $name);
 
 		foreach ($fields as $field)
@@ -165,18 +165,18 @@ if (!function_exists('GetMMDataFields')) {
 if (!function_exists('MMField')) {
 	function MMField($id, $label, $type, $options=null, $values=null)
 	{
-		global $MM_Roots;
+		global $Mmm_Class_Manager;
 		
 		$formField = "";
 
 		if (isset($values))
 		{
 			$value = isset($values[$id])?stripslashes($values[$id]):"";
-			$formField = createFormField($id, $label, $value, $type, $options);
+			$formField = createMMFormField($id, $label, $value, $type, $options);
 		}
 		else
 		{
-			$formField = createFormField($id, $label, $MM_Roots->get_setting($id), $type, $options);
+			$formField = createMMFormField($id, $label, $Mmm_Class_Manager->get_setting($id), $type, $options);
 		}
 
 		//return $formField;

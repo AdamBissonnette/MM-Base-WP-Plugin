@@ -5,7 +5,7 @@
 		<?php wp_nonce_field( 'mm_nonce', 'mm_nonce' ); ?>
 
 		<?php
-			echo OutputThemeData($options, $values);
+			echo OutputMMData($options, $values);
 		?>
 	</div>
 </div>

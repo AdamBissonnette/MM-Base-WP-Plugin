@@ -13,7 +13,7 @@
 			<?php
 				global $mmm_class_options;
 			
-				echo OutputThemeData($mmm_class_options);
+				echo OutputMMData($mmm_class_options);
 			?>
 			
 			<div class="row form-controls">

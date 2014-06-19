@@ -9,7 +9,6 @@
 	include_once('tools/shortcodes.php');
 	include_once('data/admin_data.php');
 	include_once('data/taxonomy_data.php');
-	include_once('callbacks.php');
 
 	
 ?>

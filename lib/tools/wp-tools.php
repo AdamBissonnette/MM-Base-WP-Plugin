@@ -40,7 +40,7 @@ if (!function_exists('createMMFormField')) {
 		//return $output;
 	}
 
-	function mergeMM_options($pairs, $atts) {
+	function merge_MM_options($pairs, $atts) {
 	    $atts = (array)$atts;
 	    $out = array();
 	    foreach($pairs as $name => $default) {
@@ -75,7 +75,7 @@ if (!function_exists('createMMFormField')) {
 
 	function createMMTextArea($label, $value, $options = null)
 	{
-		extract( mergeMM_options(
+		extract( merge_MM_options(
 			array("class" => "", "placeholder" => "", "rows" => 3, "note" => ""), $options)
 		);
 

@@ -18,16 +18,11 @@ class Mmm_Class_Manager
     var $_meta_key = 'Mmm_Class_Manager_meta';
     var $_save_key = '';
     var $location_folder;
-    var $_versionnum = 1.0;
+    var $_versionnum = "@core_version@";
 	var $menu_page;
 	
 	function Mmm_Class_Manager()
 	{
-		return $this->__construct();
-	}
-	
-    function __construct()
-    {
         $this->_settings = get_option($this->_settings_key) ? get_option($this->_settings_key) : array();
         $this->location_folder = trailingslashit(WP_PLUGIN_URL) . dirname( plugin_basename(__FILE__) );
 
@@ -43,7 +38,6 @@ class Mmm_Class_Manager
 		//Custom Meta
 		add_action( 'admin_init', array(&$this, 'custom_metabox'));
 		add_action( 'save_post', array(&$this, '_save_post`_meta'), 10, 2 );
-		add_action( 'init', array(&$this, 'custom_navigation_menus') );
     }
 
     static function Mmm_Class_Manager_install() {
@@ -83,7 +77,14 @@ class Mmm_Class_Manager
 		$options = $data["args"];
 
 		$values = get_post_meta($post->ID, $this->_meta_key, true);
-		include_once('inc/ui/meta_post_ui.php');
+
+        //Enqueue styles / scripts
+        //wp_enqueue_style('admin', get_template_directory_uri() . '/assets/admin/css/mmm_roots_admin.css', false, null);
+        ///wp_enqueue_style('select2', get_template_directory_uri() . '/assets/admin/css/select2.css', false, null);
+        //wp_enqueue_script('select2', get_template_directory_uri() . '/assets/js/vendor/select2.js', false, null);
+        //wp_enqueue_script('select2-sortable', get_template_directory_uri() . '/assets/js/vendor/select2.sortable.js', false, null);
+
+		include_once('lib/ui/meta_post_ui.php');
 	}
 
 	function create_menu_link()
@@ -100,16 +101,16 @@ class Mmm_Class_Manager
         
         if (!has_action( 'wp_default_styles', 'bootstrap_admin_wp_default_styles' ))
         {
-	        wp_enqueue_style('bootstrap', plugins_url('/css/bootstrap.css', __FILE__), false, null);
-	        wp_enqueue_script('jquery', plugins_url('/js/jquery-1.9.1.min.js', __FILE__), false, null);        
-	        wp_enqueue_script('bootstrap', plugins_url('/js/plugins.js', __FILE__), false, null);
+	        wp_enqueue_style('bootstrap', plugins_url('/assets/css/bootstrap.css', __FILE__), false, null);
+	        wp_enqueue_script('jquery', plugins_url('/assets/js/jquery-1.9.1.min.js', __FILE__), false, null);        
+	        wp_enqueue_script('bootstrap', plugins_url('/assets/js/plugins.js', __FILE__), false, null);
         }
         
-        wp_enqueue_style('adminstyles', plugins_url('/css/admin.css', __FILE__), false, null);
-  		wp_enqueue_script('formtools', plugins_url('/js/formtools.js', __FILE__), false, null);
-  		wp_enqueue_script('adminjs', plugins_url('/js/admin.js', __FILE__), false, null);
+        wp_enqueue_style('adminstyles', plugins_url('/assets/css/admin.css', __FILE__), false, null);
+  		wp_enqueue_script('formtools', plugins_url('/assets/js/formtools.js', __FILE__), false, null);
+  		wp_enqueue_script('adminjs', plugins_url('/assets/js/admin.js', __FILE__), false, null);
         
-		include_once('inc/ui/admin_ui.php');
+		include_once('lib/ui/admin_ui.php');
     }
 
     function check_user_capability()
@@ -158,7 +159,20 @@ class Mmm_Class_Manager
 
 	function do_standard_function()
 	{
-
+        switch($_REQUEST['fn']){
+            case 'buy':
+                $data_back = $_REQUEST['buy'];
+                
+                $values = array();
+                $i = 0;
+                foreach ($data_back as $data)
+                {
+                    $values[$data['name']] = $data['value'];
+                }
+                
+                $this->_save_settings_todb($values);
+            break;
+        }
 	}
 
 	function _save_post_meta( $post_id, $post ){
@@ -230,16 +244,16 @@ class Mmm_Class_Manager
 		}
 	}
 	
-	function get_setting($name=null)
+	function get_setting($name=null, $defaultValue="")
 	{
-		$output = "";
+		$output = $defaultValue;
 
-		if ($name != null && isset($this->_settings[$name]))
-		{
-			$output = stripslashes($this->_settings[$name]);
-		}
+        if (isset($this->_settings[$name]))
+        {
+            $output = stripslashes($this->_settings[$name]);
+        }
 
-		return $output;
+        return $output;
 	}
 
 	/*****
@@ -260,16 +274,6 @@ class Mmm_Class_Manager
 		}
 		
 		return $output;
-	}
-
-	// Register Navigation Menus
-	function custom_navigation_menus() {
-		$locations = array(
-			'header_menu' => __( 'Subpage Menu', 'text_domain' ),
-			'social_menu' => __( 'Social Menu', 'text_domain' )
-		);
-
-		register_nav_menus( $locations );
 	}
 }
 
