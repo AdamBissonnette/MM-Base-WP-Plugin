@@ -1,0 +1,29 @@
+{
+  "name": "mmm-plugin",
+  "version": "1.0.0",
+  "core_version": 1.2,
+  "description": "MMMClassManager",
+  "private": true,
+  "directories": {
+    "doc": "docs",
+    "test": "tests"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "grunt": "~0.4.1",
+    "grunt-text-replace": "~0.3.2",
+    "grunt-contrib-compress": "~0.5.0",
+    "grunt-contrib-clean":  "~0.5.0",
+    "grunt-contrib-copy":  "~0.5.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/MManifesto/MM-Base-WP-Plugin.git"
+  },
+  "author": [
+    {
+      "name": "Media Manifesto Inc"
+    }
+  ],
+  "readmeFilename": "README.md"
+}
