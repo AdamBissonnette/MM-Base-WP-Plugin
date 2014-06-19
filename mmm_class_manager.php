@@ -1,14 +1,14 @@
 <?php
 /*
-Plugin Name: MMM Class Manager
-Plugin URI: http://mediamanifesto.com
+Plugin Name: @plugin_name@
+Plugin URI: http://mediamanifesto.com/
 Description: Base plugin code for any Media Manifesto plugins (all js, css, php, for easy install of addons)
-Version: 1
+Version: @version@
 Author: Adam Bissonnette
 Author URI: http://www.mediamanifesto.com/
 */
 
-include_once('inc/functions.php');
+include_once('lib/functions.php');
 
 class Mmm_Class_Manager
 {
@@ -16,7 +16,6 @@ class Mmm_Class_Manager
     var $_options_pagename = 'Mmm_Class_Manager';
     var $_settings_key = 'Mmm_Class_Manager';
     var $_meta_key = 'Mmm_Class_Manager_meta';
-    //var $_setting_prefix = 'Mmm_Class_Manager_';
     var $_save_key = '';
     var $location_folder;
     var $_versionnum = 1.0;
