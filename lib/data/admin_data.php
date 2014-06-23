@@ -17,7 +17,7 @@
 					'fields' => array(
 						array('id' => 'class-report',
 							'label' => 'Class Report',
-							'type' => 'text')
+							'type' => 'custom')
 					)
 				),
 				array(
@@ -26,7 +26,7 @@
 					'fields' => array(
 						array('id' => 'class-report',
 							'label' => 'Class Report',
-							'type' => 'text')
+							'type' => 'custom')
 					)
 				)
 			)
@@ -55,7 +55,6 @@
 							'label' => 'Class Page',
 							'type' => 'select',
 							'options' => array("data" => getMMPostsSelectArray(), "isMultiple" => false) ),
-							
 					)
 				),
 				array(
@@ -64,7 +63,8 @@
 					'fields' => array(
 						array('id' => 'class_type_list',
 							'label' => 'List Class Types',
-							'type' => 'text')
+							'type' => 'custom',
+							'options' => array("data" => null))
 					)
 				)
 			)
@@ -98,7 +98,7 @@
 					'fields' => array(
 						array('id' => 'class_list',
 							'label' => 'List Classes',
-							'type' => 'text')
+							'type' => 'custom')
 					)
 				)
 			)
