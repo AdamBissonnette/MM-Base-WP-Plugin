@@ -8,6 +8,7 @@
 	include_once('tools/wp-tools.php');
 	include_once('tools/shortcodes.php');
 	include_once('data/admin_data.php');
+	include_once('data/plugin_data.php');
 	include_once('data/taxonomy_data.php');
 
 	

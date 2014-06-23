@@ -7,104 +7,9 @@
 
 	global $mmm_class_options;
 	$mmm_class_options = array(
-		array('name' => 'Reports',
-			'id' => 'reports',
-			'icon' => 'info',
-			'sections' => array(
-				array(
-					'name' => 'Sales Activity',
-					'size' => '6',
-					'fields' => array(
-						array('id' => 'class-report',
-							'label' => 'Class Report',
-							'type' => 'custom')
-					)
-				),
-				array(
-					'name' => 'Failed Transactions',
-					'size' => '6',
-					'fields' => array(
-						array('id' => 'class-report',
-							'label' => 'Class Report',
-							'type' => 'custom')
-					)
-				)
-			)
-		),
-		array('name' => 'Class Types',
-			'id' => 'class-types',
-			'icon' => 'coffee',
-			'sections' => array(
-				array(
-					'name' => 'Add Class Type',
-					'size' => '6',
-					'fields' => array(
-						array('id' => 'class_name',
-							'label' => 'Class Name',
-							'type' => 'text'),
-						array('id' => 'class_code',
-							'label' => 'Class Code',
-							'type' => 'text'),
-						array('id' => 'class_price',
-							'label' => 'Price',
-							'type' => 'text'),
-						array('id' => 'class_size',
-							'label' => 'Max Size',
-							'type' => 'text' ),
-						array('id' => 'class_post',
-							'label' => 'Class Page',
-							'type' => 'select',
-							'options' => array("data" => getMMPostsSelectArray(), "isMultiple" => false) ),
-					)
-				),
-				array(
-					'name' => 'List Class Types',
-					'size' => '6',
-					'fields' => array(
-						array('id' => 'class_type_list',
-							'label' => 'List Class Types',
-							'type' => 'custom',
-							'options' => array("data" => null))
-					)
-				)
-			)
-		),
-		array('name' => 'Classes',
-			'id' => 'classes',
-			'icon' => 'beer',
-			'sections' => array(
-				array(
-					'name' => 'Add Class',
-					'size' => '6',
-					'fields' => array(
-						array('id' => 'class_type',
-							'label' => 'Class Type',
-							'type' => 'select',
-							'options' => array("data" => getMMPostsSelectArray(), "isMultiple" => false)),
-						array('id' => 'class_price_override',
-							'label' => 'Price (Override)',
-							'type' => 'text'),
-						array('id' => 'class_size',
-							'label' => 'Max Size (Override)',
-							'type' => 'text' ),
-						array('id' => 'class_data',
-							'label' => 'Class Date',
-							'type' => 'text' )
-					)
-				),
-				array(
-					'name' => 'List Classes',
-					'size' => '6',
-					'fields' => array(
-						array('id' => 'class_list',
-							'label' => 'List Classes',
-							'type' => 'custom')
-					)
-				)
-			)
-		),
 		array('name' => 'Class Manager Settings',
 			'id' => 'mmm_class_manager_settings',
+			'type' => 0,
 			'icon' => 'cog',
 			'sections' => array(
 				array(
@@ -118,6 +23,10 @@
 							'label' => 'Tax Percent',
 							'type' => 'text',
 							'options' => array("note" => 'note: a percentage amount to charge in tax (e.g. for 10% enter 10)')),
+						array('id' => 'flat_fee',
+							'label' => 'Flat Fee',
+							'type' => 'text',
+							'options' => array("note" => 'note: a flat transaction fee on all purchases.')),
 						array('id' => 'invoice_prefix',
 							'label' => 'Invoice Prefix',
 							'type' => 'text',
@@ -135,7 +44,7 @@
 						array('id' => 'admin_email',
 							'label' => 'Admin Email',
 							'type' => 'text',
-							'options' => array("note" => "note: This will be the email the site will use when sending sales notifications" )),
+							'options' => array("note" => "note: This will be the email the site will use when sending sales notifications - if left empty emails will be sent to the current sitewide admin." )),
 						array('id' => 'notify_quantity',
 							'label' => 'Notify Quanity',
 							'type' => 'text',
@@ -147,7 +56,11 @@
 						array('id' => 'class_footer_message',
 							'label' => 'Class Footer Message',
 							'type' => 'textarea',
-							'options' => array("placeholder" => 'Here is a [link] to important information you should read before purchasing a class.', "class" => "col-sm-12"))
+							'options' => array("placeholder" => 'Here is a [link] to important information you should read before purchasing a class.', "class" => "col-sm-12")),
+						array('id' => 'enable_admin_menu',
+							'label' => 'Add Shortcut to Admin Bar',
+							'type' => 'checkbox',
+							'options' => array("note" => "note: When enabled this will add a link to this settings page into your admin bar."))
 					)
 				)
 			)

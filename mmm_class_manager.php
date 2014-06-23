@@ -38,6 +38,9 @@ class Mmm_Class_Manager
 		//Custom Meta
 		add_action( 'admin_init', array(&$this, 'custom_metabox'));
 		add_action( 'save_post', array(&$this, '_save_post`_meta'), 10, 2 );
+
+        //Conditionally enable admin-bar menu
+        //if settings set - enable admin-bar
     }
 
     static function Mmm_Class_Manager_install() {

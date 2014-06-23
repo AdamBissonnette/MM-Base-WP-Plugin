@@ -111,66 +111,92 @@ if (!function_exists('createMMFormField')) {
 		return $output;
 	}
 
-	function createMMSelect($label, $selectedKey, $options)
-{
-	extract( merge_MM_options(
-		array("class" => "", "placeholder" => "", "note" => "", "data" => array(), "isMultiple" => false, "addBlank" => false, "updateRegion" => false), $options)
-	);
-
-	$output = "No Data Available";
-	$linkTemplate = '<a target="blank" href="post.php?post=%s&action=edit">%s</a> ';
-
-	if (count($data) > 0)
+	function createMMCheckbox($label, $value, $options = null)
 	{
-		$selectedKeys = array();
-		$links = "";
-	
-		if ($selectedKey != "")
+		extract( merge_MM_options(
+			array("class" => "", "placeholder" => "", "note" => ""), $options)
+		);
+
+		$checked = "";
+		if ($value != "") //if there is a value then it's checked
 		{
-			$selectedKeys = explode(",", $selectedKey);
+			$checked = ' checked="checked"';
 		}
+
+		$output = sprintf('<input type="checkbox" id="%s" class="%s" name="%s"%s />', 
+			 $label, //id
+			 $class,
+			 $label, //name
+			 $checked //value
+		);
 		
-		//If it's a multi select then flag it as such and explode the key into keys
-		if ($isMultiple)
-		{
-			$output = sprintf('<input style="display: none" type="text" id="%1$s" name="%1$s" value="%2$s" />', $label, $selectedKey);
-			$output .= sprintf('<select id="mmm-select-%s" class="%s mmm-select-multi" multiple>', $label, $class, $label);
-		}
-		else
-		{
-			$output = sprintf('<select id="%s" class="%s mmm-select" name="%s">', $label, $class, $label);
-			
-		}
-
-		if ($addBlank)
-		{
-			$output .= createMMSelectOption("", "", $placeholder);
-		}
-
-		foreach ($selectedKeys as $key) {
-				$output .= createMMSelectOption($key, $data[$key], true);
-				$links .= sprintf($linkTemplate, $key, $data[$key]);
-				unset($data[$key]);
-		}
-
-		foreach ($data as $key => $text)
-		{
-			$output .= createMMSelectOption($key, $text);
-		}
-		
-		$output .= '</select>';
-
-		if ($updateRegion == true) {
-			$output .= sprintf('<div class="mmm-update-region"><label class="control-label"><i class="icon-level-up icon-rotate-90"></i> Direct Links</label><div class="controls"><div id="%s-update" class="mmm-update-content">%s</div></div></div>', $label, $links);
-		}
-
-		if ($note != "") {
+		if ($note) {
 			$output .= sprintf('<p class="help-block">%s</p>', $note);
-		}		
+		}
+		
+		return $output;
 	}
 
-	return $output;
-}
+	function createMMSelect($label, $selectedKey, $options)
+	{
+		extract( merge_MM_options(
+			array("class" => "", "placeholder" => "", "note" => "", "data" => array(), "isMultiple" => false, "addBlank" => false, "updateRegion" => false), $options)
+		);
+
+		$output = "No Data Available";
+		$linkTemplate = '<a target="blank" href="post.php?post=%s&action=edit">%s</a> ';
+
+		if (count($data) > 0)
+		{
+			$selectedKeys = array();
+			$links = "";
+		
+			if ($selectedKey != "")
+			{
+				$selectedKeys = explode(",", $selectedKey);
+			}
+			
+			//If it's a multi select then flag it as such and explode the key into keys
+			if ($isMultiple)
+			{
+				$output = sprintf('<input style="display: none" type="text" id="%1$s" name="%1$s" value="%2$s" />', $label, $selectedKey);
+				$output .= sprintf('<select id="mmm-select-%s" class="%s mmm-select-multi" multiple>', $label, $class, $label);
+			}
+			else
+			{
+				$output = sprintf('<select id="%s" class="%s mmm-select" name="%s">', $label, $class, $label);
+				
+			}
+
+			if ($addBlank)
+			{
+				$output .= createMMSelectOption("", "", $placeholder);
+			}
+
+			foreach ($selectedKeys as $key) {
+					$output .= createMMSelectOption($key, $data[$key], true);
+					$links .= sprintf($linkTemplate, $key, $data[$key]);
+					unset($data[$key]);
+			}
+
+			foreach ($data as $key => $text)
+			{
+				$output .= createMMSelectOption($key, $text);
+			}
+			
+			$output .= '</select>';
+
+			if ($updateRegion == true) {
+				$output .= sprintf('<div class="mmm-update-region"><label class="control-label"><i class="icon-level-up icon-rotate-90"></i> Direct Links</label><div class="controls"><div id="%s-update" class="mmm-update-content">%s</div></div></div>', $label, $links);
+			}
+
+			if ($note != "") {
+				$output .= sprintf('<p class="help-block">%s</p>', $note);
+			}		
+		}
+
+		return $output;
+	}
 
 function createMMSelectOption($key, $text, $selected = false)
 {

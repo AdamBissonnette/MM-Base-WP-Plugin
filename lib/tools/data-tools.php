@@ -53,7 +53,7 @@ if (!function_exists('OutputMMData')) {
 			echo '<ul class="nav nav-tabs">';
 			
 			foreach ($tabs as $tab)
-			{			
+			{
 				OutputMMTabNav($tab["id"], $tab["name"], $tab["icon"], $isFirst);
 				
 				if ($isFirst)
@@ -81,7 +81,7 @@ if (!function_exists('OutputMMData')) {
 			}
 		}
 		
-		echo '</div>'; //Done with tab content
+		echo '</div></div>'; //Done with tab content and tabbable
 		
 		//return $output;
 	}

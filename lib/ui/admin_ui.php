@@ -1,3 +1,6 @@
+<?php
+	global $mmm_class_options, $mmm_plugin_data;
+?>
 
 <div class="mmpm_wrapper">
 	<div class="container">
@@ -7,24 +10,37 @@
 			</div>
 		</div>
 
+
 		<div class="row">
-			<form id="theme_settings" onsubmit="javascript: SaveOptions(this);" class="form-horizontal" method="post">
-			
-			<?php
-				global $mmm_class_options;
-			
-				echo OutputMMData($mmm_class_options);
-			?>
-			
-			<div class="row form-controls">
-				<div class="col-sm-12">
-					<div class="form-actions clearfix">
-						<a href="#" id="btnOptionsSave" name="mmm_settings_saved" class="btn btn-primary">Save</a>
-						<input type="reset" class="btn" />
+			<div class="col-sm-12">
+				<ul class="nav nav-pills">
+					<li class="active"><a href="#plugin" data-toggle="tab">Plugin Stuff</a></li>
+					<li><a href="#admin" data-toggle="tab">Admin</a></li>
+				</ul>
+				<div class="row tab-content">
+					<div class="tab-pane active" id="plugin">
+						<?php							
+							echo OutputMMData($mmm_plugin_data);
+						?>
+					</div>
+					<div class="tab-pane" id="admin">
+						<form id="theme_settings" onsubmit="javascript: SaveOptions(this);" class="form-horizontal" method="post">
+							<?php							
+								echo OutputMMData($mmm_class_options);
+							?>
+							
+							<div class="form-controls">
+								<div class="col-sm-12">
+									<div class="form-actions clearfix">
+										<a href="#" id="btnOptionsSave" name="mmm_settings_saved" class="btn btn-primary">Save</a>
+										<input type="reset" class="btn" />
+									</div>
+								</div>
+							</div>
+						</form>
 					</div>
 				</div>
 			</div>
-			</form>
 		</div>
 
 
