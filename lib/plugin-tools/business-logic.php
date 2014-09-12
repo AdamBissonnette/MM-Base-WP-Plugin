@@ -1,4 +1,5 @@
 <?php
+namespace MmmPluginToolsNamespace;
 
     function HandleIPN($invoiceid, $value, $json, $pemail)
     {

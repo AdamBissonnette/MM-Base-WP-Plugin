@@ -1,4 +1,5 @@
 <?php
+namespace MmmPluginToolsNamespace;
 
     function Ajax_Calendar_Insert($input) {
         try {

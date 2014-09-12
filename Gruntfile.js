@@ -21,6 +21,14 @@ module.exports = function(grunt) {
         {
           from: '@plugin_name@',
           to: '<%= pkg.description %>'
+        },
+        {
+          from: 'MmmToolsNamespace',
+          to: '<%= pkg.tools_namespace %>'
+        },
+        {
+          from: 'MmmPluginToolsNamespace',
+          to: '<%= pkg.plugin_tools_namespace %>'
         }]
       }
     },

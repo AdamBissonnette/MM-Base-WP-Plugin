@@ -3,6 +3,8 @@
   "version": "1.0.0",
   "core_version": 1.2,
   "description": "MMMClassManager",
+  "tools_namespace": "mmmroots",
+  "plugin_tools_namespace": "mmmclassmanager",
   "private": true,
   "directories": {
     "doc": "docs",

@@ -127,7 +127,6 @@ class Mmm_Class_Manager
     function _save()
 	{
 		$isAdmin = $this->check_user_capability();
-
 		$this->do_callback($isAdmin);
 	}
     
@@ -143,39 +142,13 @@ class Mmm_Class_Manager
 
 	function do_admin_function()
 	{
-		switch($_REQUEST['fn']){
-			case 'mmm_class_settings':
-				$data_back = $_REQUEST['mmm_class_settings'];
-				
-				$values = array();
-				$i = 0;
-				foreach ($data_back as $data)
-				{
-					$values[$data['name']] = $data['value'];
-				}
-				
-				$this->_save_settings_todb($values);
-			break;
-		}
+		MmmPluginToolsNamespace::admin_ajax();
 	}
 
 
 	function do_standard_function()
 	{
-        switch($_REQUEST['fn']){
-            case 'buy':
-                $data_back = $_REQUEST['buy'];
-                
-                $values = array();
-                $i = 0;
-                foreach ($data_back as $data)
-                {
-                    $values[$data['name']] = $data['value'];
-                }
-                
-                $this->_save_settings_todb($values);
-            break;
-        }
+        MmmPluginToolsNamespace::non_admin_ajax();
 	}
 
 	function _save_post_meta( $post_id, $post ){
