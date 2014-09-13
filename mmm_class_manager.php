@@ -49,8 +49,10 @@ class Mmm_Class_Manager
     	require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
     	
     	//Get default values from the theme data file if there are none
-		//$this->_set_standart_values($themeSettings);
+		//Mmm_Class_Manager::_set_standart_values($themeSettings);
 		
+        MmmPluginToolsNamespace\create_tables(self::$_versionnum);
+
 		add_option(self::$_settings_key . "_versionnum", self::$_versionnum);
 	}
 
@@ -261,10 +263,5 @@ function Mmm_Class_Manager_Init()
 {
     global $Mmm_Class_Manager, $MMM_Roots;
     $Mmm_Class_Manager = new Mmm_Class_Manager();
-
-    if (!isset($MMM_Roots))
-    {
-        $MMM_Roots = $Mmm_Class_Manager;
-    }
 }
 ?>
