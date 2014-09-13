@@ -12,18 +12,19 @@ include_once('lib/functions.php');
 
 class Mmm_Class_Manager
 {
+    public static $_options_pagename = 'Mmm_Class_Manager';
+    public static $_settings_key = 'Mmm_Class_Manager';
+    public static $_meta_key = 'Mmm_Class_Manager_meta';
+    public static $_versionnum = "@core_version@";
+
 	var $_settings;
-    var $_options_pagename = 'Mmm_Class_Manager';
-    var $_settings_key = 'Mmm_Class_Manager';
-    var $_meta_key = 'Mmm_Class_Manager_meta';
     var $_save_key = '';
     var $location_folder;
-    var $_versionnum = "@core_version@";
 	var $menu_page;
 	
 	function Mmm_Class_Manager()
 	{
-        $this->_settings = get_option($this->_settings_key) ? get_option($this->_settings_key) : array();
+        $this->_settings = get_option(self::$_settings_key) ? get_option(self::$_settings_key) : array();
         $this->location_folder = trailingslashit(WP_PLUGIN_URL) . dirname( plugin_basename(__FILE__) );
 
         add_action( 'admin_menu', array(&$this, 'create_menu_link') );
@@ -50,7 +51,7 @@ class Mmm_Class_Manager
     	//Get default values from the theme data file if there are none
 		//$this->_set_standart_values($themeSettings);
 		
-		add_option($_settings_key . "_versionnum", $_versionnum);
+		add_option(self::$_settings_key . "_versionnum", self::$_versionnum);
 	}
 
 	function custom_metabox(){
@@ -92,8 +93,8 @@ class Mmm_Class_Manager
 
 	function create_menu_link()
     {
-        $this->menu_page = add_options_page($this->_options_pagename . 'Options', $this->_options_pagename . 'Options',
-        'manage_options',$this->_options_pagename, array(&$this, 'build_settings_page'));
+        $this->menu_page = add_options_page(self::$_options_pagename . 'Options', self::$_options_pagename . 'Options',
+        'manage_options',self::$_options_pagename, array(&$this, 'build_settings_page'));
     }
     
     function build_settings_page()
@@ -195,7 +196,7 @@ class Mmm_Class_Manager
     function _save_settings_todb($form_settings = '')
 	{
 		if ( $form_settings <> '' ) {
-			unset($form_settings[$this->_settings_key . '_saved']);
+			unset($form_settings[self::$_settings_key . '_saved']);
 
 			$this->_settings = $form_settings;
 
@@ -203,7 +204,7 @@ class Mmm_Class_Manager
 			$this->_set_standart_values($form_settings);
 		}
 		
-		update_option($this->_settings_key, $this->_settings);
+		update_option(self::$_settings_key, $this->_settings);
 	}
 
 	function _set_standart_values($standart_values)
@@ -258,7 +259,12 @@ register_activation_hook(__FILE__,array('Mmm_Class_Manager', 'Mmm_Class_Manager_
 add_action( 'init', 'Mmm_Class_Manager_Init', 5 );
 function Mmm_Class_Manager_Init()
 {
-    global $Mmm_Class_Manager;
+    global $Mmm_Class_Manager, $MMM_Roots;
     $Mmm_Class_Manager = new Mmm_Class_Manager();
+
+    if (!isset($MMM_Roots))
+    {
+        $MMM_Roots = $Mmm_Class_Manager;
+    }
 }
 ?>

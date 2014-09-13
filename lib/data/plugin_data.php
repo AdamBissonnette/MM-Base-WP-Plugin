@@ -53,7 +53,7 @@
                         array('id' => 'type_post',
                             'label' => 'Class Page',
                             'type' => 'select',
-                            'options' => array("data" => getMMPostsSelectArray(), "isMultiple" => false) ),
+                            'options' => array("data" => MmmToolsNamespace\getPostsSelectArray(), "isMultiple" => false) ),
                     )
                 ),
                 array(
@@ -80,7 +80,7 @@
                         array('id' => 'class_type',
                             'label' => 'Class Type',
                             'type' => 'select',
-                            'options' => array("data" => getMMPostsSelectArray(), "isMultiple" => false)),
+                            'options' => array("data" => MmmToolsNamespace\getPostsSelectArray(), "isMultiple" => false)),
                         array('id' => 'class_price_override',
                             'label' => 'Price (Override)',
                             'type' => 'text'),

@@ -20,13 +20,13 @@
 				<div class="row tab-content">
 					<div class="tab-pane active" id="plugin">
 						<?php							
-							echo OutputMMData($mmm_plugin_data);
+							echo MmmToolsNamespace\OutputThemeData($mmm_plugin_data);
 						?>
 					</div>
 					<div class="tab-pane" id="admin">
 						<form id="theme_settings" onsubmit="javascript: SaveOptions(this);" class="form-horizontal" method="post">
 							<?php							
-								echo OutputMMData($mmm_class_options);
+								echo MmmToolsNamespace\OutputThemeData($mmm_class_options);
 							?>
 							
 							<div class="form-controls">

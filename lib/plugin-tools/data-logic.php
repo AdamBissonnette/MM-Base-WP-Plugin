@@ -1,4 +1,6 @@
 <?php
+namespace MmmPluginToolsNamespace;
+
     function GetQuantitySold($ProductID)
     {
         global $wpdb;
