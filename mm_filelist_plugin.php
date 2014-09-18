@@ -1,23 +1,17 @@
 <?php
 /*
-Plugin Name: MM File List
+Plugin Name: Mmm Simple File List
 Plugin URI: http://www.mediamanifesto.com
-Description: Plugin to list files in a given directory
-Version: 1
+Description: Plugin to list files in a given directory using this shortcode [MMFileList folder="optional starting from basedir" format="li (html) or comma (txt)"" types="optional file-extension e.g. pdf,doc" class="optional css class for html list"]
+Version: 0.1
 Author: Adam Bissonnette
 Author URI: http://www.mediamanifesto.com
 */
 
 class MM_FileList
 {
-	var $_plugin_name = "MM File List";
-    var $location_folder;
-	var $menu_page;
-	
 	function MM_FileList()
 	{
-        $this->location_folder = trailingslashit(WP_PLUGIN_URL) . dirname( plugin_basename(__FILE__) );
-
         add_shortcode( 'MMFileList', array(&$this, 'ListFiles') );
 	}
 	
@@ -27,7 +21,7 @@ class MM_FileList
 		'folder' => '',
 		'format' => 'li',
 		'types' => 'pdf,doc',
-        'class' = ''
+        'class' => ''
 		), $atts ) );
 		
 		$baseDir = wp_upload_dir();
