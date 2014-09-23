@@ -11,6 +11,13 @@ function CheckScripts()
 function ValidateForm(Form)
 {
 	var FormID = jQuery(Form).attr('id');
+
+	if (FormID == undefined)
+	{
+		jQuery(Form).attr('id', "TempFormID");
+		FormID = "TempFormID";
+	}
+
 	jQuery('#' + FormID + ' .error').each(function() {jQuery(this).removeClass('error');})
 	
 	var ErrorFields = new Array();

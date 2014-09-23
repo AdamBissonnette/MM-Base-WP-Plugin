@@ -12,7 +12,7 @@ function MMBingoCard($atts)
 
     $content = "";
 
-    $cardTemplate = '<table id="mmbc-%s" class=%s><h4>%s</h4>%s</table>';
+    $cardTemplate = '<div class="mmbc_wrapper"><h4>%s</h4><table id="mmbc-%s" class="BingoCard %s">%s</table></div>';
 
     $Topics = GetTopics();
     

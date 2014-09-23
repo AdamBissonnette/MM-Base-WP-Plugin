@@ -1,18 +1,18 @@
 <?php
 namespace MmmPluginToolsNamespace;
 
-function non_admin_ajax()
+function non_admin_ajax($obj)
 {
-    if (!$this->check_user_capability())
+    if (!$obj->check_user_capability())
     {
         //If you're not an authorized user you can only do the following
         //Derp
     }
 }
 
-function admin_ajax()
+function admin_ajax($obj)
 {
-    if ($this->check_user_capability())
+    if ($obj->check_user_capability())
     {
         switch($_REQUEST['fn']){
             case 'settings':
@@ -32,7 +32,7 @@ function admin_ajax()
                     }
                 }
                 
-                $this->_save_settings_todb($values);
+                $obj->_save_settings_todb($values);
             break;
             default:
                 //Derp

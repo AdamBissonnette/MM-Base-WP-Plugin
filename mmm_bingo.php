@@ -30,15 +30,15 @@ class Mmm_Bingo
         add_action( 'admin_menu', array(&$this, 'create_menu_link') );
 		
 		//Ajax Posts
-		//add_action('wp_ajax_nopriv_do_ajax', array(&$this, '_save') );
-		//add_action('wp_ajax_do_ajax', array(&$this, '_save') );
+		add_action('wp_ajax_nopriv_do_ajax', array(&$this, '_save') );
+		add_action('wp_ajax_do_ajax', array(&$this, '_save') );
 
 		//Custom Taxonomies
 		add_action( 'init', array(&$this, 'custom_taxonomies'));
 		
 		//Custom Meta
-		add_action( 'admin_init', array(&$this, 'custom_metabox'));
-		add_action( 'save_post', array(&$this, '_save_post`_meta'), 10, 2 );
+		//add_action( 'admin_init', array(&$this, 'custom_metabox'));
+		//add_action( 'save_post', array(&$this, '_save_post`_meta'), 10, 2 );
     }
 
     static function Mmm_Bingo_install() {
@@ -77,17 +77,17 @@ class Mmm_Bingo
 
 	function taxonomy_meta($post, $data)
 	{
-		$options = $data["args"];
+		/* $options = $data["args"];
 
 		$values = get_post_meta($post->ID, $this->_meta_key, true);
 
         //Enqueue styles / scripts
-        //wp_enqueue_style('admin', get_template_directory_uri() . '/assets/admin/css/mmm_roots_admin.css', false, null);
-        ///wp_enqueue_style('select2', get_template_directory_uri() . '/assets/admin/css/select2.css', false, null);
-        //wp_enqueue_script('select2', get_template_directory_uri() . '/assets/js/vendor/select2.js', false, null);
-        //wp_enqueue_script('select2-sortable', get_template_directory_uri() . '/assets/js/vendor/select2.sortable.js', false, null);
+        wp_enqueue_style('admin', get_template_directory_uri() . '/assets/admin/css/mmm_roots_admin.css', false, null);
+        wp_enqueue_style('select2', get_template_directory_uri() . '/assets/admin/css/select2.css', false, null);
+        wp_enqueue_script('select2', get_template_directory_uri() . '/assets/js/vendor/select2.js', false, null);
+        wp_enqueue_script('select2-sortable', get_template_directory_uri() . '/assets/js/vendor/select2.sortable.js', false, null); */
 
-		include_once('lib/ui/meta_post_ui.php');
+		//include_once('lib/ui/meta_post_ui.php');
 	}
 
 	function create_menu_link()
@@ -109,9 +109,9 @@ class Mmm_Bingo
 	        wp_enqueue_script('bootstrap', plugins_url('/assets/js/plugins.js', __FILE__), false, null);
         }
         
-        wp_enqueue_style('adminstyles', plugins_url('/assets/css/admin.css', __FILE__), false, null);
-  		wp_enqueue_script('formtools', plugins_url('/assets/js/formtools.js', __FILE__), false, null);
-  		wp_enqueue_script('adminjs', plugins_url('/assets/js/admin.js', __FILE__), false, null);
+  		wp_enqueue_script('adminjs', plugins_url('/assets/js/formtools.js', __FILE__), false, null);
+
+        MmmToolsNamespace\load_admin_assets();
         
 		include_once('lib/ui/admin_ui.php');
     }
@@ -142,13 +142,13 @@ class Mmm_Bingo
 
 	function do_admin_function()
 	{
-		MmmPluginToolsNamespace::admin_ajax();
+		MmmPluginToolsNamespace\admin_ajax($this);
 	}
 
 
 	function do_standard_function()
 	{
-        MmmPluginToolsNamespace::non_admin_ajax();
+        MmmPluginToolsNamespace\non_admin_ajax($this);
 	}
 
 	function _save_post_meta( $post_id, $post ){

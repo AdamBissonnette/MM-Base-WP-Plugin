@@ -14,17 +14,21 @@
 		<div class="row">
 			<div class="col-sm-12">
 				<ul class="nav nav-pills">
-					<li class="active"><a href="#plugin" data-toggle="tab">Bingo Cards</a></li>
-					<li><a href="#admin" data-toggle="tab">Default Options</a></li>
+					<li><a href="#plugin" data-toggle="tab" style="display: none;">Bingo Cards</a></li>
+					<li class="active"><a href="#admin" data-toggle="tab">Default Options</a></li>
 				</ul>
 				<div class="row tab-content">
-					<div class="tab-pane active" id="plugin">
+					<div class="tab-pane" id="plugin">
 						<?php							
 							echo MmmToolsNamespace\OutputThemeData($mmm_plugin_data, null, $Mmm_Bingo);
 						?>
 					</div>
+
+					
+
 				</div>
-				<div class="tab-pane" id="admin">
+
+				<div class="tab-pane active" id="admin">
 					<form id="theme_settings" onsubmit="javascript: SaveOptions(this);" class="form-horizontal" method="post">
 						<?php							
 							echo MmmToolsNamespace\OutputThemeData($mmm_bingo_options, null, $Mmm_Bingo);
@@ -40,9 +44,9 @@
 						</div>
 					</form>
 				</div>
-				</div>
 			</div>
 		</div>
+	</div>
 
 
 		<div class="modal fade" id="mm-dialog">
