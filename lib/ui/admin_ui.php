@@ -1,12 +1,12 @@
 <?php
-	global $mmm_class_options, $mmm_plugin_data, $Mmm_Class_Manager;
+	global $mmm_bingo_options, $mmm_plugin_data, $Mmm_Bingo;
 ?>
 
 <div class="mmpm_wrapper">
 	<div class="container">
 		<div class="row">
 			<div class="col-sm-12">
-				<h3>MMM Class Manager Options</h3>
+				<h3>MMM Bingo Options</h3>
 			</div>
 		</div>
 
@@ -20,13 +20,13 @@
 				<div class="row tab-content">
 					<div class="tab-pane active" id="plugin">
 						<?php							
-							echo MmmToolsNamespace\OutputThemeData($mmm_plugin_data, null, $Mmm_Class_Manager);
+							echo MmmToolsNamespace\OutputThemeData($mmm_plugin_data, null, $Mmm_Bingo);
 						?>
 					</div>
 					<div class="tab-pane" id="admin">
 						<form id="theme_settings" onsubmit="javascript: SaveOptions(this);" class="form-horizontal" method="post">
 							<?php							
-								echo MmmToolsNamespace\OutputThemeData($mmm_class_options, null, $Mmm_Class_Manager);
+								echo MmmToolsNamespace\OutputThemeData($mmm_bingo_options, null, $Mmm_Bingo);
 							?>
 							
 							<div class="form-controls">

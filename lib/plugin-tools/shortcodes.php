@@ -1,110 +1,146 @@
 <?php
 namespace MmmPluginToolsNamespace;
 
-function MMProductGroup($atts, $content = null)
+function MMBingoCard($atts)
 {
-    //add_action( 'wp_print_scripts', array(&$this, 'plugin_js') );
     extract( shortcode_atts( array(
-        'description' => 'null'
-    ), $atts ) );
+            'id' => '',
+            'title' => '',
+            'count' => '1',
+            'class' => 'mmm-bingo-card'
+        ), $atts));
+
+    $content = "";
+
+    $cardTemplate = '<table id="mmbc-%s" class=%s><h4>%s</h4>%s</table>';
+
+    $Topics = GetTopics();
     
-    $Products = GetProductsByDescription($description);
-    
-    $output = "<div class=\"mm_wrapper\"><div class=\"group-header\">Register for Classes</div>";
-    
-    if ($Products)
+    //print_r($Topics);
+    for ($i = 0; $i < 25; $i++)
     {
-        $output .= "<div class=\"mm-faux-table\">";
-        $output .= "<div class=\"mm-hrow\"><div class=\"mm-inline mm-small\">Date</div><div class=\"mm-inline mm-large\">Cost</div><div class=\"mm-inline\">Quantity</div><div class=\"mm-inline\">Subtotal</div><div class=\"mm-inline mm-large\">Register via Paypal</div></div>";
-
-        $emptyCount = 0;
-        foreach ($Products as $Product)
+        if ($i == 0)
         {
-            $row = $this->GenerateProductRow($Product);
-            
-            if ($row == "")
-            {
-                $emptyCount++;
-            }
-            else
-            {
-                $output .= $row;
-            }
+            $content .= "<tr class=\"row-1\">";
         }
-        
-        if ($emptyCount == count($Products))
+        else if ($i % 5 == 0)
         {
-            $output .= "<p>" . urldecode($this->_settings['mm_pm_empty']) . "</p>";
+            $content .= sprintf("</tr>\n<tr class=\"row-%s\">\n", ($i / 5 + 1));
         }
-        
-        $output .= "</div>";
-        $output .= '<p class="note">' . urldecode($this->_settings['mm_pm_footer']) . '</p>';
+    
+        $content .= _genCardSquare($Topics[$i], ($i % 5 == 0));
+    
+        if ($i == 11)
+        {
+            $content .= _genCardSquare();
+            $i++;
+        }
     }
-    else
+
+    return sprintf($cardTemplate, $id, $class, $title, $content);
+}
+
+function GetTopics() {
+    $Topics = '"Do You Feel Me?"
+    Beatboxing or Some Other Sound Effect
+    Singing
+    Listing of Literary Terms
+    Has a Stage Name
+    Abusive Parent
+    Word that Rhymes with Shun
+    Calling On God
+    Naming A Jazz Musician
+    Mentioning Hip Hop
+    Spitting Anything (Especially Fire)
+    Rape
+    Words: Poem, Poet, Or Poetry
+    Abortion
+    Victim Of Discrimination
+    Third Eye
+    Reference of Self Royalty
+    Any Line Repeated for the Third Time
+    Drugs are Bad
+    Drugs are Awesome
+    Praying Before Starting Piece
+    Eargasm
+    Self Mutilation Confession
+    Forgets Poem
+    Incest
+    Unsafe Sex
+    Stephen Harper
+    Tar Sands / Big Oil
+    Fracking
+    Breaking Up is Hard
+    Falling in Love
+    Death of a Family Member
+    Occupy Movement
+    Fair Trade
+    World War III
+    World of Warcraft
+    Says "Toronto", "Vancouver", or "Saskatoon"
+    Feminism, Feminist references or invokes "Judith Butler"
+    Patriarchy
+    Says "Queer"
+    Claims to be Straight
+    Race / Racism
+    Sex / Sexism,
+    Celebrity Reference
+    Movie Quote
+    Gender Roles
+    Over Acting
+    Nerdgasm
+    Star Wars Reference
+    Lord of the Rings Reference
+    Superhero Reference
+    Poetry on Poetry
+    Crygasm / Teargasm
+    Poem Stops Due To Laughter
+    Famous Artist\'s Tragic Death
+    Something about butterflies
+    Unsung Beauty
+    Masturbation
+    Bathroom / Personal Hygiene Habits
+    Learning Something The Hard Way
+    Any Mention of Angels
+    Randomly Breaking out into Dance
+    Asks the Audience to Dance
+    Team Piece (Multiplayer Enabled)
+    Obama-Romney-Bush References
+    Being a Microphone Diva / Plays with the Microphone';
+
+    if (isset($_POST["Topics"]))
     {
-        $output .= "<p>" . urldecode($this->_settings['mm_pm_empty']) . "</p>";
+        $Topics = $_POST["Topics"];
     }
+
+    $SplitArray = explode("\n", $Topics);
     
-    $output .= "</div>";
+    shuffle($SplitArray);
     
-    return $output;
+    
+    return array_slice($SplitArray, 0, 25);
 }
 
-function MMProduct($atts)
+function _genCardSquare($Topic = "Star", $isFirstInRow = false)
 {
-    //add_action( 'wp_print_scripts', array(&$this, 'plugin_js') );
-    extract( shortcode_atts( array(
-        'code' => 'null'
-    ), $atts ) );
+    $TopicTemplate = "<td class=\"%s\"><div>%s</div></td>\n";
+    $SquareClass = "topic";
     
-    $product = GetProductByName($code);
-    
-    if (CanSellProduct($product, 1))
-    {       
-        $url = absolute_to_relative_url(admin_url() . "admin-ajax.php");
-        $eDate = strtotime($product->dtmEndDate);
-        $EndDate = date("M d", $eDate);
-        $Price = $product->decPrice;
-        $HiddenPrice = sprintf("<input type=\"hidden\" id=\"mmprice-%s\" value=\"%d\" />", $product->vcrName, $Price);
-        $QuantityInput = sprintf("<div class=\"mm-input\"><input onkeyup=\"javascript: updateSubtotal('%s');\" maxlength=\"1\" id=\"mmquant-%s\" type=\"text\" class=\"small nonzero req num\" value=\"0\" /></div>",
-                            $product->vcrName, $product->vcrName);
-        $Subtotal = sprintf("<input id=\"mmsubtotal-%s\" type\"text\" class=\"small\" disabled=\"disabled\" />", $product->vcrName);
-        $Action = sprintf("<a href=\"javascript: void(0);\" class=\"buy btn\" onclick=\"javascript: CheckScripts(); doBuy('%s', '%s');\">Register</a></div><div id=\"mmattr-%s\">",
-        $product->vcrName, str_replace ("\/", "\/\/", $url),  $product->vcrName);
+    if ($isFirstInRow)
+    {
+        $SquareClass .= " first";
+    }
+
+    $Square = sprintf($TopicTemplate, $SquareClass, $Topic);
         
-        $output .= sprintf("<form method=\"post\" id=\"mmform-%s\">", $product->vcrName);
-        $output .= sprintf("<div class=\"mm-row\">%s<div class=\"mm-inline mm-small\">%s</div><div class=\"mm-inline mm-large\">$%s</div><div class=\"mm-inline\">%s</div><div class=\"mm-inline\">%s</div><div class=\"mm-inline mm-large\">%s</div></div>",
-                            $HiddenPrice, $EndDate, $Price, $QuantityInput, $Subtotal, $Action);
-        $output .= "</form>";
+    if ($Topic == "Star")
+    {
+        $Square = '<td><div class="icon-star"><img src="img/star.png" /></div></td>';
     }
     
-    return $this->GenerateProductRow($product);
+    return $Square;
 }
 
-function GenerateProductRow($product)
-{
-    $output = "";
-
-    if (CanSellProduct($product, 1))
-    {       
-        $url = absolute_to_relative_url(admin_url() . "admin-ajax.php");
-        $eDate = strtotime($product->dtmEndDate);
-        $EndDate = date("M d", $eDate);
-        $Price = $product->decPrice;
-        $HiddenPrice = sprintf("<input type=\"hidden\" id=\"mmprice-%s\" value=\"%d\" />", $product->vcrName, $Price);
-        $QuantityInput = sprintf("<div class=\"mm-input\"><input onkeyup=\"javascript: updateSubtotal('%s');\" maxlength=\"1\" id=\"mmquant-%s\" type=\"text\" class=\"small nonzero req num\" value=\"0\" /></div>",
-                            $product->vcrName, $product->vcrName);
-        $Subtotal = sprintf("<input id=\"mmsubtotal-%s\" type\"text\" class=\"small\" disabled=\"disabled\" />", $product->vcrName);
-        $Action = sprintf("<a href=\"javascript: void(0);\" class=\"buy btn\" onclick=\"javascript: CheckScripts(); doBuy('%s', '%s');\">Register</a></div><div id=\"mmattr-%s\">",
-        $product->vcrName, str_replace ("\/", "\/\/", $url),  $product->vcrName);
-        
-        $output .= sprintf("<form method=\"post\" id=\"mmform-%s\">", $product->vcrName);
-        $output .= sprintf("<div class=\"mm-row\">%s<div class=\"mm-inline mm-small\">%s</div><div class=\"mm-inline mm-large\">$%s</div><div class=\"mm-inline\">%s</div><div class=\"mm-inline\">%s</div><div class=\"mm-inline mm-large\">%s</div></div>",
-                            $HiddenPrice, $EndDate, $Price, $QuantityInput, $Subtotal, $Action);
-        $output .= "</form>";
-    }
-    
-    return $output;
-}
+add_shortcode("MMBingoCard", "MMBingoCard");
 
 ?>

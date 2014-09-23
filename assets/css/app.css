@@ -1,0 +1,26 @@
+body {width: 790px; text-align: center; margin: 0 5px; padding: 0; font-family: 'Open Sans', sans-serif; background: #fff;}
+h1 {font-family: 'Ewert', cursive; font-size: 45pt; margin: 0 0 15px;}
+p {text-align: left; font-size: 0.8em; margin-left: 20px;}
+#BingoCard {height: 750px; width: 750px; border: 9px solid black;  border-left: 0;  border-bottom: 0; margin: 0 auto;}
+#BingoCard tr {}
+#BingoCard td {
+  height: 150px;
+  width: 150px;
+  border-bottom: 3px solid black;
+  border-left: 3px solid black;
+  text-align: center;
+}
+#BingoCard tr td.first {
+  border-left: 9px solid black;
+}
+#BingoCard tr.row-5 td {
+  border-bottom: 9px solid black;
+}
+#BingoCard td.topic div {
+  padding: 0 5px;
+}
+.icon-star {
+  height: 100px;
+  width: 104px;
+  margin: 0 auto;
+}

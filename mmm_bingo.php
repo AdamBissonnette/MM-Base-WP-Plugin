@@ -10,11 +10,11 @@ Author URI: http://www.mediamanifesto.com/
 
 include_once('lib/functions.php');
 
-class Mmm_Class_Manager
+class Mmm_Bingo
 {
-    public static $_options_pagename = 'Mmm_Class_Manager';
-    public static $_settings_key = 'Mmm_Class_Manager';
-    public static $_meta_key = 'Mmm_Class_Manager_meta';
+    public static $_options_pagename = 'Mmm_Bingo';
+    public static $_settings_key = 'Mmm_Bingo';
+    public static $_meta_key = 'Mmm_Bingo_meta';
     public static $_versionnum = "@core_version@";
 
 	var $_settings;
@@ -22,7 +22,7 @@ class Mmm_Class_Manager
     var $location_folder;
 	var $menu_page;
 	
-	function Mmm_Class_Manager()
+	function Mmm_Bingo()
 	{
         $this->_settings = get_option(self::$_settings_key) ? get_option(self::$_settings_key) : array();
         $this->location_folder = trailingslashit(WP_PLUGIN_URL) . dirname( plugin_basename(__FILE__) );
@@ -30,8 +30,8 @@ class Mmm_Class_Manager
         add_action( 'admin_menu', array(&$this, 'create_menu_link') );
 		
 		//Ajax Posts
-		add_action('wp_ajax_nopriv_do_ajax', array(&$this, '_save') );
-		add_action('wp_ajax_do_ajax', array(&$this, '_save') );
+		//add_action('wp_ajax_nopriv_do_ajax', array(&$this, '_save') );
+		//add_action('wp_ajax_do_ajax', array(&$this, '_save') );
 
 		//Custom Taxonomies
 		add_action( 'init', array(&$this, 'custom_taxonomies'));
@@ -39,17 +39,14 @@ class Mmm_Class_Manager
 		//Custom Meta
 		add_action( 'admin_init', array(&$this, 'custom_metabox'));
 		add_action( 'save_post', array(&$this, '_save_post`_meta'), 10, 2 );
-
-        //Conditionally enable admin-bar menu
-        //if settings set - enable admin-bar
     }
 
-    static function Mmm_Class_Manager_install() {
+    static function Mmm_Bingo_install() {
     	global $wpdb;
     	require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
     	
     	//Get default values from the theme data file if there are none
-		//Mmm_Class_Manager::_set_standart_values($themeSettings);
+		//Mmm_Bingo::_set_standart_values($themeSettings);
 		
         MmmPluginToolsNamespace\create_tables(self::$_versionnum);
 
@@ -57,9 +54,9 @@ class Mmm_Class_Manager
 	}
 
 	function custom_metabox(){
-		global $mmm_class_taxonomies;
+		global $mmm_bingo_taxonomies;
 
-		foreach ($mmm_class_taxonomies as $taxonomy)
+		foreach ($mmm_bingo_taxonomies as $taxonomy)
 		{
 			add_meta_box("mmm_post_meta", "Meta", array(&$this, "taxonomy_meta"), $taxonomy["slug"], "normal", "low", $taxonomy["options"]);
 		}	
@@ -67,9 +64,9 @@ class Mmm_Class_Manager
 
 	function custom_taxonomies()
 	{
-		global $mmm_class_taxonomies;
+		global $mmm_bingo_taxonomies;
 
-		foreach ($mmm_class_taxonomies as $taxonomy) 
+		foreach ($mmm_bingo_taxonomies as $taxonomy) 
 		{
 			if (isset($taxonomy["registration-args"]))
 			{
@@ -156,7 +153,7 @@ class Mmm_Class_Manager
 
 	function _save_post_meta( $post_id, $post ){
 		global $pagenow;
-		global $mmm_class_taxonomies;
+		global $mmm_bingo_taxonomies;
 
 		if ( 'post.php' != $pagenow ) return $post_id;
 		
@@ -256,12 +253,12 @@ class Mmm_Class_Manager
 	}
 }
 
-register_activation_hook(__FILE__,array('Mmm_Class_Manager', 'Mmm_Class_Manager_install'));
+register_activation_hook(__FILE__,array('Mmm_Bingo', 'Mmm_Bingo_install'));
 
-add_action( 'init', 'Mmm_Class_Manager_Init', 5 );
-function Mmm_Class_Manager_Init()
+add_action( 'init', 'Mmm_Bingo_Init', 5 );
+function Mmm_Bingo_Init()
 {
-    global $Mmm_Class_Manager, $MMM_Roots;
-    $Mmm_Class_Manager = new Mmm_Class_Manager();
+    global $Mmm_Bingo, $MMM_Roots;
+    $Mmm_Bingo = new Mmm_Bingo();
 }
 ?>
