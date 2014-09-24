@@ -36,6 +36,8 @@ class Mmm_Bingo
 		//Custom Taxonomies
 		add_action( 'init', array(&$this, 'custom_taxonomies'));
 		
+        add_shortcode("MMBingoCard", "MmmPluginToolsNamespace\MMBingoCard");
+        
 		//Custom Meta
 		//add_action( 'admin_init', array(&$this, 'custom_metabox'));
 		//add_action( 'save_post', array(&$this, '_save_post`_meta'), 10, 2 );
@@ -258,7 +260,7 @@ register_activation_hook(__FILE__,array('Mmm_Bingo', 'Mmm_Bingo_install'));
 add_action( 'init', 'Mmm_Bingo_Init', 5 );
 function Mmm_Bingo_Init()
 {
-    global $Mmm_Bingo, $MMM_Roots;
+    global $Mmm_Bingo;
     $Mmm_Bingo = new Mmm_Bingo();
 }
 ?>

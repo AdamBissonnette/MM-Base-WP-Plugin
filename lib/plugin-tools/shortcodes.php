@@ -3,8 +3,20 @@ namespace MmmPluginToolsNamespace;
 
 function MMBingoCard($atts)
 {
+    global $Mmm_Bingo;
+
+    $admin_path = \MmmToolsNamespace\get_admin_folder_path();
+    
+    wp_enqueue_style('OpenSans', 'http://fonts.googleapis.com/css?family=Open+Sans', false, null);
+    wp_enqueue_style('Ewert', 'http://fonts.googleapis.com/css?family=Ewert', false, null);
+
+    wp_enqueue_style('bingoapp', $Mmm_Bingo->location_folder . '/assets/css/app.css', false, null);
+    wp_enqueue_style('font-awesome', $admin_path . '/assets/css/font-awesome.css', false, null);
+
+
+
     extract( shortcode_atts( array(
-            'id' => '',
+            'id' => '0',
             'title' => '',
             'count' => '1',
             'class' => 'mmm-bingo-card'
@@ -12,9 +24,15 @@ function MMBingoCard($atts)
 
     $content = "";
 
-    $cardTemplate = '<div class="mmbc_wrapper"><h4>%s</h4><table id="mmbc-%s" class="BingoCard %s">%s</table></div>';
+    if ($title == '')
+    {
+        $title = $Mmm_Bingo->get_setting("default_title");
+    }
 
-    $Topics = GetTopics();
+    $Topics = sortTopics($Mmm_Bingo->get_setting("default_topics"));
+    $CenterIcon = $Mmm_Bingo->get_setting("default_star");
+
+    $cardTemplate = '<div class="mmbc_wrapper"><h4>%s</h4><table id="mmbc-%s" class="BingoCard %s">%s</table></div>';
     
     //print_r($Topics);
     for ($i = 0; $i < 25; $i++)
@@ -32,91 +50,18 @@ function MMBingoCard($atts)
     
         if ($i == 11)
         {
-            $content .= _genCardSquare();
+            $content .= _genCenterSquare($CenterIcon);
             $i++;
         }
     }
 
-    return sprintf($cardTemplate, $id, $class, $title, $content);
+    return sprintf($cardTemplate, $title, $id, $class, $content);
 }
 
-function GetTopics() {
-    $Topics = '"Do You Feel Me?"
-    Beatboxing or Some Other Sound Effect
-    Singing
-    Listing of Literary Terms
-    Has a Stage Name
-    Abusive Parent
-    Word that Rhymes with Shun
-    Calling On God
-    Naming A Jazz Musician
-    Mentioning Hip Hop
-    Spitting Anything (Especially Fire)
-    Rape
-    Words: Poem, Poet, Or Poetry
-    Abortion
-    Victim Of Discrimination
-    Third Eye
-    Reference of Self Royalty
-    Any Line Repeated for the Third Time
-    Drugs are Bad
-    Drugs are Awesome
-    Praying Before Starting Piece
-    Eargasm
-    Self Mutilation Confession
-    Forgets Poem
-    Incest
-    Unsafe Sex
-    Stephen Harper
-    Tar Sands / Big Oil
-    Fracking
-    Breaking Up is Hard
-    Falling in Love
-    Death of a Family Member
-    Occupy Movement
-    Fair Trade
-    World War III
-    World of Warcraft
-    Says "Toronto", "Vancouver", or "Saskatoon"
-    Feminism, Feminist references or invokes "Judith Butler"
-    Patriarchy
-    Says "Queer"
-    Claims to be Straight
-    Race / Racism
-    Sex / Sexism,
-    Celebrity Reference
-    Movie Quote
-    Gender Roles
-    Over Acting
-    Nerdgasm
-    Star Wars Reference
-    Lord of the Rings Reference
-    Superhero Reference
-    Poetry on Poetry
-    Crygasm / Teargasm
-    Poem Stops Due To Laughter
-    Famous Artist\'s Tragic Death
-    Something about butterflies
-    Unsung Beauty
-    Masturbation
-    Bathroom / Personal Hygiene Habits
-    Learning Something The Hard Way
-    Any Mention of Angels
-    Randomly Breaking out into Dance
-    Asks the Audience to Dance
-    Team Piece (Multiplayer Enabled)
-    Obama-Romney-Bush References
-    Being a Microphone Diva / Plays with the Microphone';
-
-    if (isset($_POST["Topics"]))
-    {
-        $Topics = $_POST["Topics"];
-    }
-
+function sortTopics($Topics) {
     $SplitArray = explode("\n", $Topics);
     
     shuffle($SplitArray);
-    
     
     return array_slice($SplitArray, 0, 25);
 }
@@ -135,12 +80,15 @@ function _genCardSquare($Topic = "Star", $isFirstInRow = false)
         
     if ($Topic == "Star")
     {
-        $Square = '<td><div class="icon-star"><img src="img/star.png" /></div></td>';
+        $Square = sprintf('<td><div class="fa fa-5x %s"></div></td>', $Icon);
     }
     
     return $Square;
 }
 
-add_shortcode("MMBingoCard", "MMBingoCard");
+function _genCenterSquare($Icon = "fa-star")
+{
+    return sprintf('<td><div class="fa fa-5x fa-%s"></div></td>', $Icon);
+}
 
 ?>

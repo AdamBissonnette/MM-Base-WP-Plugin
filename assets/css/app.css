@@ -1,25 +1,25 @@
-/* body {width: 790px; text-align: center; margin: 0 5px; padding: 0; font-family: 'Open Sans', sans-serif; background: #fff;} */
+.mmbc_wrapper {width: 790px; text-align: center; margin: 0 5px; padding: 0; font-family: 'Open Sans', sans-serif; background: #fff;}
 .BingoCard {height: 750px; width: 750px; border: 9px solid black;  border-left: 0;  border-bottom: 0; margin: 0 auto;}
-.BingoCard tr {}
-.BingoCard td {
+.mmbc_wrapper tr {}
+.mmbc_wrapper td {
   height: 150px;
   width: 150px;
   border-bottom: 3px solid black;
   border-left: 3px solid black;
   text-align: center;
 }
-.BingoCard tr td.first {
+.mmbc_wrapper tr td.first {
   border-left: 9px solid black;
 }
-.BingoCard tr.row-5 td {
+.mmbc_wrapper tr.row-5 td {
   border-bottom: 9px solid black;
 }
-.BingoCard td.topic div {
+.mmbc_wrapper td.topic div {
   padding: 0 5px;
 }
 
-.BingoCard h4 {font-family: 'Ewert', cursive; font-size: 45pt; margin: 0 0 15px;}
-.BingoCard p {text-align: left; font-size: 0.8em; margin-left: 20px;}
+.mmbc_wrapper h4 {font-family: 'Ewert', cursive; font-size: 45px; margin: 0 0 15px;}
+.mmbc_wrapper p {text-align: left; font-size: 0.8em; margin-left: 20px;}
 
 .icon-star {
   height: 100px;
