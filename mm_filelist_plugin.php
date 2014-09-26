@@ -3,7 +3,7 @@
 Plugin Name: Mmm Simple File List
 Plugin URI: http://www.mediamanifesto.com
 Description: Plugin to list files in a given directory using this shortcode [MMFileList folder="optional starting from base uploads path" format="li (html) or comma (txt)"" types="optional file-extension e.g. pdf,doc" class="optional css class for html list"]
-Version: 0.3
+Version: 0.4
 Author: Adam Bissonnette
 Author URI: http://www.mediamanifesto.com
 */
@@ -20,7 +20,7 @@ class MM_FileList
 		extract( shortcode_atts( array(
 		'folder' => '',
 		'format' => 'li',
-		'types' => 'pdf,doc',
+		'types' => '',
         'class' => ''
 		), $atts ) );
 		
@@ -30,39 +30,54 @@ class MM_FileList
 		
 		$typesToList = explode(",", $types);
 		$files = scandir($dir);
-		$list = array();
-		
-		foreach($files as $file)
-		{
-			$path_parts = pathinfo($file);
 
-            if (isset($path_parts['extension'])) //check for folders - don't list them
-            {
-    			$extension = $path_parts['extension'];
-    			
-    			if($file != '.' && $file != '..' && in_array($extension, $typesToList))
-    			{		 
-    				if(!is_dir($dir.'/'.$file))
-    				{
-    					array_push($list, array("name" => $file, "url" => $outputDir . "/" . $file, "size" => $this->human_filesize(filesize($dir . '/' . $file))));
-    				} 
-    			}
-            }
-		}
-        
         $output = "";
-        
-        switch($format){
-            case 'table':
-                return $this->_MakeTabularLIst($list, $class);
-            break;
-        	case 'comma':
-        	    $output = $this->_MakeCommaDelimitedList($list);
- 			break;
-            case 'li':
-            default:
-                return $this->_MakeUnorderedList($list, $class);
-            break;
+
+        if (!$files)
+        {
+            $output .= sprintf('<div class="mmm-warning">The folder "%s" was not found at: "%s".', $folder, $outputDir);
+        }
+        else
+        {
+    		$list = array();
+    		
+    		foreach($files as $file)
+    		{
+    			$path_parts = pathinfo($file);
+
+                if (isset($path_parts['extension'])) //check for folders - don't list them
+                {
+        			$extension = $path_parts['extension'];
+        			
+        			if($file != '.' && $file != '..' && in_array($extension, $typesToList))
+        			{		 
+        				if(!is_dir($dir.'/'.$file))
+        				{
+        					array_push($list, array("name" => $file, "url" => $outputDir . "/" . $file, "size" => $this->human_filesize(filesize($dir . '/' . $file))));
+        				} 
+        			}
+                }
+    		}
+            
+            if (count($list) == 0)
+            {
+                $output .= sprintf('<div class="mmm-warning">No files (of extension(s): "%s") found in: %s </div>', $types, $outputDir);
+            }
+            else
+            {
+                switch($format){
+                    case 'table':
+                        return $this->_MakeTabularLIst($list, $class);
+                    break;
+                	case 'comma':
+                	    $output = $this->_MakeCommaDelimitedList($list);
+         			break;
+                    case 'li':
+                    default:
+                        return $this->_MakeUnorderedList($list, $class);
+                    break;
+                }
+            }
         }
         
         return $output;
