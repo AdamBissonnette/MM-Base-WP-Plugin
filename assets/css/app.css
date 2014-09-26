@@ -7,6 +7,7 @@
   border-bottom: 3px solid black;
   border-left: 3px solid black;
   text-align: center;
+  vertical-align: middle;
 }
 .mmbc_wrapper tr td.first {
   border-left: 9px solid black;
