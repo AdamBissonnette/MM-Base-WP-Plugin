@@ -35,12 +35,11 @@ class Mmm_Bingo
 
 		//Custom Taxonomies
 		add_action( 'init', array(&$this, 'custom_taxonomies'));
-		
         add_shortcode("MMBingoCard", "MmmPluginToolsNamespace\MMBingoCard");
         
 		//Custom Meta
-		//add_action( 'admin_init', array(&$this, 'custom_metabox'));
-		//add_action( 'save_post', array(&$this, '_save_post`_meta'), 10, 2 );
+		add_action( 'admin_init', array(&$this, 'custom_metabox'));
+		add_action( 'save_post', array(&$this, '_save_post_meta'), 10, 2 );
     }
 
     static function Mmm_Bingo_install() {
@@ -79,17 +78,17 @@ class Mmm_Bingo
 
 	function taxonomy_meta($post, $data)
 	{
-		/* $options = $data["args"];
+		$options = $data["args"];
 
-		$values = get_post_meta($post->ID, $this->_meta_key, true);
+		$values = get_post_meta($post->ID, Mmm_Bingo::$_meta_key, true);
 
         //Enqueue styles / scripts
-        wp_enqueue_style('admin', get_template_directory_uri() . '/assets/admin/css/mmm_roots_admin.css', false, null);
-        wp_enqueue_style('select2', get_template_directory_uri() . '/assets/admin/css/select2.css', false, null);
-        wp_enqueue_script('select2', get_template_directory_uri() . '/assets/js/vendor/select2.js', false, null);
-        wp_enqueue_script('select2-sortable', get_template_directory_uri() . '/assets/js/vendor/select2.sortable.js', false, null); */
+        wp_enqueue_style('admin', plugins_url('/assets/css/mmm_roots_admin.css', __FILE__), false, null);
+        wp_enqueue_style('select2', plugins_url('/assets/css/select2.css', __FILE__), false, null);
+        wp_enqueue_script('select2', plugins_url('/assets/js/vendor/select2.js', __FILE__), false, null);
+        wp_enqueue_script('select2-sortable', plugins_url('/assets/js/vendor/select2.sortable.js', __FILE__), false, null);
 
-		//include_once('lib/ui/meta_post_ui.php');
+		include_once('lib/ui/meta_post_ui.php');
 	}
 
 	function create_menu_link()
