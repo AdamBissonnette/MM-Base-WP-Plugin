@@ -82,11 +82,10 @@ class Mmm_Bingo
 
 		$values = get_post_meta($post->ID, Mmm_Bingo::$_meta_key, true);
 
+		wp_enqueue_style('admin', plugins_url('/assets/css/admin.css', __FILE__), false, null);
+
         //Enqueue styles / scripts
-        wp_enqueue_style('admin', plugins_url('/assets/css/mmm_roots_admin.css', __FILE__), false, null);
-        wp_enqueue_style('select2', plugins_url('/assets/css/select2.css', __FILE__), false, null);
-        wp_enqueue_script('select2', plugins_url('/assets/js/vendor/select2.js', __FILE__), false, null);
-        wp_enqueue_script('select2-sortable', plugins_url('/assets/js/vendor/select2.sortable.js', __FILE__), false, null);
+		MmmToolsNamespace\load_admin_assets();
 
 		include_once('lib/ui/meta_post_ui.php');
 	}
@@ -168,14 +167,14 @@ class Mmm_Bingo
 
 	    $taxonomySlugs = array();
 
-		foreach ($taxonomies as $taxonomy) {
+		foreach ($mmm_bingo_taxonomies as $taxonomy) {
 			$taxonomySlugs[] = $taxonomy["slug"];
 		}
 
 	    if (in_array($post->post_type, $taxonomySlugs))
 	    {
 	   		$taxonomyKey = array_search($post->post_type, $taxonomySlugs);
-	   		$metafields = GetThemeDataFields($taxonomies[$taxonomyKey]["options"]);
+	   		$metafields = MmmToolsNamespace\GetThemeDataFields($mmm_bingo_taxonomies[$taxonomyKey]["options"]);
 
 			$metadata = array();
 
@@ -184,7 +183,7 @@ class Mmm_Bingo
 				$metadata[$fieldID] = $_POST[$fieldID];
 			}
 
-			update_post_meta( $post_id, $this->_meta_key, $metadata );
+			update_post_meta( $post_id, Mmm_Bingo::$_meta_key, $metadata );
 	    }
 	}
 
@@ -242,8 +241,7 @@ class Mmm_Bingo
 	*/
 	function get_post_meta($id, $key=null, $single = true)
 	{
-		$output = "";
-		$post_meta = get_post_meta($id, $this->_meta_key, $single);
+		$output = get_post_meta($id, Mmm_Bingo::$_meta_key, $single);
 
 		if ($key != null && isset($post_meta[$key]))
 		{

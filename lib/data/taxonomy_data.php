@@ -30,7 +30,7 @@
 											'not_found'           => 'No cards found',
 											'not_found_in_trash'  => 'No cards found in Trash',
 										),
-				'supports'            => array( 'title', 'editor' ),
+				'supports'            => array( 'title' ),
 				//'taxonomies'          => array( 'category', 'post_tag' ),
 				'hierarchical'        => false,
 				'public'              => true,
@@ -53,22 +53,20 @@
 								'name' => 'Bingo Card Options',
 								'size' => '10',
 								'fields' => array(
-									array('id' => 'tagline',
-										'label' => 'Tagline',
+									array('id' => 'usage',
+										'label' => 'Shortcode',
 										'type' => 'text',
-										'options' => array('note' => 'Note: This is display after / alongside the title of the section')),
-									array('id' => 'sectionID',
-										'label' => 'Section ID',
-										'type' => 'text',
-										'options' => array('note' => 'Note: This is the ID to use in conjunction with the navigation hashtag #SectionID')),
-									array('id' => 'inline-styles',
-										'label' => 'Inline Styles',
+										'options' => array('note' => 'Note: Copy this shortcode to the post / page you want to display it on.', 'disabled' => true, 'class' => 'large', 'default_value' => "[MMBingoCard id='{post_ID}' /]")),
+									array('id' => 'topics',
+										'label' => 'Topics',
 										'type' => 'textarea',
-										'options' => array('note' => 'Note: This allows you to directly modify the inline css styles on the Bingo Card for a background or anything',
-											'class' => 'span6')),
-									)
+										'options' => array('note' => 'Note: Each topic is delimited by the newline character.', 'class' => 'col-sm-12', 'rows' => '16')),
+									array('id' => 'icon',
+									'label' => 'Icon',
+									'type' => 'select',
+									'options' => array("class" => 'font-awesome', "data" => MmmToolsNamespace\getFontAwesomeSelectArray())))
+								)
 						)
-					)
 				)
 			)
 		)

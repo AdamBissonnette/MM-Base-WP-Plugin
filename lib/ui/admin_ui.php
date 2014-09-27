@@ -2,7 +2,7 @@
 	global $mmm_bingo_options, $mmm_plugin_data, $Mmm_Bingo;
 ?>
 
-<div class="mmpm_wrapper">
+<div class="mmb_wrapper">
 	<div class="container">
 		<div class="row">
 			<div class="col-sm-12">

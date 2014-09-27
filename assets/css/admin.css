@@ -123,6 +123,10 @@
 	color: #222 !important;
 }
 
+.mmm_postmeta_wrapper input.large {
+	width: 50% !important;
+}
+
 .mmm_postmeta_wrapper .error {
 	background-color: #FDDFDE !important;
 }
