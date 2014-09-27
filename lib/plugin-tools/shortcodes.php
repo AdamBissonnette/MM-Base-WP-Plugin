@@ -21,7 +21,16 @@ function MMBingoCard($atts)
             'class' => 'mmm-bingo-card'
         ), $atts));
 
-    $content = "";
+    if (isset($_GET["count"]))
+    {
+        if (is_numeric($_GET["count"]))
+        {
+            if ($_GET["count"] < 25)
+            {
+                $count = $_GET["count"];
+            }
+        }
+    }
 
     if ($id != 0)
     {
@@ -35,7 +44,7 @@ function MMBingoCard($atts)
                 $title = $post->post_title;
             }
 
-            $Topics = _sortTopics($card["topics"]);
+            $Topics = _formatTopics($card["topics"]);
             $CenterIcon = $card["icon"];
         }
         else
@@ -50,44 +59,60 @@ function MMBingoCard($atts)
         }
     }
 
-    $cardTemplate = '<div class="mmbc_wrapper"><h4>%s</h4><table id="mmbc-%s" class="BingoCard %s">%s</table></div>';
-    
+    $output = "";
+
     if (count($Topics) < 25)
     {
-        return "This bingo card has less than the required number of topics to be generated.";
+        $output = "This bingo card has less than the required number of topics to be generated.";
     }
     else
+    {   
+        for ($i = 0; $i < $count; $i++) {
+            $output .= _genBingoCard($id, $title, $Topics, $CenterIcon, $class);
+        }
+    }
+
+    return $output;
+}
+
+function _genBingoCard($id, $title, $Topics, $CenterIcon, $class)
+{
+    $Topics = _sortTopics($Topics);
+    $cardTemplate = '<div class="mmbc_wrapper"><h4>%s</h4><table id="mmbc-%s" class="BingoCard %s">%s</table></div>';
+    
+    $content = "";
+    
+    for ($i = 0; $i < 25; $i++)
     {
-        for ($i = 0; $i < 25; $i++)
+        if ($i == 0)
         {
-            if ($i == 0)
-            {
-                $content .= "<tr class=\"row-1\">";
-            }
-            else if ($i % 5 == 0)
-            {
-                $content .= sprintf("</tr>\n<tr class=\"row-%s\">\n", ($i / 5 + 1));
-            }
-        
-            $content .= _genCardSquare($Topics[$i], ($i % 5 == 0));
-        
-            if ($i == 11)
-            {
-                $content .= _genCenterSquare($CenterIcon);
-                $i++;
-            }
+            $content .= "<tr class=\"row-1\">";
+        }
+        else if ($i % 5 == 0)
+        {
+            $content .= sprintf("</tr>\n<tr class=\"row-%s\">\n", ($i / 5 + 1));
+        }
+    
+        $content .= _genCardSquare($Topics[$i], ($i % 5 == 0));
+    
+        if ($i == 11)
+        {
+            $content .= _genCenterSquare($CenterIcon);
+            $i++;
         }
     }
 
     return sprintf($cardTemplate, $title, $id, $class, $content);
 }
 
+function _formatTopics($Topics) {
+    return explode("\n", $Topics);
+}
+
 function _sortTopics($Topics) {
-    $SplitArray = explode("\n", $Topics);
+    shuffle($Topics);
     
-    shuffle($SplitArray);
-    
-    return array_slice($SplitArray, 0, 25);
+    return array_slice($Topics, 0, 25);
 }
 
 function _genCardSquare($Topic = "Star", $isFirstInRow = false)
