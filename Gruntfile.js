@@ -43,7 +43,7 @@ module.exports = function(grunt) {
     compress: {
       dist: {
         options: {
-          archive: './mmm-plugin.zip',
+          archive: './mmm-bingo.zip',
           mode: 'zip'
         },
         files: [

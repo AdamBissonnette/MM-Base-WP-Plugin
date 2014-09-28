@@ -2,7 +2,7 @@
   "name": "mmm-plugin",
   "version": "1.0.0",
   "core_version": 1.2,
-  "description": "MMMBingo",
+  "description": "Mmm Bingo",
   "tools_namespace": "mmmbingocore",
   "plugin_tools_namespace": "mmmbingoplugin",
   "private": true,
