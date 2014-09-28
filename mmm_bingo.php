@@ -40,6 +40,9 @@ class Mmm_Bingo
 		//Custom Meta
 		add_action( 'admin_init', array(&$this, 'custom_metabox'));
 		add_action( 'save_post', array(&$this, '_save_post_meta'), 10, 2 );
+
+        //Custom CSS for taxonomy icons
+        add_action('admin_head', array(&$this, 'custom_dashboard_css'));
     }
 
     static function Mmm_Bingo_install() {
@@ -53,6 +56,12 @@ class Mmm_Bingo
 
 		add_option(self::$_settings_key . "_versionnum", self::$_versionnum);
 	}
+
+    function custom_dashboard_css()
+    {
+        wp_enqueue_style('font-awesome', plugins_url('/mmm-bingo/assets/css/font-awesome.css'), false, null);
+        wp_enqueue_style('mmm_bingo_dashboard', plugins_url('/mmm-bingo/assets/css/dashboard.css'), false, null);
+    }
 
 	function custom_metabox(){
 		global $mmm_bingo_taxonomies;
@@ -82,7 +91,7 @@ class Mmm_Bingo
 
 		$values = get_post_meta($post->ID, Mmm_Bingo::$_meta_key, true);
 
-		wp_enqueue_style('admin', plugins_url('/assets/css/admin.css', __FILE__), false, null);
+		wp_enqueue_style('admin', plugins_url('/mmm-bingo/assets/css/admin.css', __FILE__), false, null);
 
         //Enqueue styles / scripts
 		MmmToolsNamespace\load_admin_assets();
@@ -92,8 +101,8 @@ class Mmm_Bingo
 
 	function create_menu_link()
     {
-        $this->menu_page = add_options_page(self::$_options_pagename . 'Options', self::$_options_pagename . 'Options',
-        'manage_options',self::$_options_pagename, array(&$this, 'build_settings_page'));
+        $this->menu_page = add_submenu_page( "edit.php?post_type=bingo-card", self::$_options_pagename . 'Options', 'Settings',
+            'manage_options', self::$_options_pagename, array(&$this, 'build_settings_page') );
     }
     
     function build_settings_page()
@@ -104,9 +113,9 @@ class Mmm_Bingo
         
         if (!has_action( 'wp_default_styles', 'bootstrap_admin_wp_default_styles' ))
         {
-	        wp_enqueue_style('bootstrap', plugins_url('/assets/css/bootstrap.css', __FILE__), false, null);
-	        wp_enqueue_script('jquery', plugins_url('/assets/js/jquery-1.9.1.min.js', __FILE__), false, null);        
-	        wp_enqueue_script('bootstrap', plugins_url('/assets/js/plugins.js', __FILE__), false, null);
+	        wp_enqueue_style('bootstrap', plugins_url('/mmm-bingo/assets/css/bootstrap.css', __FILE__), false, null);
+	        wp_enqueue_script('jquery', plugins_url('/mmm-bingo/assets/js/jquery-1.9.1.min.js', __FILE__), false, null);        
+	        wp_enqueue_script('bootstrap', plugins_url('/mmm-bingo/assets/js/plugins.js', __FILE__), false, null);
         }
         
   		wp_enqueue_script('adminjs', plugins_url('/assets/js/formtools.js', __FILE__), false, null);
