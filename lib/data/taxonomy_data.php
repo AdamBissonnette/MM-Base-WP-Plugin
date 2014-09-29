@@ -56,7 +56,7 @@
 									array('id' => 'usage',
 										'label' => 'Shortcode',
 										'type' => 'text',
-										'options' => array('note' => 'Note: Copy this shortcode to the post / page you want to display it on.', 'disabled' => true, 'class' => 'large', 'default_value' => "[MMBingoCard id='{post_ID}' /]")),
+										'options' => array('note' => 'Note: Copy this shortcode to the post / page you want to display it on.', 'disabled' => true, 'class' => 'large', 'default_value' => _genBingoCardShortcode())),
 									array('id' => 'topics',
 										'label' => 'Topics',
 										'type' => 'textarea',
@@ -71,4 +71,18 @@
 			)
 		)
 	);
+
+	function _genBingoCardShortcode()
+	{
+		global $post;
+
+		$id = 0;
+
+		if (isset($post))
+		{
+			$id = $post->ID;
+		}
+
+		return sprintf("[MMBingoCard id='%s' /]", $id);
+	}
 ?>
