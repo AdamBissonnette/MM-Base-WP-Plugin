@@ -74,15 +74,8 @@
 
 	function _genBingoCardShortcode()
 	{
-		global $post;
+		$id = MmmToolsNamespace\getKeyValueFromArray($_REQUEST, "post", 0);
 
-		$id = 0;
-
-		if (isset($post))
-		{
-			$id = $post->ID;
-		}
-
-		return sprintf("[MMBingoCard id='%s' /]", $id);
+		return htmlspecialchars(sprintf('[MMBingoCard id="%s" /]', $id));
 	}
 ?>

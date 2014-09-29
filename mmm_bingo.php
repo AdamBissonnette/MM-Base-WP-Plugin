@@ -59,8 +59,8 @@ class Mmm_Bingo
 
     function custom_dashboard_css()
     {
-        wp_enqueue_style('font-awesome', plugins_url('/mmm-bingo/assets/css/font-awesome.css'), false, null);
-        wp_enqueue_style('mmm_bingo_dashboard', plugins_url('/mmm-bingo/assets/css/dashboard.css'), false, null);
+        wp_enqueue_style('font-awesome', $this->location_folder . '/assets/css/font-awesome.css', false, null);
+        wp_enqueue_style('mmm_bingo_dashboard', $this->location_folder . '/assets/css/dashboard.css', false, null);
     }
 
 	function custom_metabox(){
@@ -91,7 +91,7 @@ class Mmm_Bingo
 
 		$values = get_post_meta($post->ID, Mmm_Bingo::$_meta_key, true);
 
-		wp_enqueue_style('admin', plugins_url('/mmm-bingo/assets/css/admin.css', __FILE__), false, null);
+		wp_enqueue_style('admin', $this->location_folder . '/assets/css/admin.css', false, null);
 
         //Enqueue styles / scripts
 		MmmToolsNamespace\load_admin_assets();
