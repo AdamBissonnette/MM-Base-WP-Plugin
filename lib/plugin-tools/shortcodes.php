@@ -5,14 +5,8 @@ function MMBingoCard($atts)
 {
     global $Mmm_Bingo;
 
-    $admin_path = \MmmToolsNamespace\get_admin_folder_path();
-    
-    wp_enqueue_style('OpenSans', 'http://fonts.googleapis.com/css?family=Open+Sans', false, null);
-    wp_enqueue_style('Ewert', 'http://fonts.googleapis.com/css?family=Ewert', false, null);
-
     wp_enqueue_style('bingoapp', $Mmm_Bingo->location_folder . '/assets/css/app.css', false, null);
-    wp_enqueue_style('font-awesome', $admin_path . '/assets/css/font-awesome.css', false, null);
-
+    \MmmToolsNamespace\load_font_awesome()    
 
     extract( shortcode_atts( array(
             'id' => '0',
@@ -31,6 +25,12 @@ function MMBingoCard($atts)
             }
         }
     }
+
+    //Todo: Add text / heading font settings in here
+    wp_enqueue_style('OpenSans', 'http://fonts.googleapis.com/css?family=Open+Sans', false, null);
+    wp_enqueue_style('Ewert', 'http://fonts.googleapis.com/css?family=Ewert', false, null);
+
+    //Todo: Add block of style output for mmbc-$id color styles
 
     if ($id != 0)
     {
