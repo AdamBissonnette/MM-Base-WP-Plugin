@@ -110,7 +110,7 @@ class MM_FileList
 	function _MakeUnorderedList($list, $class)
 	{
 		//These templates could be set as editable / saveable options
-		$listTemplate = '<ul class="' . $class . '">%s</ul>';
+		$listTemplate = '<ul class="%s">%s</ul>';
 		$listItemTemplate = '<li><a href="%s"><span class="filename">%s</span><span class="filesize"> (%s)</span></a></li>';
 		
 		$items = "";
@@ -120,7 +120,7 @@ class MM_FileList
 			$items .= sprintf($listItemTemplate, $fileatts["url"], $fileatts["name"], $fileatts["size"]);
 		}
 		
-		return sprintf($listTemplate, $items);
+		return sprintf($listTemplate, $class, $items);
 	}
 
     function _MakeTabularList($list, $class)
