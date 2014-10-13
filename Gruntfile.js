@@ -23,6 +23,10 @@ module.exports = function(grunt) {
           to: '<%= pkg.description %>'
         },
         {
+          from: '@description@',
+          to: '<%= pkg.long_description %>'
+        },
+        {
           from: 'MmmToolsNamespace',
           to: '<%= pkg.tools_namespace %>'
         },

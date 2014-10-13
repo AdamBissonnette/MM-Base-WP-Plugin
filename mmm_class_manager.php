@@ -2,7 +2,7 @@
 /*
 Plugin Name: @plugin_name@
 Plugin URI: http://mediamanifesto.com/
-Description: Base plugin code for any Media Manifesto plugins (all js, css, php, for easy install of addons)
+Description: @description@
 Version: @version@
 Author: Adam Bissonnette
 Author URI: http://www.mediamanifesto.com/

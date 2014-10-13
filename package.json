@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "core_version": 1.2,
   "description": "MMMClassManager",
+  "long_description": "Generic description and things here...",
   "tools_namespace": "mmmroots",
   "plugin_tools_namespace": "mmmclassmanager",
   "private": true,
