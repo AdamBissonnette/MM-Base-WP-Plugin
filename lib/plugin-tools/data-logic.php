@@ -71,7 +71,8 @@ namespace MmmPluginToolsNamespace;
     
     function GetProductByName($pname)
     {
-        $curdate = date('Y-m-d H:i');
+        $curdate = MmmPluginToolsNamespace\getCurDate();
+        //$curdate = date('Y-m-d H:i');
         
         global $wpdb;
         $sql = sprintf("SELECT * FROM %s WHERE vcrName = '%s' AND tinDeleted = 0 AND dtmEndDate > '%s' ORDER BY dtmEndDate",
@@ -82,7 +83,8 @@ namespace MmmPluginToolsNamespace;
     
     function GetProductsByDescription($pdesc)
     {
-        $curdate = date('Y-m-d H:i');
+        $curdate = MmmPluginToolsNamespace\getCurDate();
+        //$curdate = date('Y-m-d H:i');
     
         global $wpdb;
         $sql = sprintf("SELECT * FROM %s WHERE vcrDescription = '%s' AND tinDeleted = 0 AND dtmEndDate > '%s' ORDER BY dtmEndDate",
@@ -102,7 +104,8 @@ namespace MmmPluginToolsNamespace;
     
     function GetActiveProducts()
     {
-        $curdate = date('Y-m-d H:i');
+        //$curdate = date('Y-m-d H:i');
+        $curdate = MmmPluginToolsNamespace\getCurDate();
         
         global $wpdb;
         $sql = sprintf("SELECT * FROM %s WHERE tinDeleted = 0 AND dtmEndDate > '%s' ORDER BY dtmEndDate ASC LIMIT 100",
@@ -117,16 +120,8 @@ namespace MmmPluginToolsNamespace;
     {
         $active = true;
         
-        $curdate = date('Y-m-d H:i');
-        //echo $Product->dtmStartDate; 
-        if ($Product->dtmStartDate > $curdate)
-        {
-            $active = false;
-        }
-        elseif ($Product->dtmEndDate < $curdate)
-        {
-            $active = false;
-        }
+        $curdate = MmmPluginToolsNamespace\DateTools::getCurDate();
+        $active = MmmPluginToolsNamespace\DateTools::IsWithinRange($Product->dtmStartDate, $Product->dtmEndDate, $curdate);
         
         return $active;
     }
@@ -382,7 +377,9 @@ namespace MmmPluginToolsNamespace;
         
         //echo $InvoiceID . " " . $PurchaserID;
         
-        $curdate = date('Y-m-d H:i');
+        $curdate = MmmPluginToolsNamespace\DateTools::getCurDate();
+
+        //$curdate = date('Y-m-d H:i');
         
         $array = array(
                     'intPurchaserID' => $PurchaserID,
