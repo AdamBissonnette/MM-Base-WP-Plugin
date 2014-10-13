@@ -24,7 +24,7 @@ class Mmm_Class_Manager
     
     function Mmm_Class_Manager()
     {
-        $this->_settings = get_option(self::$_settings_key) ? get_option(self::$_settings_key) : array();
+        $this->_settings = get_option(Mmm_Class_Manager::$_settings_key) ? get_option(Mmm_Class_Manager::$_settings_key) : array();
         $this->location_folder = trailingslashit(WP_PLUGIN_URL) . dirname( plugin_basename(__FILE__) );
 
         add_action( 'admin_menu', array(&$this, 'create_menu_link') );
@@ -38,7 +38,7 @@ class Mmm_Class_Manager
         
         //Custom Meta
         add_action( 'admin_init', array(&$this, 'custom_metabox'));
-        add_action( 'save_post', array(&$this, '_save_post`_meta'), 10, 2 );
+        add_action( 'save_post', array(&$this, '_save_post_meta'), 10, 2 );
 
         //Conditionally enable admin-bar menu
         //if settings set - enable admin-bar
@@ -53,9 +53,15 @@ class Mmm_Class_Manager
         //Get default values from the theme data file if there are none
         //Mmm_Class_Manager::_set_standart_values($themeSettings);
         
-        MmmPluginToolsNamespace\create_tables(self::$_versionnum);
+        MmmPluginToolsNamespace\create_tables(Mmm_Class_Manager::$_versionnum);
 
-        add_option(self::$_settings_key . "_versionnum", self::$_versionnum);
+        add_option(Mmm_Class_Manager::$_settings_key . "_versionnum", Mmm_Class_Manager::$_versionnum);
+    }
+
+    function custom_dashboard_css()
+    {
+        MmmToolsNamespace\load_font_awesome();
+        wp_enqueue_style('dashboard', $this->location_folder . '/assets/css/dashboard.css', false, null);
     }
 
     function custom_metabox(){
@@ -84,20 +90,20 @@ class Mmm_Class_Manager
     {
         $options = $data["args"];
 
-        $values = get_post_meta($post->ID, $this->_meta_key, true);
-
-        wp_enqueue_style('admin', $this->location_folder . '/assets/css/admin.css', false, null);
+        $values = get_post_meta($post->ID, Mmm_Class_Manager::$_meta_key, true);
 
         //Enqueue styles / scripts
         MmmToolsNamespace\load_admin_assets();
+
+        wp_enqueue_style('mm-admin', $this->location_folder . '/assets/css/admin.css', false, null);
 
         include_once('lib/ui/meta_post_ui.php');
     }
 
     function create_menu_link()
     {
-        $this->menu_page = add_submenu_page( "edit.php?post_type=bingo-card", self::$_options_pagename . 'Options', 'Settings',
-            'manage_options', self::$_options_pagename, array(&$this, 'build_settings_page') );
+        $this->menu_page = add_submenu_page( "edit.php?post_type=mm-product", Mmm_Class_Manager::$_options_pagename . 'Options', 'Settings',
+            'manage_options', Mmm_Class_Manager::$_options_pagename, array(&$this, 'build_settings_page') );
     }
     
     function build_settings_page()
@@ -108,16 +114,14 @@ class Mmm_Class_Manager
         
         if (!has_action( 'wp_default_styles', 'bootstrap_admin_wp_default_styles' ))
         {
-            wp_enqueue_style('bootstrap', plugins_url('/mmm-bingo/assets/css/bootstrap.css', __FILE__), false, null);
-            wp_enqueue_script('jquery', plugins_url('/mmm-bingo/assets/js/jquery-1.9.1.min.js', __FILE__), false, null);        
-            wp_enqueue_script('bootstrap', plugins_url('/mmm-bingo/assets/js/plugins.js', __FILE__), false, null);
+            wp_enqueue_style('bootstrap', plugins_url('/assets/css/bootstrap.css', __FILE__), false, null);
+            wp_enqueue_script('jquery', plugins_url('/assets/js/jquery-1.9.1.min.js', __FILE__), false, null);        
+            wp_enqueue_script('bootstrap', plugins_url('/assets/js/plugins.js', __FILE__), false, null);
         }
         
         wp_enqueue_script('adminjs', plugins_url('/assets/js/formtools.js', __FILE__), false, null);
 
         MmmToolsNamespace\load_admin_assets();
-        
-        include_once('lib/ui/admin_ui.php');
         
         include_once('lib/ui/admin_ui.php');
     }
@@ -189,7 +193,7 @@ class Mmm_Class_Manager
                 $metadata[$fieldID] = $_POST[$fieldID];
             }
 
-            update_post_meta( $post_id, $this->_meta_key, $metadata );
+            update_post_meta( $post_id, Mmm_Class_Manager::$_meta_key, $metadata );
         }
     }
 
@@ -201,7 +205,7 @@ class Mmm_Class_Manager
     function _save_settings_todb($form_settings = '')
     {
         if ( $form_settings <> '' ) {
-            unset($form_settings[self::$_settings_key . '_saved']);
+            unset($form_settings[Mmm_Class_Manager::$_settings_key . '_saved']);
 
             $this->_settings = $form_settings;
 
@@ -209,7 +213,7 @@ class Mmm_Class_Manager
             $this->_set_standart_values($form_settings);
         }
         
-        update_option(self::$_settings_key, $this->_settings);
+        update_option(Mmm_Class_Manager::$_settings_key, $this->_settings);
     }
 
     function _set_standart_values($standart_values)
@@ -248,7 +252,7 @@ class Mmm_Class_Manager
     function get_post_meta($id, $key=null, $single = true)
     {
         $output = "";
-        $post_meta = get_post_meta($id, $this->_meta_key, $single);
+        $post_meta = get_post_meta($id, Mmm_Class_Manager::$_meta_key, $single);
 
         if ($key != null && isset($post_meta[$key]))
         {
@@ -264,7 +268,7 @@ register_activation_hook(__FILE__,array('Mmm_Class_Manager', 'Mmm_Class_Manager_
 add_action( 'init', 'Mmm_Class_Manager_Init', 5 );
 function Mmm_Class_Manager_Init()
 {
-    global $Mmm_Class_Manager, $MMM_Roots;
+    global $Mmm_Class_Manager;
     $Mmm_Class_Manager = new Mmm_Class_Manager();
 }
 ?>

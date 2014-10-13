@@ -45,12 +45,12 @@
                 'exclude_from_search' => true,
                 'publicly_queryable'  => true,
                 'capability_type'     => 'post',),
-            'options' => array(    array('name' => 'MM Product Options',
+            'options' => array(    array('name' => 'MM Product Meta',
                         'id' => 'mm-product',
                         'icon' => 'cog',
                         'sections' => array(
                             array(
-                                'name' => 'MM Product Options',
+                                'name' => 'MM Product Meta',
                                 'size' => '10',
                                 'fields' => array(
                                     array('id' => 'usage',

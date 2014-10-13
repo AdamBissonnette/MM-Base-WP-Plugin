@@ -43,7 +43,6 @@
 			</div>
 		</div>
 
-
 		<div class="modal fade" id="mm-dialog">
 			<div class="modal-dialog">
 				<div class="modal-content">
