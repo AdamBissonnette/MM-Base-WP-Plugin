@@ -16,9 +16,13 @@ function non_admin_ajax()
                 Buy($name, $quantity); //Outputs JSON
             break;
             case 'calid':
-                $data_back = json_decode (stripslashes($_REQUEST['calid']), true);
-                
-                echo GetCalendarUrl($_REQUEST['calid']['id']); //Outputs string url
+                try {
+                    $data_back = json_decode (stripslashes($_REQUEST['calid']), true);
+                    echo GetCalendarUrl($_REQUEST['calid']['id']); //Outputs string url
+                } catch(Exception $e)
+                {
+                    echo "NotImplemented.jpg";
+                }
             break;
         }
     }
@@ -94,9 +98,14 @@ function admin_ajax()
                 $this->_save_settings_todb($values);
             break;
             case 'calid':
-                $data_back = json_decode (stripslashes($_REQUEST['calid']), true);
-                
-                echo GetCalendarUrl($_REQUEST['calid']['id']); //Outputs string url
+                try
+                {
+                    $data_back = json_decode (stripslashes($_REQUEST['calid']), true);
+                    echo GetCalendarUrl($_REQUEST['calid']['id']); //Outputs string url
+                } catch(Exception $e)
+                {
+                    echo "NotImplemented.jpg";
+                }
             break;
             /* case 'testvalidate':
                 $invoiceid = $_REQUEST['testbuy']['id'];

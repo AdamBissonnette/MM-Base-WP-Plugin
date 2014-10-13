@@ -35,35 +35,13 @@
             'icon' => 'coffee',
             'sections' => array(
                 array(
-                    'name' => 'Add Class Type',
-                    'size' => '6',
-                    'fields' => array(
-                        array('id' => 'type_name',
-                            'label' => 'Class Name',
-                            'type' => 'text'),
-                        array('id' => 'type_code',
-                            'label' => 'Class Code',
-                            'type' => 'text'),
-                        array('id' => 'type_price',
-                            'label' => 'Price',
-                            'type' => 'text'),
-                        array('id' => 'type_size',
-                            'label' => 'Max Size',
-                            'type' => 'text' ),
-                        array('id' => 'type_post',
-                            'label' => 'Class Page',
-                            'type' => 'select',
-                            'options' => array("data" => MmmToolsNamespace\getPostsSelectArray(), "isMultiple" => false) ),
-                    )
-                ),
-                array(
                     'name' => 'List Class Types',
-                    'size' => '6',
+                    'size' => '12',
                     'fields' => array(
                         array('id' => 'class_type_list',
                             'label' => 'List Class Types',
-                            'type' => 'custom',
-                            'options' => array("function_ref" => "list_class_types"))
+                            'type' => 'html',
+                            'options' => array("data" => list_class_types()))
                     )
                 )
             )
@@ -105,3 +83,8 @@
             )
         )
     );
+
+function list_class_types()
+{
+    return "Classes~~~";
+}

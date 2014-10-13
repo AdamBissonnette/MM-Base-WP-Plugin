@@ -12,20 +12,6 @@ function create_tables($_versionnum)
         `intQuantity` int(11) NOT NULL,
         `decPrice` decimal(10,2) NOT NULL,
         `intNotifyQuantity` int(11) NOT NULL,
-        `tinDeleted` tinyint(1) NOT NULL DEFAULT '0',
-        `vcrUrl` varchar(100) NOT NULL DEFAULT '',
-        PRIMARY KEY (`intID`));",
-  $wpdb->prefix . "mmpm_product_template");
-  
-  \dbDelta($sql);
-
-  $sql = sprintf("CREATE TABLE IF NOT EXISTS  %s (
-        `intID` int(11) NOT NULL AUTO_INCREMENT,
-        `vcrName` varchar(100) COLLATE utf8_unicode_ci NOT NULL,
-        `vcrDescription` varchar(500) COLLATE utf8_unicode_ci NOT NULL,
-        `intQuantity` int(11) NOT NULL,
-        `decPrice` decimal(10,2) NOT NULL,
-        `intNotifyQuantity` int(11) NOT NULL,
         `dtmStartDate` datetime NOT NULL,
         `dtmEndDate` datetime NOT NULL,
         `tinDeleted` tinyint(1) NOT NULL DEFAULT '0',
