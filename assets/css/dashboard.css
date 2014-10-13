@@ -1,0 +1,2 @@
+#menu-posts-bingo-card .wp-menu-image {padding-top: 6px; height: 15px !important;}
+#menu-posts-bingo-card .wp-menu-image:after {font-family: FontAwesome; font-size: 18px; display: block; margin: 3px 0 0 0; color: yellow; content: "";}
