@@ -177,14 +177,14 @@ class Mmm_Class_Manager
 
         $taxonomySlugs = array();
 
-        foreach ($taxonomies as $taxonomy) {
+        foreach ($mmm_class_taxonomies as $taxonomy) {
             $taxonomySlugs[] = $taxonomy["slug"];
         }
 
         if (in_array($post->post_type, $taxonomySlugs))
         {
             $taxonomyKey = array_search($post->post_type, $taxonomySlugs);
-            $metafields = GetThemeDataFields($taxonomies[$taxonomyKey]["options"]);
+            $metafields = GetThemeDataFields($mmm_class_taxonomies[$taxonomyKey]["options"]);
 
             $metadata = array();
 
@@ -261,6 +261,21 @@ class Mmm_Class_Manager
         
         return $output;
     }
+
+    function get_post_variables($post)
+    {
+        $post_variables = array();
+
+        switch ($post->post_type) {
+            case 'mm-product':
+                $post_variables = array('{title}' => $post->post_title);
+                break;
+            default:
+                break;
+        }
+
+        return $post_variables;
+    }
 }
 
 register_activation_hook(__FILE__,array('Mmm_Class_Manager', 'Mmm_Class_Manager_install'));
@@ -269,6 +284,7 @@ add_action( 'init', 'Mmm_Class_Manager_Init', 5 );
 function Mmm_Class_Manager_Init()
 {
     global $Mmm_Class_Manager;
+
     $Mmm_Class_Manager = new Mmm_Class_Manager();
 }
 ?>
