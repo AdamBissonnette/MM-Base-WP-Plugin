@@ -105,7 +105,7 @@ namespace MmmPluginToolsNamespace;
     function GetActiveProducts()
     {
         //$curdate = date('Y-m-d H:i');
-        $curdate = MmmPluginToolsNamespace\getCurDate();
+        $curdate = \MmmToolsNamespace\DateTools::getCurDate();
         
         global $wpdb;
         $sql = sprintf("SELECT * FROM %s WHERE tinDeleted = 0 AND dtmEndDate > '%s' ORDER BY dtmEndDate ASC LIMIT 100",
@@ -120,8 +120,8 @@ namespace MmmPluginToolsNamespace;
     {
         $active = true;
         
-        $curdate = MmmPluginToolsNamespace\DateTools::getCurDate();
-        $active = MmmPluginToolsNamespace\DateTools::IsWithinRange($Product->dtmStartDate, $Product->dtmEndDate, $curdate);
+        $curdate = \MmmToolsNamespace\DateTools::getCurDate();
+        $active = \MmmToolsNamespace\DateTools::IsWithinRange($Product->dtmStartDate, $Product->dtmEndDate, $curdate);
         
         return $active;
     }
@@ -157,7 +157,10 @@ namespace MmmPluginToolsNamespace;
     function OutputProductList()
     {
         $Products = GetActiveProducts();
-    
+        $output = "";
+
+            ob_start(); //Since there isn't a nice way to get this content we have to use the output buffer
+
         if ($Products)
         {
         
@@ -225,8 +228,13 @@ namespace MmmPluginToolsNamespace;
         }
         else
         {
-            echo "Looks like you haven't added any Products.  Do that <a href=\"#\" onclick=\"javascript: ShowAddProduct()\">here</a>.";
+            echo "Looks like you haven't added any Classes yet.";
         }
+
+        $output = ob_get_contents();
+        ob_end_clean();
+
+        return $output;
     }
     
     function InsertProduct($Name, $Desc, $Price, $Max, $Notify, $Start, $End, $Url)

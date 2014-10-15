@@ -22,7 +22,12 @@ class Mmm_Class_Manager
     var $location_folder;
     var $menu_page;
     
-    function Mmm_Class_Manager()
+    function __construct()
+    {
+        //Building a better tomorrow
+    }
+
+    function init()
     {
         $this->_settings = get_option(Mmm_Class_Manager::$_settings_key) ? get_option(Mmm_Class_Manager::$_settings_key) : array();
         $this->location_folder = trailingslashit(WP_PLUGIN_URL) . dirname( plugin_basename(__FILE__) );
@@ -184,16 +189,30 @@ class Mmm_Class_Manager
         if (in_array($post->post_type, $taxonomySlugs))
         {
             $taxonomyKey = array_search($post->post_type, $taxonomySlugs);
-            $metafields = GetThemeDataFields($mmm_class_taxonomies[$taxonomyKey]["options"]);
+            $metafields = \MmmToolsNamespace\GetThemeDataFields($mmm_class_taxonomies[$taxonomyKey]["options"]);
 
             $metadata = array();
 
             foreach ($metafields as $field) {
+
                 $fieldID = $field["id"];
-                $metadata[$fieldID] = $_POST[$fieldID];
+
+                /*if ($metadata[$fieldID] != null)
+                {
+                    $metadata[$fieldID] .= "," . $fieldID;
+                }
+                else
+                {
+                    $metadata[$fieldID] = $fieldID;
+                }*/
+
+                $metadata[$fieldID] = $fieldID;
             }
 
-            update_post_meta( $post_id, Mmm_Class_Manager::$_meta_key, $metadata );
+            update_post_meta( $post_id, Mmm_Class_Manager::$_meta_key, $_REQUEST );
+
+            //TODO account for array data like multi select meta
+            //update_post_meta( $post_id, $this->_meta_key, array_map( 'strip_tags', $_REQUEST ) );
         }
     }
 
@@ -262,13 +281,17 @@ class Mmm_Class_Manager
         return $output;
     }
 
-    function get_post_variables($post)
+    static function get_post_variables($post)
     {
         $post_variables = array();
 
+        $post_meta = get_post_meta($post->ID, Mmm_Class_Manager::$_meta_key, true);
+
         switch ($post->post_type) {
             case 'mm-product':
-                $post_variables = array('{title}' => $post->post_title);
+                $price = MmmToolsNamespace\getStringValueFromArray($post_meta, "price");
+                $size = MmmToolsNamespace\getStringValueFromArray($post_meta, "class_size");
+                $post_variables = array('{title}' => $post->post_title, '{price}' => $price, '{class_size}' => $size);
                 break;
             default:
                 break;
@@ -284,7 +307,7 @@ add_action( 'init', 'Mmm_Class_Manager_Init', 5 );
 function Mmm_Class_Manager_Init()
 {
     global $Mmm_Class_Manager;
-
     $Mmm_Class_Manager = new Mmm_Class_Manager();
+    $Mmm_Class_Manager->init();
 }
 ?>

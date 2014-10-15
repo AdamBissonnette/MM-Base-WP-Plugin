@@ -58,7 +58,7 @@
                         array('id' => 'class_type',
                             'label' => 'Class Type',
                             'type' => 'select',
-                            'options' => array("data" => MmmToolsNamespace\getPostsSelectArray(), "isMultiple" => false)),
+                            'options' => array("data" => MmmToolsNamespace\getTaxonomySelectArray('mm-product'), "isMultiple" => false)),
                         array('id' => 'class_price_override',
                             'label' => 'Price (Override)',
                             'type' => 'text'),
@@ -76,8 +76,8 @@
                     'fields' => array(
                         array('id' => 'class_list',
                             'label' => 'List Classes',
-                            'type' => 'custom',
-                            'options' => array("function_ref" => "list_active_classes"))
+                            'type' => 'html',
+                            'options' => array("data" => list_upcoming_classes()))
                     )
                 )
             )
@@ -86,14 +86,36 @@
 
 function genPurchaseReport($state = 1)
 {
-    return MmmPluginToolsNamespace\genPurchaseReport($state);
+    return "";//MmmPluginToolsNamespace\genPurchaseReport($state);
 }
 
 function list_class_types()
 {
-    global $Mmm_Class_Manager;
-    $atts = array("taxonomy" => "mm-product");
+    /*$args = array('post_type' => 'mm-product', 'posts_per_page' => '-1');
+    $posts = get_posts($args);
 
-    return "Class data";
+    //$products = MmmToolsNamespace\getTaxonomySelectArray('mm-product');
+
+    $output = "";
+
+    foreach ($posts as $post)
+    {
+        $template = "<div>Title: {title} Price: ${price} Max Attendees: {class_size}</div>";
+        $vars = Mmm_Class_Manager::get_post_variables($post);
+
+        foreach ($vars as $key => $value) {
+            $template = str_replace($key, $value, $template);
+        }
+
+        $output .= $template;
+    }
+
+    return $output; */
+    return "";
     //return MmmToolsNamespace\ListTaxonomy($atts, null, $Mmm_Class_Manager);
+}
+
+function list_upcoming_classes()
+{
+    return "";//;MmmPluginToolsNamespace\OutputProductList();
 }

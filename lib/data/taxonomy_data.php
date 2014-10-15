@@ -69,7 +69,7 @@
                                         'label' => 'Price',
                                         'type' => 'text',
                                         'options' => array('note' => 'Note: Cost per purchase.', 'class' => 'large')),
-                                    array('id' => 'max_attendees',
+                                    array('id' => 'class_size',
                                         'label' => 'Max Attendees',
                                         'type' => 'text',
                                         'options' => array('note' => 'Note: ', 'class' => 'large')),
