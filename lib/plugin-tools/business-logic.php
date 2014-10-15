@@ -150,7 +150,7 @@ namespace MmmPluginToolsNamespace;
         return $output;
     }
 
-    function genPurchaseReport($pid = 0)
+    function genPurchaseReport($transactionType = 0, $limit = 100, $pid = 0)
     {
         global $wpdb;
 
@@ -159,19 +159,19 @@ namespace MmmPluginToolsNamespace;
                 JOIN wp_mmpm_purchase pu ON li.intPurchaseID = pu.intID
                 JOIN wp_mmpm_purchaser pur ON pu.intPurchaserID = pur.intID
                 JOIN wp_mmpm_product po ON po.intID = li.intProductID
-                WHERE po.tinDeleted = 0
-                ORDER BY pu.dtmDate DESC LIMIT 100";
-        
+                WHERE po.tinDeleted = 0";
+
+        if ($transactionType != 0) //1 == Valid, 2 == Pending, 3 == Invalid
+        {
+            $sql .= sprintf(" AND pu.intValid = %s", $transactionType);
+        }
+
         if ($pid != 0)
         {
-            $sql = "SELECT pu.vcrInvoiceNumber, po.vcrName, li.intQuantity,  pur.vcrJSON, pu.intValid, pu.dtmDate, pur.vcrIP
-                FROM wp_mmpm_lineitem li
-                JOIN wp_mmpm_purchase pu ON li.intPurchaseID = pu.intID
-                JOIN wp_mmpm_purchaser pur ON pu.intPurchaserID = pur.intID
-                JOIN wp_mmpm_product po ON po.intID = li.intProductID
-                WHERE po.tinDeleted = 0 AND li.intProductID = " . $pid .
-                " ORDER BY pu.dtmDate DESC LIMIT 20";
+            $sql .= sprintf(" AND li.intProductID = %s", $pid);
         }
+
+        $sql .= sprintf(" ORDER BY pu.dtmDate DESC LIMIT %s", $limit);
 
         $result = $wpdb->get_results($sql);
     
@@ -180,6 +180,7 @@ namespace MmmPluginToolsNamespace;
         if (!$result) {
         //die("Query to show fields from table failed " . $pid);
         //Not sure why we kill this here...
+            $message = "There are no purchases in the system at this point to display.";
         }
         else
         {

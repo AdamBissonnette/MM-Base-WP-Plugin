@@ -13,18 +13,18 @@
                     'fields' => array(
                         array('id' => 'class-report',
                             'label' => 'Class Report',
-                            'type' => 'custom',
-                            'options' => array("function_ref" => "report_success"))
+                            'type' => 'html',
+                            'options' => array("data" => genPurchaseReport()))
                     )
                 ),
                 array(
-                    'name' => 'Failed Transactions',
+                    'name' => 'Pending Transactions',
                     'size' => '6',
                     'fields' => array(
                         array('id' => 'class-report',
                             'label' => 'Class Report',
-                            'type' => 'custom',
-                            'options' => array("function_ref" => "report_failure"))
+                            'type' => 'html',
+                            'options' => array("data" => genPurchaseReport(2)))
                     )
                 )
             )
@@ -84,7 +84,16 @@
         )
     );
 
+function genPurchaseReport($state = 1)
+{
+    return MmmPluginToolsNamespace\genPurchaseReport($state);
+}
+
 function list_class_types()
 {
-    return "Classes~~~";
+    global $Mmm_Class_Manager;
+    $atts = array("taxonomy" => "mm-product");
+
+    return "Class data";
+    //return MmmToolsNamespace\ListTaxonomy($atts, null, $Mmm_Class_Manager);
 }
