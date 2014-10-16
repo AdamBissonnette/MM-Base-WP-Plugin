@@ -1,6 +1,6 @@
 {
   "name": "mmm-plugin",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "core_version": 1.2,
   "description": "MMMClassManager",
   "long_description": "Generic description and things here...",

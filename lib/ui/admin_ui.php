@@ -1,5 +1,5 @@
 <?php
-	global $mmm_class_options, $mmm_plugin_data, $Mmm_Class_Manager;
+	global $Mmm_Class_Manager;
 ?>
 
 <div class="mmpm_wrapper">

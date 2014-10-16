@@ -25,10 +25,6 @@ class Mmm_Class_Manager
     function __construct()
     {
         //Building a better tomorrow
-    }
-
-    function init()
-    {
         $this->_settings = get_option(Mmm_Class_Manager::$_settings_key) ? get_option(Mmm_Class_Manager::$_settings_key) : array();
         $this->location_folder = trailingslashit(WP_PLUGIN_URL) . dirname( plugin_basename(__FILE__) );
 
@@ -42,7 +38,7 @@ class Mmm_Class_Manager
         add_action( 'init', array(&$this, 'custom_taxonomies'));
         
         //Custom Meta
-        add_action( 'admin_init', array(&$this, 'custom_metabox'));
+        add_action( 'add_meta_boxes', array(&$this, 'custom_metabox'));
         add_action( 'save_post', array(&$this, '_save_post_meta'), 10, 2 );
 
         //Conditionally enable admin-bar menu
@@ -70,19 +66,19 @@ class Mmm_Class_Manager
     }
 
     function custom_metabox(){
-        global $mmm_class_taxonomies;
+        include_once('lib/data/taxonomy_data.php');
 
         foreach ($mmm_class_taxonomies as $taxonomy)
         {
             add_meta_box("mmm_post_meta", "Meta", array(&$this, "taxonomy_meta"), $taxonomy["slug"], "normal", "low", $taxonomy["options"]);
-        }   
+        }
     }
 
     function custom_taxonomies()
     {
-        global $mmm_class_taxonomies;
+        global $mmm_class_taxonomy_registration;
 
-        foreach ($mmm_class_taxonomies as $taxonomy) 
+        foreach ($mmm_class_taxonomy_registration as $taxonomy) 
         {
             if (isset($taxonomy["registration-args"]))
             {
@@ -101,6 +97,8 @@ class Mmm_Class_Manager
         MmmToolsNamespace\load_admin_assets();
 
         wp_enqueue_style('mm-admin', $this->location_folder . '/assets/css/admin.css', false, null);
+
+        include_once('lib/data/taxonomy_data.php');
 
         include_once('lib/ui/meta_post_ui.php');
     }
@@ -128,6 +126,9 @@ class Mmm_Class_Manager
 
         MmmToolsNamespace\load_admin_assets();
         
+        include_once('lib/data/plugin_data.php');
+        include_once('lib/data/admin_data.php');
+
         include_once('lib/ui/admin_ui.php');
     }
 
@@ -138,31 +139,13 @@ class Mmm_Class_Manager
         return false;
     }
     
-    
     function _save()
     {
-        $isAdmin = $this->check_user_capability();
-        $this->do_callback($isAdmin);
-    }
-    
-    function do_callback($isAdmin)
-    {
-        if ($isAdmin)
+        if ($this->check_user_capability()) //if isAdmin
         {
-            $this->do_admin_function();
+            MmmPluginToolsNamespace::admin_ajax();
         }
 
-        $this->do_standard_function();
-    }
-
-    function do_admin_function()
-    {
-        MmmPluginToolsNamespace::admin_ajax();
-    }
-
-
-    function do_standard_function()
-    {
         MmmPluginToolsNamespace::non_admin_ajax();
     }
 
@@ -281,7 +264,7 @@ class Mmm_Class_Manager
         return $output;
     }
 
-    static function get_post_variables($post)
+    function get_post_variables($post)
     {
         $post_variables = array();
 
@@ -308,6 +291,5 @@ function Mmm_Class_Manager_Init()
 {
     global $Mmm_Class_Manager;
     $Mmm_Class_Manager = new Mmm_Class_Manager();
-    $Mmm_Class_Manager->init();
 }
 ?>

@@ -1,6 +1,4 @@
 <?php
-
-    global $mmm_plugin_data;
     $mmm_plugin_data = array(
         array('name' => 'Reports',
             'id' => 'reports',
@@ -86,12 +84,13 @@
 
 function genPurchaseReport($state = 1)
 {
-    return "";//MmmPluginToolsNamespace\genPurchaseReport($state);
+    return MmmPluginToolsNamespace\genPurchaseReport($state);
 }
 
 function list_class_types()
 {
-    /*$args = array('post_type' => 'mm-product', 'posts_per_page' => '-1');
+    global $Mmm_Class_Manager;
+    $args = array('post_type' => 'mm-product', 'posts_per_page' => '-1');
     $posts = get_posts($args);
 
     //$products = MmmToolsNamespace\getTaxonomySelectArray('mm-product');
@@ -100,8 +99,8 @@ function list_class_types()
 
     foreach ($posts as $post)
     {
-        $template = "<div>Title: {title} Price: ${price} Max Attendees: {class_size}</div>";
-        $vars = Mmm_Class_Manager::get_post_variables($post);
+        $template = "<div>Title: {title} Price: $ {price} Max Attendees: {class_size}</div>";
+        $vars = $Mmm_Class_Manager->get_post_variables($post);
 
         foreach ($vars as $key => $value) {
             $template = str_replace($key, $value, $template);
@@ -110,12 +109,11 @@ function list_class_types()
         $output .= $template;
     }
 
-    return $output; */
-    return "";
+    return $output;
     //return MmmToolsNamespace\ListTaxonomy($atts, null, $Mmm_Class_Manager);
 }
 
 function list_upcoming_classes()
 {
-    return "";//;MmmPluginToolsNamespace\OutputProductList();
+    return MmmPluginToolsNamespace\OutputProductList();
 }

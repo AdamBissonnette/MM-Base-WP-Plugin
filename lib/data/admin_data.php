@@ -5,7 +5,6 @@
 		Fields
 	*/
 
-	global $mmm_class_options;
 	$mmm_class_options = array(
 		array('name' => 'Class Manager Settings',
 			'id' => 'mmm_class_manager_settings',
