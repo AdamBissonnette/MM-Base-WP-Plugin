@@ -9,10 +9,11 @@
 
 	include_once('data/taxonomy_registration.php');
 
-	include_once('plugin-tools/ajax.php');
-	include_once('plugin-tools/business-logic.php');
-	include_once('plugin-tools/calendar-hooks.php');
-	include_once('plugin-tools/data-logic.php');
 	include_once('plugin-tools/setup.php');
+	include_once('plugin-tools/ajax.php');
+	include_once('plugin-tools/data-logic.php');
+	include_once('plugin-tools/business-logic.php');
+	include_once('plugin-tools/reporting-logic.php');
+	include_once('plugin-tools/calendar-hooks.php');
 	include_once('plugin-tools/shortcodes.php');
 ?>

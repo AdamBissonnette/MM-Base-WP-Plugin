@@ -274,7 +274,10 @@ class Mmm_Class_Manager
             case 'mm-product':
                 $price = MmmToolsNamespace\getStringValueFromArray($post_meta, "price");
                 $size = MmmToolsNamespace\getStringValueFromArray($post_meta, "class_size");
-                $post_variables = array('{title}' => $post->post_title, '{price}' => $price, '{class_size}' => $size);
+                $post_variables = array('{id}' => $post->ID,
+                                        '{title}' => $post->post_title,
+                                        '{price}' => $price,
+                                        '{class_size}' => $size);
                 break;
             default:
                 break;
