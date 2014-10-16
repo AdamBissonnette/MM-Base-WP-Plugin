@@ -89,28 +89,9 @@ function genPurchaseReport($state = 1)
 
 function list_class_types()
 {
-    global $Mmm_Class_Manager;
-    $args = array('post_type' => 'mm-product', 'posts_per_page' => '-1');
-    $posts = get_posts($args);
-
-    //$products = MmmToolsNamespace\getTaxonomySelectArray('mm-product');
-
-    $output = "";
-
-    foreach ($posts as $post)
-    {
-        $template = "<div>Title: {title} Price: $ {price} Max Attendees: {class_size}</div>";
-        $vars = $Mmm_Class_Manager->get_post_variables($post);
-
-        foreach ($vars as $key => $value) {
-            $template = str_replace($key, $value, $template);
-        }
-
-        $output .= $template;
-    }
-
-    return $output;
-    //return MmmToolsNamespace\ListTaxonomy($atts, null, $Mmm_Class_Manager);
+    $atts = array('taxonomy' => 'mm-product');
+    $template = "<div>Title: {title} Price: $ {price} Max Attendees: {class_size}</div>";
+    return MmmToolsNamespace\ListTaxonomy($atts, $template);
 }
 
 function list_upcoming_classes()

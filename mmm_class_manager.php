@@ -289,7 +289,15 @@ register_activation_hook(__FILE__,array('Mmm_Class_Manager', 'Mmm_Class_Manager_
 add_action( 'init', 'Mmm_Class_Manager_Init', 5 );
 function Mmm_Class_Manager_Init()
 {
-    global $Mmm_Class_Manager;
-    $Mmm_Class_Manager = new Mmm_Class_Manager();
+    global $MMM_Class_Manager;
+    global $MMM_Data_Library;
+
+    if ($MMM_Data_Library == null)
+    {
+        $MMM_Data_Library = array();
+    }
+
+    $MMM_Class_Manager = new Mmm_Class_Manager();
+    $MMM_Data_Library[] = $MMM_Class_Manager;
 }
 ?>
