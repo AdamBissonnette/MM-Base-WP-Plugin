@@ -3,16 +3,16 @@
         array('name' => 'Classes',
             'id' => 'classes',
             'type' => 1,
-            'icon' => 'beer',
+            'icon' => 'fa-graduation-cap',
             'sections' => array(
                 array(
                     'name' => 'Add Class',
-                    'size' => '6',
+                    'size' => '3',
                     'fields' => array(
                         array('id' => 'class_type',
                             'label' => 'Class Type',
                             'type' => 'select',
-                            'options' => array("data" => MmmToolsNamespace\getTaxonomySelectArray('mm-product'), "isMultiple" => false)),
+                            'options' => array("data" => MmmToolsNamespace\getTaxonomySelectArray('mm-class'), "isMultiple" => false, "addBlank" => true)),
                         array('id' => 'class_price_override',
                             'label' => 'Price (Override)',
                             'type' => 'text'),
@@ -21,12 +21,16 @@
                             'type' => 'text' ),
                         array('id' => 'class_data',
                             'label' => 'Class Date',
-                            'type' => 'text' )
+                            'type' => 'datetime' ),
+                        array('id' => 'add_class',
+                            'label' => 'Add Class',
+                            'type' => 'button',
+                            'options' => array('class' => 'btn-success', 'icon' => 'fa-plus') )
                     )
                 ),
                 array(
                     'name' => 'List Classes',
-                    'size' => '6',
+                    'size' => '9',
                     'fields' => array(
                         array('id' => 'class_list',
                             'label' => 'List Classes',
@@ -36,14 +40,35 @@
                 )
             )
         ),
-        array('name' => 'Reports',
+        array('name' => 'Class Templates',
+            'id' => 'class-types',
+            'type' => 1,
+            'icon' => 'fa-file-code-o',
+            'sections' => array(
+                array(
+                    'name' => 'List Class Types',
+                    'size' => '12',
+                    'fields' => array(
+                        array('id' => 'add_class_template',
+                            'label' => 'Add Class Template',
+                            'type' => 'button',
+                            'options' => array('class' => 'btn-success', 'icon' => 'fa-plus', 'href' => "post-new.php?post_type=mm-class") ),
+                        array('id' => 'class_type_list',
+                            'label' => 'List Class Types',
+                            'type' => 'html',
+                            'options' => array("data" => list_class_types()))
+                    )
+                )
+            )
+        ),
+        array('name' => 'Transaction Reports',
             'id' => 'reports',
             'type' => 1,
-            'icon' => 'info',
+            'icon' => 'fa-database',
             'sections' => array(
                 array(
                     'name' => 'Sales Activity',
-                    'size' => '6',
+                    'size' => '5',
                     'fields' => array(
                         array('id' => 'class-report',
                             'label' => 'Class Report',
@@ -53,29 +78,30 @@
                 ),
                 array(
                     'name' => 'Pending Transactions',
-                    'size' => '6',
+                    'size' => '5',
                     'fields' => array(
                         array('id' => 'class-report',
                             'label' => 'Class Report',
                             'type' => 'html',
                             'options' => array("data" => genPurchaseReport(2)))
                     )
-                )
-            )
-        ),
-        array('name' => 'Class Types',
-            'id' => 'class-types',
-            'type' => 1,
-            'icon' => 'coffee',
-            'sections' => array(
+                ),
                 array(
-                    'name' => 'List Class Types',
-                    'size' => '12',
+                    'name' => 'Filter',
+                    'size' => '2',
                     'fields' => array(
-                        array('id' => 'class_type_list',
-                            'label' => 'List Class Types',
-                            'type' => 'html',
-                            'options' => array("data" => list_class_types()))
+                        array('id' => 'lookup_class_id',
+                            'label' => 'Filter By Class ID',
+                            'type' => 'text',
+                            'options' => array("note" => "note: Leaving this blank will report all of the existing Transactions.")),
+                        array('id' => 'lookup_class_type',
+                            'label' => 'Filter By Class Type',
+                            'type' => 'select',
+                            'options' => array("data" => MmmToolsNamespace\getTaxonomySelectArray('mm-class'), "isMultiple" => false, "addBlank" => true)),
+                        array('id' => 'do_lookup',
+                            'label' => 'Lookup Class',
+                            'type' => 'button',
+                            'options' => array('class' => 'btn-success', 'icon' => 'fa-search') )
                     )
                 )
             )
@@ -89,11 +115,21 @@ function genPurchaseReport($state = 1)
 
 function list_class_types()
 {
-    $atts = array('taxonomy' => 'mm-product', 'wrap_template' => 'tr');
+    $atts = array('taxonomy' => 'mm-class', 'wrap_template' => 'tr');
     $list_wrapper = '<table class="table table-bordered table-striped"><tr><th>Name</th><th>Price</th><th>Max Size</th><th>Controls</th></tr>%s</table>';
-    $item_template = '<td><a href="post.php?post={id}&action=edit">{title}</a></td><td>$ {price}</td><td>{class_size}</td><td><a href="javascript: use_class_template({id});">Use Template</a> | <a href="post.php?post={id}&action=edit">Edit</a></td>';
-
+    $item_template = '<td><a href="post.php?post={id}&action=edit">{title}</a></td>
+    <td>$ {price}</td>
+    <td>{class_size}</td>
+    <td><a class="btn btn-success" id="usetemplate_{id}" class="use_template"><i class="fa fa-external-link fa-flip-horizontal"></i> Use Template</a>
+    <a class="btn btn-warning" href="post.php?post={id}&action=edit"><i class="fa fa-edit"></i> Edit</a>
+    <a class="btn btn-info" id="reporttemplate_{id}" class="do_template_report"><i class="fa fa-external-link-square"></i> View in Report</a></td>';
+    
     return sprintf($list_wrapper, MmmToolsNamespace\ListTaxonomy($atts, $item_template));
+}
+
+function add_class_template_link()
+{
+    return sprintf('<a href="post-new.php?post_type=mm-class" class="%s">Add Class Template</a>', "btn btn-primary");
 }
 
 function list_upcoming_classes()

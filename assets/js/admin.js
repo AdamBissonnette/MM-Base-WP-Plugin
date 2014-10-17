@@ -27,4 +27,9 @@ jQuery(document).ready(function($) {
 			SaveOptions(jQuery("form#theme_settings"));
 		}
 	});
+
+	$('.datetime').datepicker({
+		dateFormat: 'yy-mm-dd',
+		separator: ' '
+	});
 });

@@ -105,8 +105,11 @@ class Mmm_Class_Manager
 
     function create_menu_link()
     {
-        $this->menu_page = add_submenu_page( "edit.php?post_type=mm-product", Mmm_Class_Manager::$_options_pagename . 'Options', 'Settings',
-            'manage_options', Mmm_Class_Manager::$_options_pagename, array(&$this, 'build_settings_page') );
+        $this->menu_page = add_submenu_page( "edit.php?post_type=mm-class", Mmm_Class_Manager::$_options_pagename . 'Options', 'Classes / Reporting',
+            'manage_options', Mmm_Class_Manager::$_options_pagename . "_Classes", array(&$this, 'build_settings_page') );
+
+        $this->menu_page = add_submenu_page( "edit.php?post_type=mm-class", Mmm_Class_Manager::$_options_pagename . 'Options', 'Settings',
+            'manage_options', Mmm_Class_Manager::$_options_pagename . "_Admin", array(&$this, 'build_settings_page') );
     }
     
     function build_settings_page()
@@ -117,12 +120,14 @@ class Mmm_Class_Manager
         
         if (!has_action( 'wp_default_styles', 'bootstrap_admin_wp_default_styles' ))
         {
-            wp_enqueue_style('bootstrap', plugins_url('/assets/css/bootstrap.css', __FILE__), false, null);
+            wp_enqueue_style('bootstrap_css', plugins_url('/assets/css/bootstrap.css', __FILE__), false, null);
             wp_enqueue_script('jquery', plugins_url('/assets/js/jquery-1.9.1.min.js', __FILE__), false, null);        
-            wp_enqueue_script('bootstrap', plugins_url('/assets/js/plugins.js', __FILE__), false, null);
+            wp_enqueue_script('bootstrap_js', plugins_url('/assets/js/plugins.js', __FILE__), false, null);
         }
         
-        wp_enqueue_script('adminjs', plugins_url('/assets/js/formtools.js', __FILE__), false, null);
+        wp_enqueue_style('admin_css', plugins_url('/assets/css/admin.css', __FILE__), false, null);
+        wp_enqueue_script('formtools_js', plugins_url('/assets/js/formtools.js', __FILE__), false, null);
+        wp_enqueue_script('admin_js', plugins_url('/assets/js/admin.js', __FILE__), false, null);
 
         MmmToolsNamespace\load_admin_assets();
         
@@ -271,7 +276,7 @@ class Mmm_Class_Manager
         $post_meta = get_post_meta($post->ID, Mmm_Class_Manager::$_meta_key, true);
 
         switch ($post->post_type) {
-            case 'mm-product':
+            case 'mm-class':
                 $price = MmmToolsNamespace\getStringValueFromArray($post_meta, "price");
                 $size = MmmToolsNamespace\getStringValueFromArray($post_meta, "class_size");
                 $post_variables = array('{id}' => $post->ID,

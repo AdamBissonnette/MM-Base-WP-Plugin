@@ -33,7 +33,11 @@
 						array('id' => 'currency_code',
 							'label' => 'Currency Code',
 							'type' => 'text',
-							'options' => array( "placeholder" => 'CAD', "note" => "e.g. CAD, USD, GBP??" ))
+							'options' => array( "placeholder" => 'CAD', "note" => "e.g. CAD, USD, GBP??" )),
+						array('id' => 'use_paypal_sandbox',
+							'label' => 'Use the Paypal Sandbox',
+							'type' => 'checkbox',
+							'options' => array("note" => "note: This is a helpful setting if you want to test buying, selling and refunds through the paypal sandbox."))
 					)
 				),
 				array(

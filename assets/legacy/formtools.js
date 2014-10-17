@@ -1,3 +1,8 @@
+function FormToolsSetup()
+{	
+	CheckScripts();
+}
+
 function CheckScripts()
 {
 	if(typeof(jQuery)=='undefined'){
@@ -5,6 +10,34 @@ function CheckScripts()
 		loadjQuery.setAttribute("type","text/javascript");
 		loadjQuery.setAttribute("src","jquery-1.7.1.min.js");
 		document.getElementsByTagName("head")[0].appendChild(loadjQuery);
+	}
+}
+
+function updateSubtotal(code)
+{
+	var price = jQuery('#mmprice-' + code).val();
+	var quant = jQuery('#mmquant-' + code).val();
+	
+	if (!jQuery.isNumeric(price))
+	{
+		price = 0;
+	}
+	
+	if (!jQuery.isNumeric(quant))
+	{
+		quant = 0;
+	}
+	
+	var subtotal = (price * quant);
+	var formatted = '$' + (subtotal).formatMoney(2, '.', ',')
+	jQuery('#mmsubtotal-' + code).val(formatted);
+}
+
+function doBuy(code, url)
+{
+	if (ValidateForm(jQuery("#mmform-" + code)))
+	{
+		StoreJSON(code, url);
 	}
 }
 
@@ -43,9 +76,7 @@ function ValidateForm(Form)
 	if (IsValid == false)
 	{
 		Handle(Form, ErrorFields);
-		
-		ShowModal('Oops!', 'It looks like some of the fields you entered were incomplete or not formatted properly.  Please fix any fields highlighted in red and try submitting again.');
-
+		alert('There is an error in the form.  Please correct any fields highlight in red.');
 	}
 	
 	return IsValid;
@@ -134,6 +165,11 @@ function AddErrorClass(Field)
 	}
 }
 
+function bJSONS(key, value)
+{
+	return "\"" + key + "\": \"" + value + "\"";
+}
+
 function isEmpty(value)
 {
 	return value == '';
@@ -150,29 +186,27 @@ function Handle(Form, ErrorFields)
 	}
 }
 
-Number.prototype.formatMoney = function(c, d, t){
-var n = this, c = isNaN(c = Math.abs(c)) ? 2 : c, d = d == undefined ? "," : d, t = t == undefined ? "." : t, s = n < 0 ? "-" : "", i = parseInt(n = Math.abs(+n || 0).toFixed(c)) + "", j = (j = i.length) > 3 ? j % 3 : 0;
-   return s + (j ? i.substr(0, j) + t : "") + i.substr(j).replace(/(\d{3})(?=\d)/g, "jQuery1" + t) + (c ? d + Math.abs(n - i).toFixed(c).slice(2) : "");
- };
-
-jQuery(document).ready(function($) {
-	CheckScripts();
-	$('#mm-dialog').modal({
-  		show: false
-	});
-});
-
-
-function HideModal()
+/* Form Submit */
+function StoreJSON(code, url)
 {
-	jQuery('#mm-dialog').modal('hide');
+	var quant = jQuery("#mmquant-" + code).val();
+	
+	var info = '{"info":[{' + bJSONS("quant", quant) + ', ' + bJSONS("code", code) + '}]}';
+	
+	jQuery.post (url, { 'action':'do_ajax', 'fn':'buy', 'count':10, buy:info }, function(data){FinalizeForm(data)}, "json");
 }
 
-function ShowModal(title, message)
+function FinalizeForm(data)
 {
-	jQuery('#mm-dialog-title').html(title);
-	jQuery('#mm-dialog-message').html(message);
-	jQuery('#mm-dialog').modal('show');
+	if (data.g)
+	{
+		jQuery(data.form).attr('action', data.action);
+		jQuery(data.attr).html(data.html);
+		jQuery(data.submit).click();
+	}
+	else {
+		alert(data.gm);
+	}
 }
 
 function GetCalUrl(calid)
@@ -189,3 +223,12 @@ function GotCalUrl(data)
 		window.location.href = data;
 	}
 }
+Number.prototype.formatMoney = function(c, d, t){
+var n = this, c = isNaN(c = Math.abs(c)) ? 2 : c, d = d == undefined ? "," : d, t = t == undefined ? "." : t, s = n < 0 ? "-" : "", i = parseInt(n = Math.abs(+n || 0).toFixed(c)) + "", j = (j = i.length) > 3 ? j % 3 : 0;
+   return s + (j ? i.substr(0, j) + t : "") + i.substr(j).replace(/(\d{3})(?=\d)/g, "jQuery1" + t) + (c ? d + Math.abs(n - i).toFixed(c).slice(2) : "");
+ };
+
+/* Form Tools Setup */
+jQuery(document).ready(function() {
+	FormToolsSetup()
+});

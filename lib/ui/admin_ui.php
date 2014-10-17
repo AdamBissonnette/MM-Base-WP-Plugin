@@ -1,12 +1,28 @@
 <?php
 	global $MMM_Class_Manager;
+
+	$page = $_GET["page"];
+
+	$active_page = str_replace("Mmm_Class_Manager_", "", $page);
+
+	$plugin = "";
+	$admin = "";
+
+	switch ($active_page) {
+		case 'Classes':
+				$plugin = "active";
+			break;
+		case 'Admin':
+				$admin = "active";
+			break;
+	}
 ?>
 
 <div class="mmpm_wrapper">
 	<div class="container">
 		<div class="row">
 			<div class="col-sm-12">
-				<h3>MMM Class Manager Options</h3>
+				<h3>MmmClass Options</h3>
 			</div>
 		</div>
 
@@ -14,16 +30,16 @@
 		<div class="row">
 			<div class="col-sm-12">
 				<ul class="nav nav-pills">
-					<li class="active"><a href="#plugin" data-toggle="tab">Plugin Stuff</a></li>
-					<li><a href="#admin" data-toggle="tab">Admin</a></li>
+					<li class="<?php echo $plugin ?>"><a href="#plugin" data-toggle="tab">Classes / Reporting</a></li>
+					<li class="<?php echo $admin ?>"><a href="#admin" data-toggle="tab">Settings</a></li>
 				</ul>
 				<div class="row tab-content">
-					<div class="tab-pane active" id="plugin">
+					<div class="tab-pane <?php echo $plugin ?>" id="plugin">
 						<?php							
 							echo MmmToolsNamespace\OutputThemeData($mmm_plugin_data, null, $MMM_Class_Manager);
 						?>
 					</div>
-					<div class="tab-pane" id="admin">
+					<div class="tab-pane <?php echo $admin ?>" id="admin">
 						<form id="theme_settings" onsubmit="javascript: SaveOptions(this);" class="form-horizontal" method="post">
 							<?php							
 								echo MmmToolsNamespace\OutputThemeData($mmm_class_options, null, $MMM_Class_Manager);
