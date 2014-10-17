@@ -46,7 +46,7 @@
             'icon' => 'fa-file-code-o',
             'sections' => array(
                 array(
-                    'name' => 'List Class Types',
+                    'name' => 'List Class Templates',
                     'size' => '12',
                     'fields' => array(
                         array('id' => 'add_class_template',
