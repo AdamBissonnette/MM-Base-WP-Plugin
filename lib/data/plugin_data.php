@@ -120,10 +120,12 @@ function list_class_types()
     $item_template = '<td><a href="post.php?post={id}&action=edit">{title}</a></td>
     <td>$ {price}</td>
     <td>{class_size}</td>
-    <td><a class="btn btn-success" id="usetemplate_{id}" class="use_template"><i class="fa fa-external-link fa-flip-horizontal"></i> Use Template</a>
-    <a class="btn btn-warning" href="post.php?post={id}&action=edit"><i class="fa fa-edit"></i> Edit</a>
-    <a class="btn btn-info" id="reporttemplate_{id}" class="do_template_report"><i class="fa fa-external-link-square"></i> View in Report</a></td>';
+    <td>%s %s %s</td>';
     
+    $item_template = sprintf($item_template, MmmToolsNamespace\createLink("usetemplate_{id}", "Use Template", array("class" => "btn-success use_template", "icon" => "fa-external-link fa-flip-horizontal")),
+        MmmToolsNamespace\createLink("edittemplate_{id}", "Edit", array("class" => "btn-warning", "icon" => "fa-edit", "href" => "post.php?post={id}&action=edit")),
+        MmmToolsNamespace\createLink("reporttemplate_{id}", "Use Template", array("class" => "btn-info do_template_report", "icon" => "fa-external-link-square")));
+
     return sprintf($list_wrapper, MmmToolsNamespace\ListTaxonomy($atts, $item_template));
 }
 
