@@ -66,7 +66,8 @@ class Mmm_Class_Manager
     }
 
     function custom_metabox(){
-        include_once('lib/data/taxonomy_data.php');
+        global $mmm_class_taxonomies;
+        require_once('lib/data/taxonomy_data.php');
 
         foreach ($mmm_class_taxonomies as $taxonomy)
         {
@@ -89,6 +90,8 @@ class Mmm_Class_Manager
 
     function taxonomy_meta($post, $data)
     {
+        global $mmm_class_taxonomies;
+        require_once('lib/data/taxonomy_data.php');
         $options = $data["args"];
 
         $values = get_post_meta($post->ID, Mmm_Class_Manager::$_meta_key, true);
@@ -96,9 +99,7 @@ class Mmm_Class_Manager
         //Enqueue styles / scripts
         MmmToolsNamespace\load_admin_assets();
 
-        wp_enqueue_style('mm-admin', $this->location_folder . '/assets/css/admin.css', false, null);
-
-        include_once('lib/data/taxonomy_data.php');
+        wp_enqueue_style('mm-admin', $this->location_folder . '/assets/css/admin.css', false, null);        
 
         include_once('lib/ui/meta_post_ui.php');
     }
@@ -155,8 +156,9 @@ class Mmm_Class_Manager
     }
 
     function _save_post_meta( $post_id, $post ){
-        global $pagenow;
-        global $mmm_class_taxonomies;
+        global $pagenow, $mmm_class_taxonomies;
+
+        require_once('lib/data/taxonomy_data.php');
 
         if ( 'post.php' != $pagenow ) return $post_id;
         

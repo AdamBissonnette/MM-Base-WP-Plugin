@@ -1,4 +1,9 @@
 <?php
+
+    //build_data determines whether or not we want to run the database queries / do other processing for the data 
+    //since Sometimes this file will only be used for variable names and not for building forms
+    if (!isset($build_data)) $build_data = true;
+
     $mmm_plugin_data = array(
         array('name' => 'Classes',
             'id' => 'classes',
@@ -12,7 +17,7 @@
                         array('id' => 'class_type',
                             'label' => 'Class Type',
                             'type' => 'select',
-                            'options' => array("data" => MmmToolsNamespace\getTaxonomySelectArray('mm-class'), "isMultiple" => false, "addBlank" => true)),
+                            'options' => array("data" => _genClassTypeSelect($build_data), "isMultiple" => false, "addBlank" => true)),
                         array('id' => 'class_price_override',
                             'label' => 'Price (Override)',
                             'type' => 'text'),
@@ -35,7 +40,7 @@
                         array('id' => 'class_list',
                             'label' => 'List Classes',
                             'type' => 'html',
-                            'options' => array("data" => list_upcoming_classes()))
+                            'options' => array("data" => _genListUpcomingClasses($build_data)))
                     )
                 )
             )
@@ -56,7 +61,7 @@
                         array('id' => 'class_type_list',
                             'label' => 'List Class Types',
                             'type' => 'html',
-                            'options' => array("data" => list_class_types()))
+                            'options' => array("data" => _genListClassTypes($build_data)))
                     )
                 )
             )
@@ -73,7 +78,7 @@
                         array('id' => 'class-report',
                             'label' => 'Class Report',
                             'type' => 'html',
-                            'options' => array("data" => genPurchaseReport()))
+                            'options' => array("data" => _genPurchaseReport($build_data)))
                     )
                 ),
                 array(
@@ -83,7 +88,7 @@
                         array('id' => 'class-report',
                             'label' => 'Class Report',
                             'type' => 'html',
-                            'options' => array("data" => genPurchaseReport(2)))
+                            'options' => array("data" => _genPurchaseReport($build_data, 2)))
                     )
                 ),
                 array(
@@ -97,7 +102,7 @@
                         array('id' => 'lookup_class_type',
                             'label' => 'Filter By Class Type',
                             'type' => 'select',
-                            'options' => array("data" => MmmToolsNamespace\getTaxonomySelectArray('mm-class'), "isMultiple" => false, "addBlank" => true)),
+                            'options' => array("data" => _genClassTypeSelect($build_data), "isMultiple" => false, "addBlank" => true)),
                         array('id' => 'do_lookup',
                             'label' => 'Lookup Class',
                             'type' => 'button',
@@ -108,13 +113,24 @@
         )        
     );
 
-function genPurchaseReport($state = 1)
+function _genClassTypeSelect($build_data)
 {
+    if (!$build_data) return false;
+
+    return MmmToolsNamespace\getTaxonomySelectArray('mm-class');
+}
+
+function _genPurchaseReport($build_data, $state = 1)
+{
+    if (!$build_data) return false;
+
     return MmmPluginToolsNamespace\genPurchaseReport($state);
 }
 
-function list_class_types()
+function _genListClassTypes($build_data)
 {
+    if (!$build_data) return false;
+
     $atts = array('taxonomy' => 'mm-class', 'wrap_template' => 'tr');
     $list_wrapper = '<table class="table table-bordered table-striped"><tr><th>Name</th><th>Price</th><th>Max Size</th><th>Controls</th></tr>%s</table>';
     $item_template = '<td><a href="post.php?post={id}&action=edit">{title}</a></td>
@@ -124,17 +140,19 @@ function list_class_types()
     
     $item_template = sprintf($item_template, MmmToolsNamespace\createLink("usetemplate_{id}", "Use Template", array("class" => "btn-success use_template", "icon" => "fa-external-link fa-flip-horizontal")),
         MmmToolsNamespace\createLink("edittemplate_{id}", "Edit", array("class" => "btn-warning", "icon" => "fa-edit", "href" => "post.php?post={id}&action=edit")),
-        MmmToolsNamespace\createLink("reporttemplate_{id}", "Use Template", array("class" => "btn-info do_template_report", "icon" => "fa-external-link-square")));
+        MmmToolsNamespace\createLink("reporttemplate_{id}", "Filter Report by Template", array("class" => "btn-info do_template_report", "icon" => "fa-external-link-square")));
 
     return sprintf($list_wrapper, MmmToolsNamespace\ListTaxonomy($atts, $item_template));
 }
 
-function add_class_template_link()
+function _genAddClassTemplateLink($build_data)
 {
+    if (!$build_data) return false;
+
     return sprintf('<a href="post-new.php?post_type=mm-class" class="%s">Add Class Template</a>', "btn btn-primary");
 }
 
-function list_upcoming_classes()
+function _genListUpcomingClasses($build_data)
 {
     return MmmPluginToolsNamespace\OutputProductList();
 }

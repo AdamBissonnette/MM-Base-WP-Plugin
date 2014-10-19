@@ -7,6 +7,7 @@
 		placeholder - placeholder text
 		rows - text area only rows attribute
 	*/
+    global $mmm_class_taxonomies;
 
 	$mmm_class_taxonomies = array(
         array('slug' => 'mm-class',

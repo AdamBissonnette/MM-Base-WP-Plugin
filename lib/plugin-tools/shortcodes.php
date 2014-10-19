@@ -107,4 +107,11 @@ function GenerateProductRow($product)
     return $output;
 }
 
+function _genShortcode()
+{
+    $id = MmmToolsNamespace\getKeyValueFromArray($_REQUEST, "post", 0);
+
+    return htmlspecialchars(sprintf('[MMClassGroup id="%s" /]', $id));
+}
+
 ?>
