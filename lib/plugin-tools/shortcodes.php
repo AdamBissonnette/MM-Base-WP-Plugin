@@ -1,6 +1,10 @@
 <?php
 namespace MmmPluginToolsNamespace;
 
+if ( ! defined( 'ABSPATH' ) ) { 
+    exit; // Exit if accessed directly
+}
+
 function MMProductGroup($atts, $content = null)
 {
     //add_action( 'wp_print_scripts', array(&$this, 'plugin_js') );

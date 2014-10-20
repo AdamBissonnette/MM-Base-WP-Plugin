@@ -1,6 +1,10 @@
 <?php
 namespace MmmPluginToolsNamespace;
 
+if ( ! defined( 'ABSPATH' ) ) { 
+    exit; // Exit if accessed directly
+}
+
 function create_tables($_versionnum)
 {
   global $wpdb;

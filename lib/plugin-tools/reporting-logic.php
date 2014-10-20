@@ -1,6 +1,11 @@
 <?php
     namespace MmmPluginToolsNamespace;
 
+if ( ! defined( 'ABSPATH' ) ) { 
+    exit; // Exit if accessed directly
+}
+
+
     function genPurchaseReport($transactionType = 0, $limit = 100, $pid = 0)
     {
         global $wpdb;

@@ -1,6 +1,11 @@
 <?php
 namespace MmmPluginToolsNamespace;
 
+if ( ! defined( 'ABSPATH' ) ) { 
+    exit; // Exit if accessed directly
+}
+
+
     function Ajax_Calendar_Insert($input) {
         try {
         global $wpdb;

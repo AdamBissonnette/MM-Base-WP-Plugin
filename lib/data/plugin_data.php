@@ -1,4 +1,7 @@
 <?php
+if ( ! defined( 'ABSPATH' ) ) { 
+    exit; // Exit if accessed directly
+}
 
     //build_data determines whether or not we want to run the database queries / do other processing for the data 
     //since Sometimes this file will only be used for variable names and not for building forms

@@ -77,9 +77,9 @@ class Mmm_Class_Manager
 
     function custom_taxonomies()
     {
-        global $mmm_class_taxonomy_registration;
+        global $mmm_class_taxonomies;
 
-        foreach ($mmm_class_taxonomy_registration as $taxonomy) 
+        foreach ($mmm_class_taxonomies as $taxonomy) 
         {
             if (isset($taxonomy["registration-args"]))
             {
@@ -294,20 +294,24 @@ class Mmm_Class_Manager
     }
 }
 
-register_activation_hook(__FILE__,array('Mmm_Class_Manager', 'Mmm_Class_Manager_install'));
+if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', get_option( 'active_plugins' ) ) ) ) {
+    register_activation_hook(__FILE__,array('Mmm_Class_Manager', 'Mmm_Class_Manager_install'));
 
-add_action( 'init', 'Mmm_Class_Manager_Init', 5 );
-function Mmm_Class_Manager_Init()
-{
-    global $MMM_Class_Manager;
-    global $MMM_Data_Library;
-
-    if ($MMM_Data_Library == null)
+    add_action( 'init', 'Mmm_Class_Manager_Init', 5 );
+    function Mmm_Class_Manager_Init()
     {
-        $MMM_Data_Library = array();
-    }
+        global $MMM_Class_Manager;
+        global $MMM_Data_Library;
 
-    $MMM_Class_Manager = new Mmm_Class_Manager();
-    $MMM_Data_Library[] = $MMM_Class_Manager;
+        if ($MMM_Data_Library == null)
+        {
+            $MMM_Data_Library = array();
+        }
+
+        $MMM_Class_Manager = new Mmm_Class_Manager();
+        $MMM_Data_Library[] = $MMM_Class_Manager;
+    }
 }
+
+
 ?>

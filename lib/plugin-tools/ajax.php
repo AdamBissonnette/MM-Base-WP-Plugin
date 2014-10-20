@@ -1,6 +1,11 @@
 <?php
 namespace MmmPluginToolsNamespace;
 
+if ( ! defined( 'ABSPATH' ) ) { 
+    exit; // Exit if accessed directly
+}
+
+
 function non_admin_ajax()
 {
     if (!$this->check_user_capability())

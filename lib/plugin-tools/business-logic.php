@@ -1,6 +1,11 @@
 <?php
 namespace MmmPluginToolsNamespace;
 
+if ( ! defined( 'ABSPATH' ) ) { 
+    exit; // Exit if accessed directly
+}
+
+
     function HandleIPN($invoiceid, $value, $json, $pemail)
     {
         $purchase = SelectPurchaseByInvoiceID($invoiceid); 

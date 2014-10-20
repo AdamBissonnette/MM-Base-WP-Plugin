@@ -1,4 +1,7 @@
 <?php
+if ( ! defined( 'ABSPATH' ) ) { 
+    exit; // Exit if accessed directly
+}
 global $mmm_class_taxonomy_registration;
 
 $mmm_class_taxonomy_registration = array(array('slug' => 'mm-class',

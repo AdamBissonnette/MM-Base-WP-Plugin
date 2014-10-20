@@ -7,7 +7,7 @@
 	include_once('tools/wp-tools.php');
 	include_once('tools/shortcodes.php');
 
-	include_once('data/taxonomy_registration.php');
+	include_once('data/taxonomy_data.php');
 
 	include_once('plugin-tools/setup.php');
 	include_once('plugin-tools/ajax.php');
