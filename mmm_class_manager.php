@@ -294,23 +294,71 @@ class Mmm_Class_Manager
     }
 }
 
-if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', get_option( 'active_plugins' ) ) ) ) {
-    register_activation_hook(__FILE__,array('Mmm_Class_Manager', 'Mmm_Class_Manager_install'));
+//if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', get_option( 'active_plugins' ) ) ) ) {
+register_activation_hook(__FILE__,array('Mmm_Class_Manager', 'Mmm_Class_Manager_install'));
 
-    add_action( 'init', 'Mmm_Class_Manager_Init', 5 );
-    function Mmm_Class_Manager_Init()
+add_action( 'init', 'Mmm_Class_Manager_Init', 5 );
+function Mmm_Class_Manager_Init()
+{
+    global $MMM_Class_Manager;
+    global $MMM_Data_Library;
+
+    if ($MMM_Data_Library == null)
     {
-        global $MMM_Class_Manager;
-        global $MMM_Data_Library;
-
-        if ($MMM_Data_Library == null)
-        {
-            $MMM_Data_Library = array();
-        }
-
-        $MMM_Class_Manager = new Mmm_Class_Manager();
-        $MMM_Data_Library[] = $MMM_Class_Manager;
+        $MMM_Data_Library = array();
     }
+
+    $MMM_Class_Manager = new Mmm_Class_Manager();
+    $MMM_Data_Library[] = $MMM_Class_Manager;
+
+    if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', get_option( 'active_plugins' ) ) ) ) {
+        add_action('woocommerce_product_options_general_product_data','mmm_custom_general_fields_add');
+        // Save Fields
+        add_action( 'woocommerce_process_product_meta', 'mmm_custom_general_fields_save' );
+
+        add_filter( 'woocommerce_is_purchasable', 'custom_woocommerce_is_purchasable', 10, 2 );
+    }
+}
+
+function custom_woocommerce_is_purchasable( $purchasable, $product ){
+    $bbdValue = get_post_meta( $product->post->ID, '_best_before', true );
+    $bbdDate = strtotime($bbdValue);
+
+    if ($bbdDate)
+    {
+        if( strtotime("now") > $bbdDate )
+            $purchasable = false;
+    }
+
+    return $purchasable;
+}
+
+function mmm_custom_general_fields_add(){
+  global $woocommerce, $post;
+
+  $bbdValue = get_post_meta( $post->ID, '_best_before', true );
+
+  echo '<p class="form-field _best_before_event_field ">
+        <label for="_best_before">Best Before Date</label>
+        <input type="text" class="short" name="_best_before" id="_best_before" value="' . $bbdValue . '" placeholder="YYYY-MM-DD" maxlength="10" pattern="[0-9]{4}-(0[1-9]|1[012])-(0[1-9]|1[0-9]|2[0-9]|3[01])">
+        <span class="description">Disable purchasing after this date. Leave blank to run indefinitely.</span>
+        </p>';
+  echo '<script type="text/javascript">// DATE PICKER FIELDS
+  jQuery(function($) {$( "._best_before_event_field input" ).datepicker({
+        defaultDate: "",
+        dateFormat: "yy-mm-dd",
+        numberOfMonths: 1,
+        showButtonPanel: true,
+        showOn: "button",
+        buttonImage: woocommerce_admin_meta_boxes.calendar_image,
+        buttonImageOnly: true})});</script>';
+}
+
+function mmm_custom_general_fields_save($post_id)
+{
+    // Custom Field
+    $best_before_date =  esc_attr( $_POST['_best_before'] );
+    update_post_meta( $post_id, '_best_before', $best_before_date );
 }
 
 
