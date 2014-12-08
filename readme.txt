@@ -45,7 +45,7 @@ If you have you disabled the setting to store uploads in the /mm/yy/ folder stru
 
 [MMFileList folder="/cats/" format="table" types="png" /]
 
-This will result in a tabular list of all .png files in the /wp-content/uploads/cats/ folder.  It's important to ensure that you add the first "/" in that folder attribute to ensure you don't end up with the system looks for a directory like /wp-content/uploadscats/.
+This will result in a tabular list of all .png files in the /wp-content/uploads/cats/ folder.
 
 
 == Installation ==
