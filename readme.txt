@@ -84,6 +84,10 @@ If you want to remove the warning text that is output when folders / files are n
 
 == Changelog ==
 
+= 0.6a =
+
+* Added slightly more robust path code so trailing / preceeding slashes aren't so tricky to work with.  e.g. say you want to load files from a folder called "cats".  You can now simply have folder="cats" instead of having to include the first slash "/cats" and having to avoid using the trailing slash "/cats/".  Any variation should work along with handling of cases when too many slashes are added "//cats//".
+
 = 0.6 =
 
 * Reworked how the class parameter is passed through the code so more information can be sent along with it
