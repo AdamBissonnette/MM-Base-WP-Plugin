@@ -189,7 +189,11 @@ class Mmm_Bingo
 
 			foreach ($metafields as $field) {
 				$fieldID = $field["id"];
-				$metadata[$fieldID] = $_POST[$fieldID];
+                
+                if (isset($_POST[$fieldID]))
+                {
+				    $metadata[$fieldID] = $_POST[$fieldID];
+                }
 			}
 
 			update_post_meta( $post_id, Mmm_Bingo::$_meta_key, $metadata );

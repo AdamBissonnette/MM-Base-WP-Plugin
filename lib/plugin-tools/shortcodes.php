@@ -6,7 +6,7 @@ function MMBingoCard($atts)
     global $Mmm_Bingo;
 
     wp_enqueue_style('bingoapp', $Mmm_Bingo->location_folder . '/assets/css/app.css', false, null);
-    \MmmToolsNamespace\load_font_awesome()    
+    \MmmToolsNamespace\load_font_awesome();
 
     extract( shortcode_atts( array(
             'id' => '0',
