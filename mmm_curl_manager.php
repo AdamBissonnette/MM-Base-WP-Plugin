@@ -58,11 +58,11 @@ class Mmm_Curl_Manager
 
     function create_menu_link()
     {
-        $this->menu_page = add_submenu_page( "edit.php?post_type=mm-class", Mmm_Curl_Manager::$_options_pagename . 'Options', 'Classes / Reporting',
-            'manage_options', Mmm_Curl_Manager::$_options_pagename . "_Classes", array(&$this, 'build_settings_page') );
+        $this->menu_page = add_options_page(Mmm_Curl_Manager::$_options_pagename  . ' Options', Mmm_Curl_Manager::$_options_pagename . ' Plugin',
+                'manage_options',Mmm_Curl_Manager::$_options_pagename, array(&$this, 'build_settings_page'));
 
-        $this->menu_page = add_submenu_page( "edit.php?post_type=mm-class", Mmm_Curl_Manager::$_options_pagename . 'Options', 'Settings',
-            'manage_options', Mmm_Curl_Manager::$_options_pagename . "_Admin", array(&$this, 'build_settings_page') );
+        // $this->menu_page = add_submenu_page( "options-general.php?post_type=mmm-curl-settings", Mmm_Curl_Manager::$_options_pagename . 'Options', 'Settings',
+        //     'manage_options', Mmm_Curl_Manager::$_options_pagename . "_Admin", array(&$this, 'build_settings_page') );
     }
     
     function build_settings_page()
@@ -84,7 +84,6 @@ class Mmm_Curl_Manager
 
         MmmToolsNamespace\load_admin_assets();
         
-        include_once('lib/data/plugin_data.php');
         include_once('lib/data/admin_data.php');
 
         include_once('lib/ui/admin_ui.php');
@@ -101,10 +100,10 @@ class Mmm_Curl_Manager
     {
         if ($this->check_user_capability()) //if isAdmin
         {
-            MmmPluginToolsNamespace::admin_ajax();
+            \MmmPluginToolsNamespace\admin_ajax($this);
         }
 
-        MmmPluginToolsNamespace::non_admin_ajax();
+        \MmmPluginToolsNamespace\non_admin_ajax($this);
     }
 
     function get_option($setting)

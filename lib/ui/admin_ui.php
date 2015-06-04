@@ -10,7 +10,7 @@
 
 	switch ($active_page) {
 		case 'Admin':
-		case default:
+		default:
 				$admin = "active";
 			break;
 	}
@@ -20,7 +20,7 @@
 	<div class="container">
 		<div class="row">
 			<div class="col-sm-12">
-				<h3>MmmClass Options</h3>
+				<h3>Mmm Curl Options</h3>
 			</div>
 		</div>
 
