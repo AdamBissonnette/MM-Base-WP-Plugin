@@ -1,11 +1,11 @@
 {
-  "name": "mmm-plugin",
+  "name": "mmm-curl-manager",
   "version": "1.1.0",
   "core_version": 1.2,
-  "description": "MMMClassManager",
-  "long_description": "Generic description and things here...",
+  "description": "MMMCurlManager",
+  "long_description": "Manage Curl requests to and from a webhook",
   "tools_namespace": "mmmroots",
-  "plugin_tools_namespace": "mmmclassmanager",
+  "plugin_tools_namespace": "mmmcurlmanager",
   "private": true,
   "directories": {
     "doc": "docs",

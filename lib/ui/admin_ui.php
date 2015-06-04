@@ -1,18 +1,16 @@
 <?php
-	global $MMM_Class_Manager;
+	global $MMM_Curl_Manager;
 
 	$page = $_GET["page"];
 
-	$active_page = str_replace("Mmm_Class_Manager_", "", $page);
+	$active_page = str_replace("Mmm_Curl_Manager_", "", $page);
 
 	$plugin = "";
 	$admin = "";
 
 	switch ($active_page) {
-		case 'Classes':
-				$plugin = "active";
-			break;
 		case 'Admin':
+		case default:
 				$admin = "active";
 			break;
 	}
@@ -30,19 +28,13 @@
 		<div class="row">
 			<div class="col-sm-12">
 				<ul class="nav nav-pills">
-					<li class="<?php echo $plugin ?>"><a href="#plugin" data-toggle="tab">Classes / Reporting</a></li>
 					<li class="<?php echo $admin ?>"><a href="#admin" data-toggle="tab">Settings</a></li>
 				</ul>
 				<div class="row tab-content">
-					<div class="tab-pane <?php echo $plugin ?>" id="plugin">
-						<?php							
-							echo MmmToolsNamespace\OutputThemeData($mmm_plugin_data, null, $MMM_Class_Manager);
-						?>
-					</div>
 					<div class="tab-pane <?php echo $admin ?>" id="admin">
 						<form id="theme_settings" onsubmit="javascript: SaveOptions(this);" class="form-horizontal" method="post">
 							<?php							
-								echo MmmToolsNamespace\OutputThemeData($mmm_class_options, null, $MMM_Class_Manager);
+								echo MmmToolsNamespace\OutputThemeData($mmm_curl_options, null, $MMM_Curl_Manager);
 							?>
 							
 							<div class="form-controls">
