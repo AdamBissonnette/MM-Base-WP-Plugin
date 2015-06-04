@@ -11,7 +11,7 @@ function non_admin_ajax($manager)
     //If you're not an authorized user you can only buy products
     switch($_REQUEST['fn']){
         case 'buy':
-            $data_back = json_decode (stripslashes($_REQUEST['buy']), true);
+            $data_back = $_REQUEST['buy'];
             
             $name = $data_back['info'][0]['code'];
             $quantity = $data_back['info'][0]['quant'];
@@ -20,7 +20,7 @@ function non_admin_ajax($manager)
         break;
         case 'calid':
             try {
-                $data_back = json_decode (stripslashes($_REQUEST['calid']), true);
+                $data_back = $_REQUEST['calid'];
                 echo GetCalendarUrl($_REQUEST['calid']['id']); //Outputs string url
             } catch(Exception $e)
             {
@@ -34,17 +34,17 @@ function admin_ajax($manager)
 {
     switch($_REQUEST['fn']){
         case 'delete':
-            $data_back = json_decode (stripslashes($_REQUEST['delete']), true);
+            $data_back = $_REQUEST['delete'];
             $id = $data_back['info'][0]['Pid'];
             DeleteProduct($id);
         break;
-        case 'fill':
-            $data_back = json_decode (stripslashes($_REQUEST['fill']), true);
+        case 'post':
+            $data_back = $_REQUEST['post'];
             $id = $data_back['info'][0]['Pid'];
             FinishProduct($id);
         break;
         case 'get':
-            $data_back = json_decode (stripslashes($_REQUEST['get']), true);
+            $data_back = $_REQUEST['get'];
             $pid = $data_back['info'][0]['Pid'];
             OutputProductJSON($pid);
         break;
