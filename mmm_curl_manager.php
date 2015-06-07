@@ -21,6 +21,7 @@ class Mmm_Curl_Manager
     var $_save_key = '';
     var $location_folder;
     var $menu_page;
+    var $curlHandler = null;
     
     function __construct()
     {
@@ -34,10 +35,13 @@ class Mmm_Curl_Manager
         add_action('wp_ajax_nopriv_do_ajax', array(&$this, '_save') );
         add_action('wp_ajax_do_ajax', array(&$this, '_save') );
 
-        //Conditionally enable admin-bar menu
-        //if settings set - enable admin-bar
-        //Custom CSS for taxonomy icons
-        add_action('admin_head', array(&$this, 'custom_dashboard_css'));
+        //Register Shortcodes
+        $this->register_shortcodes();
+
+        if (!isset($this->curlHandler))
+        {
+            $this->curlHandler = new \MmmPluginToolsNamespace\CurlHandler($this->get_setting("webhook_url"), $this->get_setting("webhook_api_key"));
+        }
     }
 
     static function Mmm_Curl_Manager_install() {
@@ -50,10 +54,9 @@ class Mmm_Curl_Manager
         add_option(Mmm_Curl_Manager::$_settings_key . "_versionnum", Mmm_Curl_Manager::$_versionnum);
     }
 
-    function custom_dashboard_css()
+    function register_shortcodes()
     {
-        MmmToolsNamespace\load_font_awesome();
-        wp_enqueue_style('dashboard', $this->location_folder . '/assets/css/dashboard.css', false, null);
+        add_shortcode( 'GetEntity', '\MmmPluginToolsNamespace\getEntity' );
     }
 
     function create_menu_link()

@@ -36,17 +36,14 @@ function admin_ajax($manager)
         case 'delete':
             $data_back = $_REQUEST['delete'];
             $id = $data_back['info'][0]['Pid'];
-            DeleteProduct($id);
         break;
         case 'post':
             $data_back = $_REQUEST['post'];
             $id = $data_back['info'][0]['Pid'];
-            FinishProduct($id);
         break;
         case 'get':
             $data_back = $_REQUEST['get'];
             $pid = $data_back['info'][0]['Pid'];
-            OutputProductJSON($pid);
         break;
         case 'settings':
             $data_back = $_REQUEST['settings'];
