@@ -10,7 +10,7 @@ if ( ! defined( 'ABSPATH' ) ) {
         $output = "";
 
         foreach ($json as $key => $value) {
-            if (is_object($value))
+            if (is_object($value) || is_array($value))
             {
                 $output .= $key . " => " . _output_json($value) . "<br />";    
             }
