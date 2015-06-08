@@ -57,6 +57,9 @@ class Mmm_Curl_Manager
     function register_shortcodes()
     {
         add_shortcode( 'GetEntity', '\MmmPluginToolsNamespace\getEntity' );
+        add_shortcode( 'OutputRegistrationForm', '\MmmPluginToolsNamespace\outputRegistrationForm' );
+        add_shortcode( 'OutputAddPartyMemberForm', '\MmmPluginToolsNamespace\outputAddPartyMemberForm' );
+        
     }
 
     function create_menu_link()
