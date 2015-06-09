@@ -10,62 +10,85 @@ if ( ! defined( 'ABSPATH' ) ) {
         global $MMM_Curl_Manager;
         $curly = $MMM_Curl_Manager->curlHandler;
 
+        $json = "{}";
+
         $atts["entityName"] = "User";
-        if ($atts->id == -1)
+        if ($atts["id"] == -1)
         {
             $atts["fn"] = "POST";
-            $json = json_decode($curly->DoCurl($atts), "POST");
+            $json = $curly->DoCurl($atts);
         }
         else
         {
-            $atts["fn"] = "PUT";
-            $json = json_decode($curly->DoCurl($atts), "PUT");   
+            $atts["fn"] = "POST";
+            $json = $curly->DoCurl($atts); 
         }
 
-        return $json;
+        return json_decode($json);
     }
 
-    remove_all_filters ('wpcf7_before_send_mail');
-    add_action( 'wpcf7_mail_sent', '\MmmPluginToolsNamespace\cf7_posted' );
+    function GetUser($uid)
+    {
+        global $MMM_Curl_Manager;
+        $curly = $MMM_Curl_Manager->curlHandler;
 
-    function cf7_posted( $contact_form ) {
-        $title = $contact_form->title();
+        $json = "{}";
 
-        if ( 'Get Started' == $title ) {
+        $atts["entityName"] = "User";
 
-            // array(12) {
-            //   ["_wpcf7"]=>
-            //   string(3) "198"
-            //   ["_wpcf7_version"]=>
-            //   string(3) "4.2"
-            //   ["_wpcf7_locale"]=>
-            //   string(5) "en_US"
-            //   ["_wpcf7_unit_tag"]=>
-            //   string(17) "wpcf7-f198-p64-o1"
-            //   ["_wpnonce"]=>
-            //   string(10) "3cdd6e6630"
-            //   ["party_name"]=>
-            //   string(4) "Test"
-            //   ["name"]=>
-            //   string(4) "test"
-            //   ["email"]=>
-            //   string(13) "test@test.com"
-            //   ["phone"]=>
-            //   string(11) "13063704254"
-            //   ["_wpcf7_captcha_challenge_captcha-648"]=>
-            //   string(10) "3210000978"
-            //   ["captcha-648"]=>
-            //   string(4) "knmx"
-            //   ["_wpcf7_is_ajax_call"]=>
-            //   string(1) "1"
-            // }
+        $atts["fn"] = "GET";
+        $atts["id"] = $uid;
+        $json = $curly->DoCurl($atts); 
 
-            $data = array('id' => -1, 'name' => $_REQUEST["name"], 'email' => $_REQUEST["email"], 'phone' => $_REQUEST["phone"], 'party_name' => $_REQUEST["party_name"]);
-
-            SaveUser($data);
-        }
+        return json_decode($json);
     }
 
+    function GetParty($pid)
+    {
+        global $MMM_Curl_Manager;
+        $curly = $MMM_Curl_Manager->curlHandler;
+
+        $json = "{}";
+
+        $atts["entityName"] = "Party";
+
+        $atts["fn"] = "GET";
+        $atts["id"] = $pid;
+        $json = $curly->DoCurl($atts); 
+
+        return json_decode($json);
+    }
+
+    function getEntity($atts) {
+
+        extract( shortcode_atts( array(
+            'entity' => '',
+            'id' => ''
+            ), $atts ) );
+
+        global $MMM_Curl_Manager;
+
+        $curly = $MMM_Curl_Manager->curlHandler;
+
+        $data = array("fn" => "GET", "entityName" => $entity, "id" => $id);
+
+        $json = json_decode($curly->DoCurl($data));
+
+        return _output_json($json);
+    }
+
+    function KickUser($id)
+    {
+        $atts["entityName"] = "User";
+
+        $atts["fn"] = "DELETE";
+        $atts["id"] = $id;
+
+        global $MMM_Curl_Manager;
+
+        $curly = $MMM_Curl_Manager->curlHandler;
+        $json = $curly->DoCurl($atts); 
+    }
 
 //     if ( null == username_exists( $email_address ) ) {
  
@@ -82,12 +105,3 @@ if ( ! defined( 'ABSPATH' ) ) {
 // } else {
 //     // The username already exists, so handle this accordingly...
 // }
-
-    function GetParty($atts)
-    {
-        global $MMM_Curl_Manager;
-        $curly = $MMM_Curl_Manager->curlHandler;
-        $atts["entityName"] = "Party";
-
-
-    }

@@ -19,18 +19,72 @@ $('#get_started').validator().on('submit', function (e) {
     // handle the invalid form...
   } else {
   	e.preventDefault();
-    var formdata = jQuery($('#get_started')).serializeArray()
+    var formdata = jQuery($('#get_started')).serializeArray();
 		jQuery.post ('/wp-admin/admin-ajax.php',
 			 { 'action':'do_ajax', 'fn':'registration', 'count':10, data:formdata },
-			  function(data){ShowModal("Details Saved", data.message)},
+			  function(data){HandleRegister(data.data)},
 			   "json");
   }
 });
 
 $('#get_started_btn').click(function(e) {$('#get_started').submit()});
 
+$('#add_party_member').validator().on('submit', function (e) {
+  if (e.isDefaultPrevented()) {
+    // handle the invalid form...
+  } else {
+    e.preventDefault();
+    var formdata = jQuery($('#add_party_member')).serializeArray();
+    jQuery.post ('/wp-admin/admin-ajax.php',
+       { 'action':'do_ajax', 'fn':'post', 'count':10, data:formdata },
+        function(data){HandleAddUser(data.data)},
+         "json");
+  }
+});
+
+$('#add_party_member_btn').click(function(e) {$('#add_party_member').submit()});
+
 
 });
+
+function HandleRegister(data)
+{
+  if (data.refresh == true)
+  {
+    location.reload(true);
+  }
+  else
+  {
+    ShowModal("Details Saved", data.message);
+  }
+}
+
+function HandleAddUser(data)
+{
+  RefreshPartyTable();
+}
+
+function HandleRemoveUser(data)
+{
+  RefreshPartyTable();
+}
+
+function RefreshPartyTable()
+{
+  jQuery.post ('/wp-admin/admin-ajax.php',
+       { 'action':'do_ajax', 'fn':'get', 'count':1, data:null },
+        function(data){jQuery('#party_table').html(data.html);},
+         "json"); 
+}
+
+function KickUser(id)
+{
+  formdata = {"id": id};
+  jQuery.post ('/wp-admin/admin-ajax.php',
+       { 'action':'do_ajax', 'fn':'delete', 'count':1, data:formdata },
+        function(data){HandleRemoveUser(data);},
+         "json");   
+}
 
 function HideModal()
 {

@@ -59,6 +59,7 @@ class Mmm_Curl_Manager
         add_shortcode( 'GetEntity', '\MmmPluginToolsNamespace\getEntity' );
         add_shortcode( 'OutputRegistrationForm', '\MmmPluginToolsNamespace\outputRegistrationForm' );
         add_shortcode( 'OutputAddPartyMemberForm', '\MmmPluginToolsNamespace\outputAddPartyMemberForm' );
+        add_shortcode( 'OutputParty', '\MmmPluginToolsNamespace\outputParty' );
         
     }
 

@@ -1,35 +1,50 @@
 <?php
 namespace MmmPluginToolsNamespace;
 
-function getEntity($atts) {
-
-    extract( shortcode_atts( array(
-        'entity' => '',
-        'id' => ''
-        ), $atts ) );
-
-    global $MMM_Curl_Manager;
-
-    $curly = $MMM_Curl_Manager->curlHandler;
-
-    $data = array("fn" => "GET", "entityName" => $entity, "id" => $id);
-
-    $json = json_decode($curly->DoCurl($data));
-
-    return _output_json($json);
-}
-
 function outputRegistrationForm($atts)
 {
+    global $MMM_Curl_Manager;
+
+    wp_enqueue_style('app_styles', $MMM_Curl_Manager->location_folder . '/assets/css/app.css', false, null);
+
+    wp_enqueue_style('MCM_bootstrap_css', $MMM_Curl_Manager->location_folder . '/assets/css/bootstrap.css', false, null);
+    wp_enqueue_script('MCM_jquery_js', $MMM_Curl_Manager->location_folder . '/assets/js/jquery-1.9.1.min.js', false, null);        
+    wp_enqueue_script('MCM_bootstrap_js', $MMM_Curl_Manager->location_folder . '/assets/js/plugins.js', false, null);
+    wp_enqueue_script('MCM_formtools_js', $MMM_Curl_Manager->location_folder . '/assets/js/formtools.js', false, null);
+
     $content = "";
     $party_name = "";
+    $name = "";
+    $email = "";
+    $phone = "";
     //Preload registration form values
-    if (isset($_REQUEST["party_name"]))
+
+    if ( \is_user_logged_in() )  //Update values
     {
-        $party_name = $_REQUEST["party_name"];
+        $current_user = \wp_get_current_user();
+
+        $uid = get_user_meta($current_user->ID, "scav_uid", true);
+
+        if (isset($uid))
+        {
+            $json = GetUser($uid);
+
+            if (isset($json))
+            {
+                $name = $json->name;
+                $email = $json->email;
+                $phone = $json->phone;
+                $party_name = $json->party->name;
+            }
+        }
     }
-
-
+    else
+    {
+        if (isset($_REQUEST["party_name"]))
+        {
+            $party_name = $_REQUEST["party_name"];
+        }
+    }
 
 ob_start(); //Since there isn't a nice way to get this content we have to use the output buffer
 
@@ -48,19 +63,19 @@ ob_start(); //Since there isn't a nice way to get this content we have to use th
 
 <div class="form-group">
     <label for="inputName" class="control-label">Your Name</label>
-    <div class="controls"><input type="text" class="form-control" id="inputName" name="registration_name" placeholder="e.g. John Smith" required></div>
+    <div class="controls"><input type="text" class="form-control" id="inputName" name="registration_name" value="<?php echo $name; ?>"  placeholder="e.g. John Smith" required></div>
     <div class="help-block with-errors"><ul class="list-unstyled"><li>*Required</li></ul></div>
 </div>
 
 <div class="form-group">
     <label for="inputEmail" class="control-label">Your Email</label>
-    <div class="controls"><input type="email" class="form-control" id="inputEmail" name="registration_email" placeholder="e.g. JSmith@internet.com" required></div>
+    <div class="controls"><input type="email" class="form-control" id="inputEmail" name="registration_email" value="<?php echo $email; ?>"  placeholder="e.g. JSmith@internet.com" required></div>
     <div class="help-block with-errors"><ul class="list-unstyled"><li>*Required</li></ul></div>
 </div>
 
 <div class="form-group">
     <label for="inputPhone" class="control-label">Your Phone</label>
-    <div class="controls"><input type="text" pattern="\+?1?\W*([2-9][0-8][0-9])\W*([2-9][0-9]{2})\W*([0-9]{4})(\se?x?t?(\d*))?" class="form-control" id="inputPhone" name="registration_phone" placeholder="e.g. +13069921212" required></div>
+    <div class="controls"><input type="text" pattern="\+?1?\W*([2-9][0-8][0-9])\W*([2-9][0-9]{2})\W*([0-9]{4})(\se?x?t?(\d*))?" class="form-control" id="inputPhone" name="registration_phone" value="<?php echo $phone; ?>"  placeholder="e.g. +13069921212" required></div>
     <div class="help-block with-errors"><ul class="list-unstyled"><li>*Required - enter like this: +13069921212</li></ul></div>
 </div>
 
@@ -79,19 +94,10 @@ ob_start(); //Since there isn't a nice way to get this content we have to use th
 
 function outputAddPartyMemberForm($atts)
 {
-
-    global $MMM_Curl_Manager;
-
-    wp_enqueue_style('app_styles', $MMM_Curl_Manager->location_folder . '/assets/css/app.css', false, null);
-
-    wp_enqueue_style('MCM_bootstrap_css', $MMM_Curl_Manager->location_folder . '/assets/css/bootstrap.css', false, null);
-    wp_enqueue_script('MCM_jquery_js', $MMM_Curl_Manager->location_folder . '/assets/js/jquery-1.9.1.min.js', false, null);        
-    wp_enqueue_script('MCM_bootstrap_js', $MMM_Curl_Manager->location_folder . '/assets/js/plugins.js', false, null);
-    wp_enqueue_script('MCM_formtools_js', $MMM_Curl_Manager->location_folder . '/assets/js/formtools.js', false, null);
-
-
     $content = "";
 
+    if ( \is_user_logged_in() )  //Update values
+    {
 
 
 ob_start(); //Since there isn't a nice way to get this content we have to use the output buffer
@@ -101,7 +107,7 @@ ob_start(); //Since there isn't a nice way to get this content we have to use th
 <div class="add-party-member-form">
     <!-- <div id="party-form-overlay"></div> -->
 
-    <h3>Your Party Members</h3>
+    <h3>Add Party Members</h3>
 
     <form data-toggle="validator" name="add-party-member" action="/get-started/" method="post" id="add_party_member" class="start-form">
         <div class="form-group">
@@ -118,7 +124,7 @@ ob_start(); //Since there isn't a nice way to get this content we have to use th
 
         <div class="form-group">
             <label for="inputAPPhone" class="control-label">Phone</label>
-            <div class="controls"><input type="text" pattern="1?\W*([2-9][0-8][0-9])\W*([2-9][0-9]{2})\W*([0-9]{4})(\se?x?t?(\d*))?" class="form-control" id="inputAPPhone" name="add_party_member_phone" placeholder="e.g. +13069921212" required></div>
+            <div class="controls"><input type="text" pattern="\+?1?\W*([2-9][0-8][0-9])\W*([2-9][0-9]{2})\W*([0-9]{4})(\se?x?t?(\d*))?" class="form-control" id="inputAPPhone" name="add_party_member_phone" placeholder="e.g. +13069921212" required></div>
             <div class="help-block with-errors"><ul class="list-unstyled"><li>*Required - Enter like this: +13069921212</li></ul></div>
         </div>
 
@@ -134,7 +140,57 @@ ob_start(); //Since there isn't a nice way to get this content we have to use th
     $content = ob_get_contents();
     ob_end_clean();
 
+    }
+
+
     return $content; 
+}
+
+function outputParty($atts)
+{
+    $content = "";
+
+    if ( \is_user_logged_in() )  //Update values
+    {
+        $current_user = \wp_get_current_user();
+
+        $uid = get_user_meta($current_user->ID, "scav_uid", true);
+        $pid = get_user_meta($current_user->ID, "scav_pid", true);
+
+        if (isset($pid))
+        {
+            $party = GetParty($pid);
+            
+            $content = genPartyTable($party, $uid);
+        }
+    }
+
+    return '<div id="party_table">' . $content . '</div>';
+}
+
+function genPartyTable($party, $uid)
+{
+    $content = "";
+    $table_template = '<h3>Your Party</h3><table class="table table-bordered table-striped">%s</table>';
+    $header_template = "<tr><th>Name</th><th>Email</th><th>Phone</th><th>Controls</th></tr>";
+    $row_template = "<tr><td>%s</td><td>%s</td><td>%s</td><td>%s</td></tr>";
+    $control_template = '<a href="javascript: KickUser(%s);">Kick</a>';
+
+    $content .= $header_template;
+
+    foreach ($party->users as $user)
+    {
+        if ($user->id == $uid)
+        {
+            $content .= sprintf($row_template, $user->name, $user->email, $user->phone, "");
+        }
+        else
+        {
+            $content .= sprintf($row_template, $user->name, $user->email, $user->phone, sprintf($control_template, $user->id));
+        }
+    }
+
+    return sprintf($table_template, $content);  
 }
 
 ?>

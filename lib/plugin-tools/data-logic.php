@@ -43,12 +43,15 @@ if ( ! defined( 'ABSPATH' ) ) {
             $ch = curl_init($this->url);                                                                      
             curl_setopt($ch, CURLOPT_CUSTOMREQUEST, $method);                                                                     
             curl_setopt($ch, CURLOPT_POSTFIELDS, $json);                                                                  
-            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);                                                                      
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1); 
+            curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);                                                                     
             curl_setopt($ch, CURLOPT_HTTPHEADER, array(                                                          
                 'Content-Type: application/json',                                                                                
                 'Content-Length: ' . strlen($json))                                                                       
             );                                                                                                                   
                                                                                                                                  
-            return curl_exec($ch);
+            $output = curl_exec($ch);
+            curl_close($ch);
+            return $output;
         }
     }
