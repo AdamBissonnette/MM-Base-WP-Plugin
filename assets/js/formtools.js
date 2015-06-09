@@ -61,6 +61,7 @@ function HandleRegister(data)
 
 function HandleAddUser(data)
 {
+  jQuery($('#add_party_member'))[0].reset();
   RefreshPartyTable();
 }
 
