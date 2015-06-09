@@ -36,17 +36,35 @@ ob_start(); //Since there isn't a nice way to get this content we have to use th
 ?>
 
 <div class="registration-forms">
-    <form name="registration" action="/get-started/" method="post" id="get_started" class="start-form">
-        <label for="registration_party_name">Party Name (required)</label>
-        <p>    <input type="text" id="registration_party_name" name="registration_party_name" value="<?php echo $party_name; ?>" placeholder="e.g. The Taco Salads"> </p>
-        <label for="registration_name">Your Name (required)</label>
-        <p>    <input type="text" id="registration_name" name="registration_name" value="" placeholder="e.g. John Smith"> </p>
-        <label for="registration_email">Your Email (required)</label>
-        <p>    <input type="email" id="registration_email" name="registration_email" value="" placeholder="e.g. J.Smith@lookgo.io"> </p>
-        <label for="registration_phone">Your Phone (required)</label>
-        <p>    <input type="tel" id="registration_phone" name="registration_phone" value="" placeholder="e.g. +13062649895"> </p>
+    <form data-toggle="validator" name="registration" action="/get-started/" method="post" id="get_started" class="start-form">
 
-        <p class="aligncenter"><a class="et_pb_promo_button" href="javascript: void(0)" onclick="get_started.submit();">Save Your Details</a></p>
+<div class="form-group">
+    <label for="inputPartyName" class="control-label">Party Name (Required)</label>
+    <div class="controls"><input type="text" class="form-control" id="inputPartyName" name="registration_party_name" value="<?php echo $party_name; ?>" required></div>
+    <div class="help-block with-errors"></div>
+</div>
+
+<div class="form-group">
+    <label for="inputName" class="control-label">Your Name (Required)</label>
+    <div class="controls"><input type="text" class="form-control" id="inputName" name="registration_name" required></div>
+    <div class="help-block with-errors"></div>
+</div>
+
+<div class="form-group">
+    <label for="inputEmail" class="control-label">Your Email (Required)</label>
+    <div class="controls"><input type="email" class="form-control" id="inputEmail" name="registration_email" required></div>
+    <div class="help-block with-errors"></div>
+</div>
+
+<div class="form-group">
+    <label for="inputPhone" class="control-label">Your Phone (Required)</label>
+    <div class="controls"><input type="text" pattern="\+?1?\W*([2-9][0-8][0-9])\W*([2-9][0-9]{2})\W*([0-9]{4})(\se?x?t?(\d*))?" class="form-control" id="inputPhone" name="registration_phone" required></div>
+    <div class="help-block with-errors">Enter it like this: +13069921212</div>
+</div>
+
+<div class="form-group">
+    <a class="et_pb_promo_button" href="javascript: void(0);" id="get_started_btn">Save Your Details</a>
+</div>
         </form>
 </div>
     <?php
@@ -59,12 +77,18 @@ ob_start(); //Since there isn't a nice way to get this content we have to use th
 
 function outputAddPartyMemberForm($atts)
 {
-       $content = "";
-    //Preload registration form values
-    if (isset($_REQUEST["party_name"]))
-    {
-        $party_name = $_REQUEST["party_name"];
-    }
+
+    global $MMM_Curl_Manager;
+
+    wp_enqueue_style('app_styles', $MMM_Curl_Manager->location_folder . '/assets/css/app.css', false, null);
+
+    wp_enqueue_style('MCM_bootstrap_css', $MMM_Curl_Manager->location_folder . '/assets/css/bootstrap.css', false, null);
+    wp_enqueue_script('MCM_jquery_js', $MMM_Curl_Manager->location_folder . '/assets/js/jquery-1.9.1.min.js', false, null);        
+    wp_enqueue_script('MCM_bootstrap_js', $MMM_Curl_Manager->location_folder . '/assets/js/plugins.js', false, null);
+    wp_enqueue_script('MCM_formtools_js', $MMM_Curl_Manager->location_folder . '/assets/js/formtools.js', false, null);
+
+
+    $content = "";
 
 
 
@@ -73,21 +97,36 @@ ob_start(); //Since there isn't a nice way to get this content we have to use th
 ?>
 
 <div class="add-party-member-form">
-    <div id="party-form-overlay"></div>
+    <!-- <div id="party-form-overlay"></div> -->
 
     <h2>Your Party Members</h2>
 
-    <form name="add-party-member" action="/get-started/" method="post" id="add_member" class="start-form">
-        <label for="add_party_member_name">Name (required)</label>
-        <p>    <input id="add_party_member_name" name="add_party_member_name"  type="text" name="name" value="" placeholder="e.g. John Smith"> </p>
-        <label for="add_party_member_email">Email (required)</label>
-        <p>    <input id="add_party_member_email" name="add_party_member_email" type="email" name="email" value="" placeholder="e.g. J.Smith@lookgo.io"> </p>
-        <label for="add_party_member_phone">Phone (required)</label>
-        <p>    <input id="add_party_member_phone" name="add_party_member_phone" type="tel" name="phone" value="" placeholder="e.g. +13062649895"> </p>
+    <form data-toggle="validator" name="add-party-member" action="/get-started/" method="post" id="add_party_member" class="start-form">
+        <div class="form-group">
+            <label for="inputAPName" class="control-label">Name (Required)</label>
+            <div class="controls"><input type="text" class="form-control" id="inputAPName" name="add_party_member_name" required></div>
+            <div class="help-block with-errors"></div>
+        </div>
 
-        <p class="aligncenter"><a class="et_pb_promo_button" href="javascript: void(0)" onclick="add_member.submit();">Add Party Member</a></p>
+        <div class="form-group">
+            <label for="inputAPEmail" class="control-label">Email (Required)</label>
+            <div class="controls"><input type="email" class="form-control" id="inputAPEmail" name="add_party_member_email" required></div>
+            <div class="help-block with-errors"></div>
+        </div>
+
+        <div class="form-group">
+            <label for="inputAPPhone" class="control-label">Phone (Required)</label>
+            <div class="controls"><input type="text" pattern="1?\W*([2-9][0-8][0-9])\W*([2-9][0-9]{2})\W*([0-9]{4})(\se?x?t?(\d*))?" class="form-control" id="inputAPPhone" name="add_party_member_phone" required></div>
+            <div class="help-block with-errors">Enter it like this: +13069921212</div>
+        </div>
+
+        <div class="form-group">
+            <a class="et_pb_promo_button" href="javascript: void(0);" id="add_party_member_btn">Add Party Member</a>
+        </div>
+
         </form>
 </div>
+
     <?php
 
     $content = ob_get_contents();
