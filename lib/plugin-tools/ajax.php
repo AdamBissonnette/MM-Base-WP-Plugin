@@ -10,22 +10,24 @@ function non_admin_ajax($manager)
 {
     //If you're not an authorized user you can only buy products
     switch($_REQUEST['fn']){
-        case 'buy':
-            $data_back = $_REQUEST['buy'];
-            
-            $name = $data_back['info'][0]['code'];
-            $quantity = $data_back['info'][0]['quant'];
-            
-            Buy($name, $quantity); //Outputs JSON
+        case 'delete': //they can only delete party members
+            $data_back = $_REQUEST['data'];
+            $id = $data_back['info'][0]['Pid'];
         break;
-        case 'calid':
-            try {
-                $data_back = $_REQUEST['calid'];
-                echo GetCalendarUrl($_REQUEST['calid']['id']); //Outputs string url
-            } catch(Exception $e)
+        case 'post':
+            if (isset($_REQUEST['registration']))
             {
-                echo "NotImplemented.jpg";
+                $data_back = $_REQUEST['registration'];
             }
+            elseif ($_REQUEST['data']) {
+                $data_back = $_REQUEST['data'];
+            }
+
+            $id = $data_back['info'][0]['Pid'];
+        break;
+        case 'get':
+            $data_back = $_REQUEST['data'];
+            $pid = $data_back['info'][0]['Pid'];
         break;
     }
 }
@@ -33,18 +35,6 @@ function non_admin_ajax($manager)
 function admin_ajax($manager)
 {
     switch($_REQUEST['fn']){
-        case 'delete':
-            $data_back = $_REQUEST['delete'];
-            $id = $data_back['info'][0]['Pid'];
-        break;
-        case 'post':
-            $data_back = $_REQUEST['post'];
-            $id = $data_back['info'][0]['Pid'];
-        break;
-        case 'get':
-            $data_back = $_REQUEST['get'];
-            $pid = $data_back['info'][0]['Pid'];
-        break;
         case 'settings':
             $data_back = $_REQUEST['settings'];
             
