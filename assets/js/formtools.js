@@ -74,8 +74,13 @@ function RefreshPartyTable()
 {
   jQuery.post ('/wp-admin/admin-ajax.php',
        { 'action':'do_ajax', 'fn':'get', 'count':1, data:null },
-        function(data){jQuery('#party_table').html(data.html);},
+        function(data){ReloadPartyTable(data.data);},
          "json"); 
+}
+
+function ReloadPartyTable(data)
+{
+  jQuery('#party_table').html(data.html);
 }
 
 function KickUser(id)
