@@ -5,6 +5,27 @@ if ( ! defined( 'ABSPATH' ) ) {
     exit; // Exit if accessed directly
 }
 
+class AjaxResponse implements \JsonSerializable
+{
+    var $message = "";
+    var $html = "";
+    var $refresh = false;
+
+    function __construct($message)
+    {
+        $this->message = $message;
+    }
+
+    public function jsonSerialize()
+    {
+        return array("data" => array(
+            'message' => $this->message,
+            'html' => $this->html,
+            'refresh' => $this->refresh
+        ));
+    }
+}
+
 
 function non_admin_ajax($manager)
 {
@@ -41,7 +62,7 @@ function admin_ajax($manager)
 function scavajax()
 {
     header('Content-type: application/json');
-    $output = array('data' => array('message' => "Things happened!" ) );
+    $output = new AjaxResponse("Data received.  All is well.");
     if ( \is_user_logged_in() )  //Update values
     {
         $current_user = \wp_get_current_user();
@@ -95,8 +116,8 @@ function scavajax()
                 $json = SaveUser($data);
                 // update_user_meta($current_user->ID, "scav_uid", $json->id);
                 // update_user_meta($current_user->ID, "scav_pid", $json->party->id);
-                $output["data"]["message"] = "Your information has been updated!";
-                $output["data"]["refresh"] = false;
+                $output->message = "Your information has been updated!";
+                $output->refresh = false;
             break;
             case 'post': //Add new party member
                 $data_back = $_REQUEST['data'];
@@ -110,7 +131,7 @@ function scavajax()
             case 'get': //Party
                 $uid = get_user_meta($current_user->ID, "scav_uid", true);
                 $pid = get_user_meta($current_user->ID, "scav_pid", true);
-                $output = array("html" => genPartyTable(GetParty($pid), $uid));
+                $output->html = genPartyTable(GetParty($pid), $uid);
             break;
         }
 
@@ -143,10 +164,10 @@ function scavajax()
 
                 if (is_wp_error($user))
                 {
-                    $output["data"]["message"] = $user->get_error_message();
+                    $output->message = $user->get_error_message();
                 }
 
-                $output["data"]["refresh"] = true;
+                $output->refresh = true;
             break;
         }
     }
