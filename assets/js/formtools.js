@@ -14,60 +14,73 @@ jQuery(document).ready(function($) {
   		show: false	
 	});
 
-$('#get_started').validator().on('submit', function (e) {
-  if (e.isDefaultPrevented()) {
-    // handle the invalid form...
-  } else {
-  	e.preventDefault();
-    var formdata = jQuery($('#get_started')).serializeArray();
-		jQuery.post ('/wp-admin/admin-ajax.php',
-			 { 'action':'do_ajax', 'fn':'registration', 'count':10, data:formdata },
-			  function(data){HandleRegister(data.data)},
-			   "json");
-  }
-});
+  $('#get_started').validator().on('submit', function (e) {
+    if (e.isDefaultPrevented()) {
+      // handle the invalid form...
+    } else {
+    	e.preventDefault();
+      var formdata = jQuery($('#get_started')).serializeArray();
+  		jQuery.post ('/wp-admin/admin-ajax.php',
+  			 { 'action':'do_ajax', 'fn':'registration', 'count':10, data:formdata },
+  			  function(data){HandleRegister(data.data);},
+  			   "json");
+    }
+  });
 
-$('#get_started_btn').click(function(e) {$('#get_started').submit()});
+  $('#get_started_btn').click(function(e) {$('#get_started').submit()});
 
-$('#add_party_member').validator().on('submit', function (e) {
-  if (e.isDefaultPrevented()) {
-    // handle the invalid form...
-  } else {
-    e.preventDefault();
-    var formdata = jQuery($('#add_party_member')).serializeArray();
-    jQuery.post ('/wp-admin/admin-ajax.php',
-       { 'action':'do_ajax', 'fn':'post', 'count':10, data:formdata },
-        function(data){HandleAddUser(data.data)},
-         "json");
-  }
-});
+  $('#add_party_member').validator().on('submit', function (e) {
+    if (e.isDefaultPrevented()) {
+      // handle the invalid form...
+    } else {
+      e.preventDefault();
+      var formdata = jQuery($('#add_party_member')).serializeArray();
+      jQuery.post ('/wp-admin/admin-ajax.php',
+         { 'action':'do_ajax', 'fn':'post', 'count':10, data:formdata },
+          function(data){HandleThings(data.data, HandleAddUser);},
+           "json");
+    }
+  });
 
-$('#add_party_member_btn').click(function(e) {$('#add_party_member').submit()});
-
-
+  $('#add_party_member_btn').click(function(e) {$('#add_party_member').submit()});
 });
 
 function HandleRegister(data)
 {
-  if (data.refresh == true)
+  if (data.state)
   {
-    location.reload(true);
+    if (data.refresh == true)
+    {
+      location.reload(true);
+    }
+    else
+    {
+      RefreshPartyTable();
+      ShowModal("Details Saved", data.message);
+    }
   }
   else
   {
-    ShowModal("Details Saved", data.message);
+    ShowModal("Oh Snap!", data.message);
   }
 }
 
-function HandleAddUser(data)
+function HandleAddUser()
 {
   jQuery($('#add_party_member'))[0].reset();
   RefreshPartyTable();
 }
 
-function HandleRemoveUser(data)
+function HandleThings(data, func)
 {
-  RefreshPartyTable();
+  if (data.state)
+  {
+    func();
+  }
+  else
+  {
+    ShowModal("Oh Snap!", data.message);
+  }
 }
 
 function RefreshPartyTable()
@@ -88,7 +101,7 @@ function KickUser(id)
   formdata = {"id": id};
   jQuery.post ('/wp-admin/admin-ajax.php',
        { 'action':'do_ajax', 'fn':'delete', 'count':1, data:formdata },
-        function(data){HandleRemoveUser(data);},
+        function(data){HandleThings(data.data, RefreshPartyTable);},
          "json");   
 }
 

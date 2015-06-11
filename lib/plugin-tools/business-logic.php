@@ -5,6 +5,33 @@ if ( ! defined( 'ABSPATH' ) ) {
     exit; // Exit if accessed directly
 }
 
+    function ValidateUser($user)
+    {
+        $phoneRegex = "/\+?1?\W*([2-9][0-8][0-9])\W*([2-9][0-9]{2})\W*([0-9]{4})(\se?x?t?(\d*))?/";
+        $emailRegex = "/(.+@.+)/";
+
+        $output = array("valid" => false, "message" => "Valid User");
+
+        if ($user["name"] == "")
+        {
+            $output["message"] = "Have you disabled javascript?  The user's name was left blank.";
+        }
+        elseif (!preg_match($emailRegex, $user["email"], $emailMatches))
+        {
+            $output["message"] = "Have you disabled javascript?  The user's email wasn't in the right format.";
+        }
+        elseif (!preg_match($phoneRegex, $user["phone"], $phoneMatches))
+        {
+            $output["message"] = "Have you disabled javascript?  The user's phone number wasn't in the right format.";
+        }
+        else
+        {
+            $output["valid"] = true;
+        }
+
+        return $output;
+    }
+
     function SaveUser($atts)
     {
         global $MMM_Curl_Manager;
