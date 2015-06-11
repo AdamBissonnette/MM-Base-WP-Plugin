@@ -110,27 +110,27 @@ ob_start(); //Since there isn't a nice way to get this content we have to use th
     <h3>Add Party Members</h3>
 
     <form data-toggle="validator" name="add-party-member" action="/get-started/" method="post" id="add_party_member" class="start-form">
-        <div class="form-group">
-            <label for="inputAPName" class="control-label">Name</label>
-            <div class="controls"><input type="text" class="form-control" id="inputAPName" name="add_party_member_name" placeholder="e.g. John Smith" required></div>
-            <div class="help-block with-errors"><ul class="list-unstyled"><li>*Required</li></ul></div>
-        </div>
+            <div class="form-group">
+                <label for="inputAPName" class="control-label">Name</label>
+                <div class="controls"><input type="text" class="form-control" id="inputAPName" name="add_party_member_name" placeholder="e.g. John Smith" required></div>
+                <div class="help-block with-errors"><ul class="list-unstyled"><li>*Required</li></ul></div>
+            </div>
 
-        <div class="form-group">
-            <label for="inputAPEmail" class="control-label">Email</label>
-            <div class="controls"><input type="email" class="form-control" id="inputAPEmail" name="add_party_member_email" placeholder="e.g. JSmith@internet.com" required></div>
-            <div class="help-block with-errors"><ul class="list-unstyled"><li>*Required</li></ul></div>
-        </div>
+            <div class="form-group">
+                <label for="inputAPEmail" class="control-label">Email</label>
+                <div class="controls"><input type="email" class="form-control" id="inputAPEmail" name="add_party_member_email" placeholder="e.g. JSmith@internet.com" required></div>
+                <div class="help-block with-errors"><ul class="list-unstyled"><li>*Required</li></ul></div>
+            </div>
 
-        <div class="form-group">
-            <label for="inputAPPhone" class="control-label">Phone</label>
-            <div class="controls"><input type="text" pattern="\+?1?\W*([2-9][0-8][0-9])\W*([2-9][0-9]{2})\W*([0-9]{4})(\se?x?t?(\d*))?" class="form-control" id="inputAPPhone" name="add_party_member_phone" placeholder="e.g. +13069921212" required></div>
-            <div class="help-block with-errors"><ul class="list-unstyled"><li>*Required - Enter like this: +13069921212</li></ul></div>
-        </div>
+            <div class="form-group">
+                <label for="inputAPPhone" class="control-label">Phone</label>
+                <div class="controls"><input type="text" pattern="\+?1?\W*([2-9][0-8][0-9])\W*([2-9][0-9]{2})\W*([0-9]{4})(\se?x?t?(\d*))?" class="form-control" id="inputAPPhone" name="add_party_member_phone" placeholder="e.g. +13069921212" required></div>
+                <div class="help-block with-errors"><ul class="list-unstyled"><li>*Required - Enter like this: +13069921212</li></ul></div>
+            </div>
 
-        <div class="form-group">
-            <a class="et_pb_promo_button" href="javascript: void(0);" id="add_party_member_btn">Add Party Member</a>
-        </div>
+            <div class="form-group">
+                <a class="et_pb_promo_button" href="javascript: void(0);" id="add_party_member_btn">Add Party Member</a>
+            </div>
 
         </form>
 </div>
@@ -171,26 +171,32 @@ function outputParty($atts)
 function genPartyTable($party, $uid)
 {
     $content = "";
-    $table_template = '<h3>Your Party</h3><table class="table table-bordered table-striped">%s</table>';
-    $header_template = "<tr><th>Name</th><th>Email</th><th>Phone</th><th>Controls</th></tr>";
-    $row_template = "<tr><td>%s</td><td>%s</td><td>%s</td><td>%s</td></tr>";
-    $control_template = '<a href="javascript: KickUser(%s);">Kick</a>';
 
-    $content .= $header_template;
-
-    foreach ($party->users as $user)
+    if ( \is_user_logged_in() )  //Update values
     {
-        if ($user->id == $uid)
+        $table_template = '<h3>Your Party</h3><table class="table table-bordered table-striped">%s</table>';
+        $header_template = "<tr><th>Name</th><th>Email</th><th>Phone</th><th>Controls</th></tr>";
+        $row_template = "<tr><td>%s</td><td>%s</td><td>%s</td><td>%s</td></tr>";
+        $control_template = '<a href="javascript: KickUser(%s);">Kick</a>';
+
+        $content .= $header_template;
+
+        foreach ($party->users as $user)
         {
-            $content .= sprintf($row_template, $user->name, $user->email, $user->phone, "");
+            if ($user->id == $uid)
+            {
+                $content .= sprintf($row_template, $user->name, $user->email, $user->phone, "");
+            }
+            else
+            {
+                $content .= sprintf($row_template, $user->name, $user->email, $user->phone, sprintf($control_template, $user->id));
+            }
         }
-        else
-        {
-            $content .= sprintf($row_template, $user->name, $user->email, $user->phone, sprintf($control_template, $user->id));
-        }
+
+        $content = sprintf($table_template, $content);
     }
 
-    return sprintf($table_template, $content);  
+    return $content;
 }
 
 ?>
