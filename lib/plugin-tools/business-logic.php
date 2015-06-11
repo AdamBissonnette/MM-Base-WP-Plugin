@@ -5,24 +5,25 @@ if ( ! defined( 'ABSPATH' ) ) {
     exit; // Exit if accessed directly
 }
 
-    function AddHuntToCompletePayments() {
+    function AddHuntToCompletePayments($order_id) {
         global $woocommerce;
         global $MMM_Curl_Manager;
-        $productid = $this->get_setting("hunt_product");
-        $curly = $MMM_Curl_Manager->curlHandler;
+        $productid = $MMM_Curl_Manager->get_setting("hunt_product");
 
         $current_user_id = get_current_user_id();
 
         $uid = get_user_meta($current_user_id, "scav_uid", true);
         $pid = get_user_meta($current_user_id, "scav_pid", true);
 
+        $order = new \WC_Order( $order_id );
+
         if (isset($uid) && isset($pid))
         {
-            foreach( $woocommerce->cart->cart_contents as $id => $cart_item)
-            {
-                if( $cart_item['product_id'] == $productid ) {
-                    AddHunt($pid, 1);
-                    break;
+            $items = $order->get_items();
+            foreach ($items as $item) {
+                if ($item['product_id']==$productid) {
+                  echo AddHunt($pid, 1);
+                  break;
                 }
             }
         }
@@ -30,17 +31,19 @@ if ( ! defined( 'ABSPATH' ) ) {
         {
             //Derp
         }
-
     }
 
-    add_action('woocommerce_payment_complete', 'AddHuntToCompletePayments');
+    add_action('woocommerce_order_status_completed', '\MmmPluginToolsNamespace\AddHuntToCompletePayments');
 
     function AddHunt($party_id, $story_id)
     {
+        global $MMM_Curl_Manager;
+        $curly = $MMM_Curl_Manager->curlHandler;
         $atts = array();
         $atts["entityName"] = "Hunt";
         $atts["fn"] = "POST";
 
+        $atts["id"] = -1;
         $atts["party"] = $party_id;
         $atts["story"] = $story_id;
         $atts["start"] = "";
@@ -48,7 +51,8 @@ if ( ! defined( 'ABSPATH' ) ) {
         $atts["hintsUsed"] = 0;
         $atts["clue"] = null;
 
-        $json = $curly->DoCurl($atts); 
+        $json = $curly->DoCurl($atts);
+        return $json; 
     }
 
     function ValidateUser($user)
