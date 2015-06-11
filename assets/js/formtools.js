@@ -8,6 +8,11 @@ function CheckScripts()
 	}
 }
 
+function ValidateForm()
+{
+  return true;
+}
+
 jQuery(document).ready(function($) {
 	CheckScripts();
 	$('#mm-dialog').modal({

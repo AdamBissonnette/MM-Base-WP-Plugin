@@ -5,6 +5,52 @@ if ( ! defined( 'ABSPATH' ) ) {
     exit; // Exit if accessed directly
 }
 
+    function AddHuntToCompletePayments() {
+        global $woocommerce;
+        global $MMM_Curl_Manager;
+        $productid = $this->get_setting("hunt_product");
+        $curly = $MMM_Curl_Manager->curlHandler;
+
+        $current_user_id = get_current_user_id();
+
+        $uid = get_user_meta($current_user_id, "scav_uid", true);
+        $pid = get_user_meta($current_user_id, "scav_pid", true);
+
+        if (isset($uid) && isset($pid))
+        {
+            foreach( $woocommerce->cart->cart_contents as $id => $cart_item)
+            {
+                if( $cart_item['product_id'] == $productid ) {
+                    AddHunt($pid, 1);
+                    break;
+                }
+            }
+        }
+        else
+        {
+            //Derp
+        }
+
+    }
+
+    add_action('woocommerce_payment_complete', 'AddHuntToCompletePayments');
+
+    function AddHunt($party_id, $story_id)
+    {
+        $atts = array();
+        $atts["entityName"] = "Hunt";
+        $atts["fn"] = "POST";
+
+        $atts["party"] = $party_id;
+        $atts["story"] = $story_id;
+        $atts["start"] = "";
+        $atts["end"] = "";
+        $atts["hintsUsed"] = 0;
+        $atts["clue"] = null;
+
+        $json = $curly->DoCurl($atts); 
+    }
+
     function ValidateUser($user)
     {
         $phoneRegex = "/\+?1?\W*([2-9][0-8][0-9])\W*([2-9][0-9]{2})\W*([0-9]{4})(\se?x?t?(\d*))?/";

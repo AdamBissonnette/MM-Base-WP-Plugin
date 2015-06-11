@@ -49,7 +49,8 @@ function admin_ajax($manager)
             }
             
             $manager->_save_settings_todb($values);
-            echo 0;
+            echo json_encode(0);
+            die;
         break;
         default:
             //Derp
@@ -57,7 +58,6 @@ function admin_ajax($manager)
     }
 
     scavajax();
-
     die;
 }
 

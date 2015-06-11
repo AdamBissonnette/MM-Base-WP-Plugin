@@ -23,6 +23,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 							'type' => 'text'),
 						array('id' => 'webhook_api_key',
 							'label' => 'API Key',
+							'type' => 'text'),
+						array('id' => 'hunt_product',
+							'label' => 'Hunt Product ID',
 							'type' => 'text')
 					)
 				)
