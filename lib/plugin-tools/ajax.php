@@ -114,16 +114,25 @@ function scavajax()
 
                 if ($validationResult["valid"])
                 {
-                    if (isset($uid))
+                    if ($uid != "")
                     {
                         $data["id"] = $uid;
-                    }
 
-                    $json = SaveUser($data);
-                    // update_user_meta($current_user->ID, "scav_uid", $json->id);
-                    // update_user_meta($current_user->ID, "scav_pid", $json->party->id);
+                        if ($pid != "")
+                        {
+                            $data["party"] = $pid;
+                            $json = SaveUser($data);
+                        }
+                    }
+                    else
+                    {
+                        $json = SaveUser($data);
+                        update_user_meta($current_user->ID, "scav_uid", $json->id);
+                        update_user_meta($current_user->ID, "scav_pid", $json->party->id);
+                        $output->refresh = true;
+                    }
+                    
                     $output->message = "Your information has been updated!";
-                    $output->refresh = false;
                 }
                 else
                 {
@@ -182,7 +191,6 @@ function scavajax()
 
                 if ($validationResult["valid"])
                 {
-
                     $json = SaveUser($data);
 
                     $email_address = $data_back[2]["value"];

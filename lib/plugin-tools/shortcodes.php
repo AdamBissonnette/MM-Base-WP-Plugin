@@ -161,7 +161,10 @@ function outputParty($atts)
         {
             $party = GetParty($pid);
             
-            $content = genPartyTable($party, $uid);
+            if (isset($party))
+            {
+                $content = genPartyTable($party, $uid);
+            }
         }
     }
 
