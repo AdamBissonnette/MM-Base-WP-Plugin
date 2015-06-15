@@ -31,6 +31,8 @@ function outputRegistrationForm($atts)
 
             if (isset($json))
             {
+                $json = json_decode($json->data);
+
                 $name = $json->name;
                 $email = $json->email;
                 $phone = $json->phone;
@@ -163,7 +165,8 @@ function outputParty($atts)
             
             if (isset($party))
             {
-                $content = genPartyTable($party, $uid);
+                $json = json_decode($party->data);
+                $content = genPartyTable($json, $uid);
             }
         }
     }

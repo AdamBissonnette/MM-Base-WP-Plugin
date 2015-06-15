@@ -114,6 +114,7 @@ function scavajax()
 
                 if ($validationResult["valid"])
                 {
+                    $output->message = "Your information has been updated!";
                     if ($uid != "")
                     {
                         $data["id"] = $uid;
@@ -122,17 +123,50 @@ function scavajax()
                         {
                             $data["party"] = $pid;
                             $json = SaveUser($data);
+
+                            if (isset($json))
+                            {
+                                if (isset($json->data))
+                                {
+                                }
+                                else
+                                {
+                                    $output->message = $json->value;
+                                    $output->state = false;
+                                }
+                            }
+                            else
+                            {
+                                $output->message = "An error has occured.  Please try this again later or contact an administrator.";
+                                $output->state = false;
+                            }
                         }
                     }
                     else
                     {
                         $json = SaveUser($data);
-                        update_user_meta($current_user->ID, "scav_uid", $json->id);
-                        update_user_meta($current_user->ID, "scav_pid", $json->party->id);
-                        $output->refresh = true;
+                        
+                        if (isset($json))
+                        {
+                            if (isset($json->data))
+                            {
+                                update_user_meta($current_user->ID, "scav_uid", $json->data->id);
+                                update_user_meta($current_user->ID, "scav_pid", $json->data->party->id);
+                                $output->refresh = true;
+                            }
+                            else
+                            {
+                                $output->message = $json->value;
+                                $output->state = false;
+                            }
+                        }
+                        else
+                        {
+                            $output->message = "An error has occured.  Please try this again later or contact an administrator.";
+                            $output->state = false;
+                        }
                     }
                     
-                    $output->message = "Your information has been updated!";
                 }
                 else
                 {
@@ -149,23 +183,45 @@ function scavajax()
 
                 if (isset($party))
                 {
-                    $data["party"] = $pid;
-
-                    $usercount = 0;
-
-                    foreach ($party->users as $user) {
-                        $usercount++;
-                    }
-
-                    if ($usercount > 4) //allow up to 5 party members
+                    if (isset($party->data))
                     {
-                        $output->message = "You can only have up to 5 party members.";
-                        $output->state = false;                        
+                        $party = json_decode($party->data);
+                        $data["party"] = $pid;
+
+                        $usercount = 0;
+
+                        foreach ($party->users as $user) {
+                            $usercount++;
+                        }
+
+                        if ($usercount > 4) //allow up to 5 party members
+                        {
+                            $output->message = "You can only have up to 5 party members.";
+                            $output->state = false;                        
+                        }
+                        else
+                        {
+                            $json = SaveUser($data);
+
+                            if (isset($json))
+                            {
+                                //var_dump($json);
+                                if ($json->data == "")
+                                {
+                                    $output->message = $json->value;
+                                    $output->state = false;
+                                }                        
+                            }
+                            else
+                            {
+                                $output->html = $usercount;
+                            }
+                        }
                     }
                     else
                     {
-                        SaveUser($data);
-                        $output->html = $usercount;
+                        $output->message = "An error has occured.  Please try this again later or contact an administrator.";
+                        $output->state = false;
                     }
                 }
 
@@ -173,7 +229,8 @@ function scavajax()
             case 'get': //Party
                 $uid = get_user_meta($current_user->ID, "scav_uid", true);
                 $pid = get_user_meta($current_user->ID, "scav_pid", true);
-                $output->html = genPartyTable(GetParty($pid), $uid);
+                $party = GetParty($pid);
+                $output->html = genPartyTable(json_decode($party->data), $uid);
             break;
         }
 
@@ -193,29 +250,45 @@ function scavajax()
                 {
                     $json = SaveUser($data);
 
-                    $email_address = $data_back[2]["value"];
-                    $password = wp_generate_password( 12, false );
-                    $user_id = wp_create_user( $email_address, $password, $email_address );
-                 
-                    wp_update_user(
-                        array(
-                            'ID'          =>    $user_id,
-                            'nickname'    =>    $email_address
-                        )
-                    );
-
-                    update_user_meta($user_id, "scav_uid", $json->id);
-                    update_user_meta($user_id, "scav_pid", $json->party->id);
-
-                    $user = wp_signon(array("user_login"=>$email_address, "user_password"=>$password), false);
-
-                    if (is_wp_error($user))
+                    if (isset($json))
                     {
-                        $output->message = $user->get_error_message();
+                        if (isset($json->data))
+                        {                        
+                            $email_address = $data_back[2]["value"];
+                            $password = wp_generate_password( 12, false );
+                            $user_id = wp_create_user( $email_address, $password, $email_address );
+                         
+                            wp_update_user(
+                                array(
+                                    'ID'          =>    $user_id,
+                                    'nickname'    =>    $email_address
+                                )
+                            );
+
+                            update_user_meta($user_id, "scav_uid", $json->data->id);
+                            update_user_meta($user_id, "scav_pid", $json->data->party->id);
+
+                            $user = wp_signon(array("user_login"=>$email_address, "user_password"=>$password), false);
+
+                            if (is_wp_error($user))
+                            {
+                                $output->message = $user->get_error_message();
+                                $output->state = false;
+                            }
+
+                            $output->refresh = true;
+                        }
+                        else
+                        {
+                            $output->message = $json->value;
+                            $output->state = false;
+                        }
+                    }
+                    else
+                    {
+                        $output->message = "An error has occured.  Please try this again later or contact an administrator.";
                         $output->state = false;
                     }
-
-                    $output->refresh = true;
                 }
                 else
                 {
