@@ -98,7 +98,7 @@ function scavajax()
                 }
                 else
                 {
-                    $output->message = "That user could not be kicked.";
+                    $output->message = "That user could not be kicked.  Try refreshing?";
                     $output->state = false;
                 }
             break;

@@ -25,7 +25,7 @@ function outputRegistrationForm($atts)
 
         $uid = get_user_meta($current_user->ID, "scav_uid", true);
 
-        if (isset($uid))
+        if ($uid != "")
         {
             $json = GetUser($uid);
 
@@ -159,7 +159,7 @@ function outputParty($atts)
         $uid = get_user_meta($current_user->ID, "scav_uid", true);
         $pid = get_user_meta($current_user->ID, "scav_pid", true);
 
-        if (isset($pid))
+        if ($pid != "")
         {
             $party = GetParty($pid);
             
