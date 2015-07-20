@@ -82,7 +82,7 @@ ob_start(); //Since there isn't a nice way to get this content we have to use th
 </div>
 
 <div class="form-group">
-    <a class="et_pb_promo_button" href="javascript: void(0);" id="get_started_btn">Save Your Details</a>
+    <a class="et_pb_promo_button et_pb_button" href="javascript: void(0);" id="get_started_btn">Save Your Details</a>
 </div>
         </form>
 </div>
@@ -131,7 +131,7 @@ ob_start(); //Since there isn't a nice way to get this content we have to use th
             </div>
 
             <div class="form-group">
-                <a class="et_pb_promo_button" href="javascript: void(0);" id="add_party_member_btn">Add Party Member</a>
+                <a class="et_pb_promo_button et_pb_button" href="javascript: void(0);" id="add_party_member_btn">Add Party Member</a>
             </div>
 
         </form>
