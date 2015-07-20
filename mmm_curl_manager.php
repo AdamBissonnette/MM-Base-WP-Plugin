@@ -40,7 +40,7 @@ class Mmm_Curl_Manager
 
         if (!isset($this->curlHandler))
         {
-            $this->curlHandler = new \MmmPluginToolsNamespace\CurlHandler($this->get_setting("webhook_url"), $this->get_setting("webhook_api_key"));
+            $this->curlHandler = new \MmmPluginToolsNamespace\CurlHandler($this->get_setting("webhook_url"), $this->get_setting("webhook_username"), $this->get_setting("webhook_password"));
         }
     }
 

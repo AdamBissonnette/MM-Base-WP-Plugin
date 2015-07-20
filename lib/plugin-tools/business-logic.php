@@ -51,7 +51,7 @@ if ( ! defined( 'ABSPATH' ) ) {
         $atts["hintsUsed"] = 0;
         $atts["clue"] = null;
 
-        $json = $curly->DoCurl($atts);
+        $json = new CurlResponse($curly->DoCurl($atts));
         return $json; 
     }
 
@@ -101,7 +101,7 @@ if ( ! defined( 'ABSPATH' ) ) {
             $json = $curly->DoCurl($atts); 
         }
 
-        return json_decode($json);
+        return new CurlResponse($json);
     }
 
     function GetUser($uid)
@@ -117,7 +117,7 @@ if ( ! defined( 'ABSPATH' ) ) {
         $atts["id"] = $uid;
         $json = $curly->DoCurl($atts); 
 
-        return json_decode($json);
+        return new CurlResponse($json);
     }
 
     function GetParty($pid)
@@ -133,7 +133,7 @@ if ( ! defined( 'ABSPATH' ) ) {
         $atts["id"] = $pid;
         $json = $curly->DoCurl($atts); 
 
-        return json_decode($json);
+        return new CurlResponse($json);
     }
 
     function getEntity($atts) {
@@ -149,7 +149,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
         $data = array("fn" => "GET", "entityName" => $entity, "id" => $id);
 
-        $json = json_decode($curly->DoCurl($data));
+        $json = new CurlResponse($curly->DoCurl($data));
 
         return _output_json($json);
     }
@@ -164,7 +164,7 @@ if ( ! defined( 'ABSPATH' ) ) {
         global $MMM_Curl_Manager;
 
         $curly = $MMM_Curl_Manager->curlHandler;
-        $json = $curly->DoCurl($atts); 
+        $json = new CurlResponse($curly->DoCurl($atts)); 
     }
 
 //     if ( null == username_exists( $email_address ) ) {

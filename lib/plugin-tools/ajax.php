@@ -103,76 +103,7 @@ function scavajax()
                 }
             break;
             case 'registration':
-                $data_back = $_REQUEST['data'];
-                $data = array('id' => -1, 'name' => $data_back[1]["value"], 'email' => $data_back[2]["value"], 'phone' => $data_back[3]["value"], 'party_name' => $data_back[0]["value"]);
-
-                $uid = get_user_meta($current_user->ID, "scav_uid", true);
-                $pid = get_user_meta($current_user->ID, "scav_pid", true);
-
-                //Validate and format the phone number
-                $validationResult = ValidateUser($data);
-
-                if ($validationResult["valid"])
-                {
-                    $output->message = "Your information has been updated!";
-                    if ($uid != "")
-                    {
-                        $data["id"] = $uid;
-
-                        if ($pid != "")
-                        {
-                            $data["party"] = $pid;
-                            $json = SaveUser($data);
-
-                            if (isset($json))
-                            {
-                                if (isset($json->data))
-                                {
-                                }
-                                else
-                                {
-                                    $output->message = $json->value;
-                                    $output->state = false;
-                                }
-                            }
-                            else
-                            {
-                                $output->message = "An error has occured.  Please try this again later or contact an administrator.";
-                                $output->state = false;
-                            }
-                        }
-                    }
-                    else
-                    {
-                        $json = SaveUser($data);
-                        
-                        if (isset($json))
-                        {
-                            if (isset($json->data))
-                            {
-                                update_user_meta($current_user->ID, "scav_uid", $json->data->id);
-                                update_user_meta($current_user->ID, "scav_pid", $json->data->party->id);
-                                $output->refresh = true;
-                            }
-                            else
-                            {
-                                $output->message = $json->value;
-                                $output->state = false;
-                            }
-                        }
-                        else
-                        {
-                            $output->message = "An error has occured.  Please try this again later or contact an administrator.";
-                            $output->state = false;
-                        }
-                    }
-                    
-                }
-                else
-                {
-                    $output->message = $validationResult["message"];
-                    $output->state = false;
-                }
+                $output = _register($output, true);
             break;
             case 'post': //Add new party member
                 $data_back = $_REQUEST['data'];
@@ -185,7 +116,7 @@ function scavajax()
                 {
                     if (isset($party->data))
                     {
-                        $party = json_decode($party->data);
+                        $party = ($party->data);
                         $data["party"] = $pid;
 
                         $usercount = 0;
@@ -230,77 +161,143 @@ function scavajax()
                 $uid = get_user_meta($current_user->ID, "scav_uid", true);
                 $pid = get_user_meta($current_user->ID, "scav_pid", true);
                 $party = GetParty($pid);
-                $output->html = genPartyTable(json_decode($party->data), $uid);
+                $output->html = genPartyTable(($party->data), $uid);
             break;
         }
 
     }
     else //Add new values
     {
-        //If you're not an authorized user you can only buy products
         switch($_REQUEST['fn']){
             case 'registration':
-                $data_back = $_REQUEST['data'];
-                //create new user
-                $data = array('id' => -1, 'name' => $data_back[1]["value"], 'email' => $data_back[2]["value"], 'phone' => $data_back[3]["value"], 'party_name' => $data_back[0]["value"]);
-             
-                $validationResult = ValidateUser($data);
-
-                if ($validationResult["valid"])
-                {
-                    $json = SaveUser($data);
-
-                    if (isset($json))
-                    {
-                        if (isset($json->data))
-                        {                        
-                            $email_address = $data_back[2]["value"];
-                            $password = wp_generate_password( 12, false );
-                            $user_id = wp_create_user( $email_address, $password, $email_address );
-                         
-                            wp_update_user(
-                                array(
-                                    'ID'          =>    $user_id,
-                                    'nickname'    =>    $email_address
-                                )
-                            );
-
-                            update_user_meta($user_id, "scav_uid", $json->data->id);
-                            update_user_meta($user_id, "scav_pid", $json->data->party->id);
-
-                            $user = wp_signon(array("user_login"=>$email_address, "user_password"=>$password), false);
-
-                            if (is_wp_error($user))
-                            {
-                                $output->message = $user->get_error_message();
-                                $output->state = false;
-                            }
-
-                            $output->refresh = true;
-                        }
-                        else
-                        {
-                            $output->message = $json->value;
-                            $output->state = false;
-                        }
-                    }
-                    else
-                    {
-                        $output->message = "An error has occured.  Please try this again later or contact an administrator.";
-                        $output->state = false;
-                    }
-                }
-                else
-                {
-                    $output->message = $validationResult["message"];
-                    $output->state = false;
-                }
+                $output = _register($output, false);
             break;
         }
     }
  
  echo json_encode($output);
+ die(); 
 }
 
+function _register($output, $is_logged_in)
+{
+    $data_back = $_REQUEST['data'];
+    //create new user
+    $data = array('id' => -1, 'name' => $data_back[1]["value"], 'email' => $data_back[2]["value"], 'phone' => $data_back[3]["value"], 'party_name' => $data_back[0]["value"]);
+
+    $validationResult = ValidateUser($data);
+
+    if ($validationResult["valid"])
+    {
+        $output->message = "Your information has been updated!";
+
+        if ($is_logged_in)
+        {
+            $output = _register_existing($output, $data_back, $data);
+        }
+        else
+        {
+            $output = _register_new($output, $data_back, $data);
+        }
+    }
+    else
+    {
+        $output->message = $validationResult["message"];
+        $output->state = false;
+    }
+
+    return $output;
+}
+
+function _register_new($output, $data_back, $data)
+{
+    $json = SaveUser($data);
+
+    if (isset($json->data))
+    {
+        $data = ($json->data);
+
+        //Ensure the data is in the correct format                            
+        $email_address = $data_back[2]["value"];
+        $password = wp_generate_password( 12, false );
+        $user_id = wp_create_user( $email_address, $password, $email_address );
+     
+        wp_update_user(
+            array(
+                'ID'          =>    $user_id,
+                'nickname'    =>    $email_address
+            )
+        );
+
+        $user = wp_signon(array("user_login"=>$email_address, "user_password"=>$password), false);
+
+        if (is_wp_error($user))
+        {
+            $output->message = $user->get_error_message();
+            $output->state = false;
+        }
+        else
+        {
+            update_user_meta($user_id, "scav_uid", $data->id);
+            update_user_meta($user_id, "scav_pid", $data->party->id);
+        }
+
+        $output->refresh = true;
+
+    }
+    else
+    {
+        $output->message = $json->message;
+        $output->state = false;
+    }
+
+    return $output;
+}
+
+function _register_existing($output, $data_back, $data)
+{
+    $current_user = \wp_get_current_user();
+    $uid = get_user_meta($current_user->ID, "scav_uid", true);
+    $pid = get_user_meta($current_user->ID, "scav_pid", true);
+    $has_meta = true;
+
+    if ($uid == "" && $pid == "")
+    {
+        $has_meta = false;
+    }
+    else
+    {
+        $data["id"] = $uid;
+        $data["party"] = $pid;
+    }
+
+    $json = SaveUser($data);
+    
+    if (isset($json))
+    {
+        if (isset($json->data))
+        {
+            $data = ($json->data);
+
+            if (!$has_meta)
+            {
+                update_user_meta($user_id, "scav_uid", $data->id);
+                update_user_meta($user_id, "scav_pid", $data->party->id);
+            }
+        }
+        else
+        {
+            $output->message = $json->message;
+            $output->state = false;
+        }
+    }
+    else
+    {
+        $output->message = $json->message;
+        $output->state = false;
+    }
+
+    return $output;
+}
 
 ?>
