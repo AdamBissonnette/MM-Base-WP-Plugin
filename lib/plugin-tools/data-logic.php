@@ -37,7 +37,29 @@ if ( ! defined( 'ABSPATH' ) ) {
             $this->password = $password;
         }
 
-        function DoCurl($data, $method="GET")
+        function DoCurl($data, $method="POST")
+        {
+            $data["is_curl"] = 1;
+            $json = json_encode($data);
+
+            $args = array(
+                'method' => $method,
+                'body' => $json,
+                'timeout' => 45,
+                'redirection' => 5,
+                'httpversion' => '1.0',
+                'blocking' => true,
+                'headers' => array(),
+                'cookies' => array()
+                );
+            $url = "http://" . $this->username . ":" . $this->password . "@" . $this->url;
+
+            $output = wp_remote_post($url, $args);
+
+            return $output["body"];
+        }
+
+        /*function DoCurl($data, $method="GET")
         {
             $data["is_curl"] = 1;
             $json = json_encode($data);
@@ -61,7 +83,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
             curl_close($ch);
             return $output;
-        }
+        }*/
 
         function toJSON()
         {
