@@ -66,7 +66,7 @@ function HandleRegister(data)
   }
   else
   {
-    ShowModal("Oh Snap!", data.message);
+    ShowModal("Oops!", data.message);
   }
 }
 
@@ -84,7 +84,7 @@ function HandleThings(data, func)
   }
   else
   {
-    ShowModal("Oh Snap!", data.message);
+    ShowModal("Oops!", data.message);
   }
 }
 
