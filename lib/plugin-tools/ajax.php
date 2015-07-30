@@ -78,7 +78,7 @@ function scavajax()
                 $uid = get_user_meta($current_user->ID, "scav_uid", true);
                 $pid = get_user_meta($current_user->ID, "scav_pid", true);
 
-                $party = GetParty($pid);
+                $party = GetParty($pid)->data;
                 $inParty = false;
 
                 //they can only delete party members
@@ -281,8 +281,8 @@ function _register_existing($output, $data_back, $data)
 
             if (!$has_meta)
             {
-                update_user_meta($user_id, "scav_uid", $data->id);
-                update_user_meta($user_id, "scav_pid", $data->party->id);
+                update_user_meta($current_user->ID, "scav_uid", $data->id);
+                update_user_meta($current_user->ID, "scav_pid", $data->party->id);
             }
         }
         else
