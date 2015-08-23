@@ -3,7 +3,7 @@
 Plugin Name: Mmm Simple File List
 Plugin URI: http://www.mediamanifesto.com
 Description: Plugin to list files in a given directory using this shortcode [MMFileList folder="optional starting from base uploads path" format="li (unordered list) or table (tabular) or img (unordered list of images) or comma (plain text, comma, delimited) types="optional file-extension e.g. pdf,doc" class="optional css class for html list"]
-Version: 1.0
+Version: 1.7
 Author: Adam Bissonnette
 Author URI: http://www.mediamanifesto.com
 */
@@ -12,11 +12,11 @@ class MM_FileList
 {
     public static $attsKeyTemplate = "{%s}";
 
-	function MM_FileList()
-	{
+    function MM_FileList()
+    {
         add_shortcode( 'MMFileList', array(&$this, 'ListFiles') );
-	}
-	
+    }
+    
     function copter_remove_crappy_markup( $string )
     {
         $patterns = array(
@@ -27,29 +27,32 @@ class MM_FileList
         return preg_replace($patterns, '', $string);
     }
 
-	function ListFiles($atts, $content="")
-	{	
+    function ListFiles($atts, $content="")
+    {   
         //Strip any empty <p> tags
         //Credit goes to: https://gist.github.com/jlengstorf/5370457
         $content = $this->copter_remove_crappy_markup($content);
 
-		extract( shortcode_atts( array(
-		'folder' => '',
-		'format' => 'li',
-		'types' => '',
+        extract( shortcode_atts( array(
+        'folder' => '',
+        'format' => 'li',
+        'types' => '',
         'class' => '',
         'limit' => '-1',
         'orderby' => 'name', //name or date
-        'target' => ''
-		), $atts ) );
-		
+        'order' => "asc",
+        'target' => '',
+        'prettyname' => false,
+        'regexstrip' => '',
+        ), $atts ) );
+        
         $folder = $this->_check_for_slashes($folder);
 
-		$baseDir = wp_upload_dir(); //Base Upload Directory
-		$dir = $baseDir['path'] . '/' . $folder;
-		$outputDir = $baseDir['url'] . '/' . $folder; //ex. http://example.com/wp-content/uploads/2010/05/../../cats
-		
-		$typesToList = array_filter(explode(",", $types));
+        $baseDir = wp_upload_dir(); //Base Upload Directory
+        $dir = $baseDir['path'] . '/' . $folder;
+        $outputDir = $baseDir['url'] . '/' . $folder; //ex. http://example.com/wp-content/uploads/2010/05/../../cats
+        
+        $typesToList = array_filter(explode(",", $types));
 
         $output = "";
 
@@ -62,26 +65,42 @@ class MM_FileList
         else
         {
             $files = scandir($dir);
-    		$list = array();
+            $list = array();
 
             if ($orderby == "date")
             {
-                $files = array_reverse($this->rearrange_files_by_date($dir, $files));
+                $files = array_reverse($this->rearrange_files_by_date($dir . "/", $files));
             }
 
-    		foreach($files as $file)
-    		{
-    			$path_parts = pathinfo($file);
+            if ($order == "desc")
+            {
+                $files = array_reverse($files);
+            }
+
+            foreach($files as $file)
+            {
+                $path_parts = pathinfo($file);
 
                 if (isset($path_parts['extension'])) //check for folders - don't list them
                 {
-        			$extension = $path_parts['extension'];
-        			
-        			if($file != '.' && $file != '..')
-        			{
+                    $extension = $path_parts['extension'];
+                    
+                    if($file != '.' && $file != '..')
+                    {
                         if(!is_dir($dir.'/'.$file))
                         {
-                            $file = array("name" => $file, "url" => $outputDir . "/" . $file, "size" => $this->human_filesize(filesize($dir . '/' . $file)));
+                            $filename = $file;
+                            if ($prettyname != false)
+                            {
+                                $filename = $this->_pretty_filename($file);
+                            }
+
+                            if ($regexstrip != "")
+                            {
+                                $filename = preg_replace($regexstrip, "", $filename);
+                            }
+
+                            $file = array("name" => $filename, "ext" => $extension, "url" => $outputDir . "/" . $file, "size" => $this->human_filesize(filesize($dir . '/' . $file)));
                             
                             //If we are looking for specific types then only list those types, otherwise list everything
                             if (count($typesToList) > 0)
@@ -96,9 +115,9 @@ class MM_FileList
                                 array_push($list, $file);
                             }
                         }
-        			}
+                    }
                 }
-    		}
+            }
             
             if (is_numeric($limit))
             {
@@ -124,12 +143,13 @@ class MM_FileList
                 switch($format){
                     case 'li':
                         $output = $this->_MakeUnorderedList($list, $content, $formatAtts);
+                        break;
                     case 'img':
                         $listTemplate = '<ul class="%s">%s</ul>';
 
                         if ($content == "")
                         {
-                            $content = '<a href="{url}"{target}><img src="{url}" class="image" title="{name} ({size})" /></a>';
+                            $content = $this->_AddFileAttsToTemplate('<a href="{url}"{target}><img src="{url}" class="{class}" title="{name} ({size})" /></a>', $formatAtts);
                         }
 
                         $output = $this->_MakeUnorderedList($list, $content, $formatAtts);
@@ -140,9 +160,9 @@ class MM_FileList
                     case 'table':
                         $output = $this->_MakeTabularLIst($list, $content, $formatAtts);
                     break;
-                	case 'comma':
+                    case 'comma':
                         $output = $this->_MakeCommaDelimitedList($list);
-         			break;
+                    break;
                     default:
                         $output = $this->_MakeUnorderedList($list, $content, $formatAtts);
                     break;
@@ -160,7 +180,7 @@ class MM_FileList
         foreach ($fileAtts as $key => $value) {
             if (isset($value))
             {
-                $output = str_replace(sprintf($this::$attsKeyTemplate, $key), $value, $output);
+                $output = str_replace(sprintf(MM_FileList::$attsKeyTemplate, $key), $value, $output);
             }
         }
 
@@ -190,14 +210,18 @@ class MM_FileList
 
     function _MakeCommaDelimitedList($list)
     {
-        $formattedList = array_map(function($entry) { $listItemTemplate = "%s"; return sprintf($listItemTemplate, $entry["url"]); },$list);
+        $formattedList = array();
+
+        foreach ($list as $entry) {
+            array_push($formattedList, $entry["url"]);
+        }
 
         return implode(",", $formattedList);
     }
 
-	function _MakeUnorderedList($list, $content, $atts)
-	{
-		$listTemplate = '<ul class="%s">%s</ul>';
+    function _MakeUnorderedList($list, $content, $atts)
+    {
+        $listTemplate = '<ul class="%s">%s</ul>';
         $listItemTemplate = sprintf('<li>%s</li>', $content);
 
         if ($content == "")
@@ -218,9 +242,9 @@ class MM_FileList
         {
             return $this->_OutputList($list, $listItemTemplate, $atts, $listTemplate);
         }
-	}
+    }
 
-    function _MakeTabularList($list, $atts)
+    function _MakeTabularList($list, $content, $atts)
     {
         $listTemplate = '<table class="%s">%s%s</table>';
         $listHeadingTemplate = '<tr><th class="filename">Filename / Link</th><th class="filesize">Size</th></tr>';
@@ -235,11 +259,46 @@ class MM_FileList
         return sprintf($listTemplate, $atts["class"], $listHeadingTemplate, $items);
     }
 
-    //Stolen from comments : http://php.net/manual/en/function.filesize.php thx Rommelsantor.com
-    function human_filesize($bytes, $decimals = 2) {
-      $sz = 'BKMGTP';
-      $factor = floor((strlen($bytes) - 1) / 3);
-      return sprintf("%.{$decimals}f", $bytes / pow(1024, $factor)) . @$sz[$factor];
+    //Stolen from comments : http://php.net/manual/en/function.filesize.php thx Arseny Mogilev
+    function human_filesize($bytes) {
+        $bytes = floatval($bytes);
+        $arBytes = array(
+            array(
+                "UNIT" => "Pb",
+                "VALUE" => pow(1024, 5)
+            ),
+            array(
+                "UNIT" => "Tb",
+                "VALUE" => pow(1024, 4)
+            ),
+            array(
+                "UNIT" => "Gb",
+                "VALUE" => pow(1024, 3)
+            ),
+            array(
+                "UNIT" => "Mb",
+                "VALUE" => pow(1024, 2)
+            ),
+            array(
+                "UNIT" => "Kb",
+                "VALUE" => 1024
+            ),
+            array(
+                "UNIT" => "Bytes",
+                "VALUE" => 1
+            ),
+        );
+
+        foreach($arBytes as $arItem)
+        {
+            if($bytes >= $arItem["VALUE"])
+            {
+                $result = $bytes / $arItem["VALUE"];
+                $result = str_replace(",", "." , strval(round($result, 2)))." ".$arItem["UNIT"];
+                break;
+            }
+        }
+        return $result;
     }
 
     function rearrange_files_by_date($dir, $files)
@@ -268,6 +327,19 @@ class MM_FileList
     function _flip_slahes($folder)
     {
         return str_replace("/", "\\", $folder);
+    }
+
+    function _pretty_filename($str="")
+    {
+        $regex = '/-|_| |\.[a-z0-9]*$/';
+        $output = preg_replace($regex, ' ', $str);
+
+        //Add space before cap borrowed from: http://stackoverflow.com/a/1089681/4621469
+        $output = preg_replace('/(?<!\ )[A-Z]/', ' $0', $output);
+
+        // Trim whitespace
+        return trim($output);
+
     }
 
 } // end class
