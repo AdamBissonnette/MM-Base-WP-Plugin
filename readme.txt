@@ -20,9 +20,10 @@ This is a simple plugin to list files in a given directory using this shortcode:
 * **folder**: Relative to the base uploads directory of your wordpress install (e.g. siteurl.com/wp-content/uploads/mm/yy/ or siteurl.com/wp-content/ or siteurl.com/media).  You can check your media settings from your WordPress dashboard in Settings -> Media.  If you organize your uploads in the WordPress default month / year base folder you should either prepend this field with "/../../" or disable that setting before uploading files.
 * **format**: Tabular (format="table") or Unordered list (format="li") or comma-delimited (format="comma") or Unordered List of Images (format="img" Note: this will put all files in <img> tags) or Custom (format="custom") for using the Shortcode content to create a custom template (see Custom Formats section below for more information)
 * **types**: Only list given file types (e.g. types="pdf,doc,txt"), If no types are specified then all files in the directory will be listed.
-* **class**: Only used for the "li", "img" and "table" formats, applies a given class to the shortcode output (e.g. <ul class="mmm-list"> / for more information on styling check out the FAQ)
+* **class**: Only used for the "li", "img" and "table" formats, applies a given class to the shortcode output (e.g. &#60;ul class="mmm-list"&#62; / for more information on styling check out the FAQ)
 * **limit**: The default value will list all files in the directory.  You can add a positive number of your choice and that amount of files will be displayed.
 * **orderby**: Current params can be either "name" (default) or "date" which sorts the files by date modified since date created seems to be hit and miss.
+* **order**: By default the order of the list is sorted descending (asc) from the highest value to lowest where value is determined by the "orderby" attribute.  Ordering by date results in a list being displayed as newest to oldest and ordering by name results in a list descending through the alphabet (a-z).  To reverse either of these defaults simply add order="desc" into the shortcode parameters
 * **target**: This parameter lets you set a "target" for the links to the listed files (This is typically used to open the files in a new window)
 
 
@@ -44,7 +45,7 @@ Let's say you're using the default WordPress Media settings so we can expect you
 
 [MMFileList folder="/../../cats/" format="table" types="png" /]
 
-If you have you disabled the setting to store uploads in the /mm/yy/ folder structure (you can do this within Settings -> Media) and wanted to display that same file you would use this shortcode:
+If you have you disabled the setting to store uploads in the /mm/yy/ folder structure (you can do this within Settings -&#62; Media) and wanted to display that same file you would use this shortcode:
 
 [MMFileList folder="/cats/" format="table" types="png" /]
 
@@ -53,9 +54,9 @@ This will result in a tabular list of all .png files in the /wp-content/uploads/
 
 **Custom Formats**
 
-The "li" and "custom" formats allow you to define a template using the content portion of the shortcode.  The difference between these two output formats is that "li" will still wrap all the output in a <ul> tag and each file will be wrapped in a <li> tag.  Here is an example of how to create a custom template:
+The "li" and "custom" formats allow you to define a template using the content portion of the shortcode.  The difference between these two output formats is that "li" will still wrap all the output in a &#60;ul&#62; tag and each file will be wrapped in a &#60;li&#62; tag.  Here is an example of how to create a custom template:
 
-[MMFileList folder="/cats/" format="li"]<div class="taco"><a href="{url}">{name} ({size})</a></div>[/MMFileList]
+[MMFileList folder="/cats/" format="li"]&#60;div class="taco"&#62;&#60;a href="{url}"&#62;{name} ({size})&#60;/a&#62;&#60;/div&#62;[/MMFileList]
 
 Variables that can be used with the custom templates are as follows:
 
@@ -104,6 +105,43 @@ The "img" format outputs all files in <li><a><img></a></li> blocks so if you hav
 1. Sample of the "li" output used with a fairly large set of bylaws.
 
 == Changelog ==
+
+= 1.8 =
+
+* Added date modified as an available template parameter using the {date} markup
+* Added file extension as an available template parameter using the {ext} markup
+* Added a "prettyname" parameter to the shortcode which strips dashes, underscores and the file extension when set to "true", replaces them with spaces, adds spaces between uppercase characters and then trims everything nicely
+* Added a "regexstrip" parameter to the shortcode which strips away characters based on a given regex string from the user (Note: will throw errors if the regex isn't properly formatted!)
+* Added a "dateformat" parameter for adjusting how the date modified variable appears
+* Added an output format called "li2" which renders the name date and extension parameters in an unordered list
+
+= 1.7 =
+
+* Changed default order setting to be labeled as "ascending|asc" instead of "descending|desc"
+
+= 1.6 =
+
+* Added "order" parameter
+
+= 1.5 =
+
+* Bug fix for orderby date code
+
+= 1.4 =
+
+* Bug fix for tabular list target and class vars not being passed through correctly.
+
+= 1.3 =
+
+* Updated human_filesize function to work according to the standardized International System.
+
+= 1.2 =
+
+* Fixed bug with array_map usage in 5.2.17
+
+= 1.1 =
+
+* Fixed missing break; in the format switch
 
 = 1.0 =
 
