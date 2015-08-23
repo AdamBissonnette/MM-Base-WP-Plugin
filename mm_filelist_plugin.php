@@ -3,7 +3,7 @@
 Plugin Name: Mmm Simple File List
 Plugin URI: http://www.mediamanifesto.com
 Description: Plugin to list files in a given directory using this shortcode [MMFileList folder="optional starting from base uploads path" format="li (unordered list) or table (tabular) or img (unordered list of images) or comma (plain text, comma, delimited) types="optional file-extension e.g. pdf,doc" class="optional css class for html list"]
-Version: 1.7
+Version: 1.8
 Author: Adam Bissonnette
 Author URI: http://www.mediamanifesto.com
 */
@@ -44,6 +44,7 @@ class MM_FileList
         'target' => '',
         'prettyname' => false,
         'regexstrip' => '',
+        'dateformat' => 'Y-m-d H:i:s',
         ), $atts ) );
         
         $folder = $this->_check_for_slashes($folder);
@@ -100,7 +101,9 @@ class MM_FileList
                                 $filename = preg_replace($regexstrip, "", $filename);
                             }
 
-                            $file = array("name" => $filename, "ext" => $extension, "url" => $outputDir . "/" . $file, "size" => $this->human_filesize(filesize($dir . '/' . $file)));
+                            $modifiedDate = date($dateformat, filemtime($dir . "/" . $file));
+
+                            $file = array("name" => $filename, "ext" => $extension, "date" => $modifiedDate, "url" => $outputDir . "/" . $file, "size" => $this->human_filesize(filesize($dir . '/' . $file)));
                             
                             //If we are looking for specific types then only list those types, otherwise list everything
                             if (count($typesToList) > 0)
@@ -143,6 +146,11 @@ class MM_FileList
                 switch($format){
                     case 'li':
                         $output = $this->_MakeUnorderedList($list, $content, $formatAtts);
+                        break;
+                    case 'li2':
+                        $output = $this->_MakeUnorderedList($list,
+                                    '<a href="{url}"{target}><span class="filename">{name}</span><span class="filesize"> ({size})</span> <span class="dateModified">{date}</span> <span class="extension mm-{ext}">{ext}</span></a>',
+                                    $formatAtts);
                         break;
                     case 'img':
                         $listTemplate = '<ul class="%s">%s</ul>';
