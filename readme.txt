@@ -106,6 +106,11 @@ The "img" format outputs all files in <li><a><img></a></li> blocks so if you hav
 
 == Changelog ==
 
+= 1.9 =
+
+* Added headings parameter which allows us to customize the headings row on a table with a given bulleted list
+* Added hooks for custom table value templates based on the shortcode content, users can now add a series of <td> tags which will be wrapped in a <tr> while building the table
+
 = 1.8 =
 
 * Added date modified as an available template parameter using the {date} markup
