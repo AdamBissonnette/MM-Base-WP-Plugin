@@ -45,6 +45,7 @@ class MM_FileList
         'prettyname' => false,
         'regexstrip' => '',
         'dateformat' => 'Y-m-d H:i:s',
+        'headings' => '',
         ), $atts ) );
         
         $folder = $this->_check_for_slashes($folder);
@@ -166,7 +167,7 @@ class MM_FileList
                         $output = $this->_OutputList($list, $content, $formatAtts);
                     break;
                     case 'table':
-                        $output = $this->_MakeTabularLIst($list, $content, $formatAtts);
+                        $output = $this->_MakeTabularLIst($list, $content, $formatAtts, $headings);
                     break;
                     case 'comma':
                         $output = $this->_MakeCommaDelimitedList($list);
@@ -252,16 +253,39 @@ class MM_FileList
         }
     }
 
-    function _MakeTabularList($list, $content, $atts)
+    function _MakeTabularList($list, $content, $atts, $headings)
     {
         $listTemplate = '<table class="%s">%s%s</table>';
         $listHeadingTemplate = '<tr><th class="filename">Filename / Link</th><th class="filesize">Size</th></tr>';
-        $listItemTemplate = '<tr><td class="filename"><a href="%s"%s>%s</a></td><td class="filesize">%s</td></tr>';
+        $rowWrapper = "<tr>%s</tr>";
 
-        $items = "";
+        if ($headings != "")
+        {
+            $headingWrapper = "<th>%s</th>";
 
-        foreach ($list as $filename => $fileatts) {
-            $items .= sprintf($listItemTemplate, $fileatts["url"], $atts["target"], $fileatts["name"], $fileatts["size"]);
+            $headingList = explode(",", $headings);
+            $output = "";
+
+            foreach ($headingList as $heading) {
+                $output .= sprintf($headingWrapper, $heading);
+            }
+
+            $listHeadingTemplate = sprintf($rowWrapper, $output);
+        }
+
+        if ($content == "")
+        {
+            $listItemTemplate = '<tr><td class="filename"><a href="%s"%s>%s</a></td><td class="filesize">%s</td></tr>';
+
+            $items = "";
+
+            foreach ($list as $filename => $fileatts) {
+                $items .= sprintf($listItemTemplate, $fileatts["url"], $atts["target"], $fileatts["name"], $fileatts["size"]);
+            }
+        }
+        else
+        {
+            $items = $this->_OutputList($list, sprintf($rowWrapper, $content), $atts);
         }
 
         return sprintf($listTemplate, $atts["class"], $listHeadingTemplate, $items);
